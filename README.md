@@ -10,6 +10,6 @@
 
 In development, I will update the readme once this repo is usable.
 
-Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>
+Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
 
 Copyright (c) 2019 - today, Tobias Uhlig
