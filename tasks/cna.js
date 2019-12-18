@@ -1,1 +1,0 @@
-console.log('Create neo.mjs app');

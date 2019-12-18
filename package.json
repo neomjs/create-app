@@ -1,16 +1,26 @@
 {
     "name": "neo-app",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "neo.mjs: Create app via npx",
     "repository": {
         "type": "git",
         "url": "https://github.com/neomjs/create-app"
     },
     "scripts": {
-        "neo-app": "node tasks/cna.js",
+        "neo-app": "node tasks/neo-app.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "keywords": ["neomjs", "neo.mjs","javascript","frontend","framework","webworker","ecmascript","css","json"],
+    "keywords": [
+        "neomjs",
+        "neo.mjs",
+        "javascript",
+        "frontend",
+        "framework",
+        "webworker",
+        "ecmascript",
+        "css",
+        "json"
+    ],
     "author": "Tobias Uhlig",
     "license": "MIT",
     "bugs": {
@@ -19,6 +29,9 @@
     "homepage": "https://neomjs.github.io/pages/",
     "dependencies": {
         "neo.mjs": "^1.0.12"
+    },
+    "devDependencies": {
+        "fs": "^0.0.1-security"
     },
     "funding": {
         "type": "GitHub Sponsors",
