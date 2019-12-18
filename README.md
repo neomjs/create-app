@@ -1,7 +1,7 @@
 <p align="center">
-  <a href="https://npmcharts.com/compare/neo.mjs-create-app?minimal=true"><img src="https://img.shields.io/npm/dm/neo.mjs-create-app.svg" alt="Downloads"></a>
-  <a href="https://www.npmjs.com/package/neo.mjs-create-app"><img src="https://img.shields.io/npm/v/neo.mjs-create-app.svg" alt="Version"></a>
-  <a href="https://www.npmjs.com/package/neo.mjs-create-app"><img src="https://img.shields.io/npm/l/neo.mjs-create-app.svg" alt="License"></a>
+  <a href="https://npmcharts.com/compare/neo-app?minimal=true"><img src="https://img.shields.io/npm/dm/neo-app.svg" alt="Downloads"></a>
+  <a href="https://www.npmjs.com/package/neo-app"><img src="https://img.shields.io/npm/v/neo-app.svg" alt="Version"></a>
+  <a href="https://www.npmjs.com/package/neo-app"><img src="https://img.shields.io/npm/l/neo-app.svg" alt="License"></a>
   <a href="https://discordapp.com/channels/656620537514164249"><img src="https://img.shields.io/discord/656620537514164249?label=discord%20chat" alt="Chat"></a>
   <a href="./CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-green.svg" alt="PRs Welcome"></a>
 </p>
