@@ -11,7 +11,7 @@
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "bin": {
-        "neo-app": "node ./tasks/neo-app.js"
+        "neo-app": "./tasks/neo-app.js"
     },
     "keywords": [
         "neomjs",
