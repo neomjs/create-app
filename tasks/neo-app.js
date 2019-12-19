@@ -2,9 +2,12 @@
 
 'use strict';
 
-//const fs = require('fs');
-//const path = require('path');
-//const cp = require('child_process');
+const fs       = require('fs'),
+      path     = require('path'),
+      appName  = 'MyApp',
+      lAppName = appName.toLowerCase(),
+      appPath  = 'apps/' + lAppName + '/',
+      folder   = 'myapp';
 
 console.log('Create neo.mjs app');
 
@@ -23,5 +26,25 @@ const handleError = e => {
 process.on('SIGINT', handleExit);
 process.on('uncaughtException', handleError);
 
-// Cleanup
-handleExit();
+fs.mkdir(folder, { recursive: true }, (err) => {
+    if (err) {
+        throw err;
+    }
+
+    const appContent = [
+        "import MainContainer from './MainContainer.mjs';",
+        "",
+        "Neo.onStart = function() {",
+        "    Neo.app({",
+        "        appPath : '" + appPath + "',",
+        "        mainView: MainContainer,",
+        "        name    : '" + appName + "'",
+        "    });",
+        "};"
+    ].join('\n');
+
+    fs.writeFileSync(folder + '/app.mjs', appContent);
+
+    // Cleanup
+    handleExit();
+});
