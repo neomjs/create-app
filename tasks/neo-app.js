@@ -2,13 +2,11 @@
 
 'use strict';
 
+console.log('Create neo.mjs app');
+
 const fs       = require('fs'),
       inquirer = require('inquirer'),
-      path     = require('path'),
-      appName  = 'MyApp',
-      lAppName = appName.toLowerCase(),
-      appPath  = 'apps/' + lAppName + '/',
-      folder   = 'myapp';
+      path     = require('path');
 
 let questions = [{
     type   : 'input',
@@ -22,8 +20,6 @@ let questions = [{
     choices: ['neo-theme-dark', 'neo-theme-light', 'both'],
     default: 'both'
 }];
-
-console.log('Create neo.mjs app');
 
 const handleExit = () => {
     console.log('Exiting without error.');
@@ -40,32 +36,11 @@ const handleError = e => {
 process.on('SIGINT', handleExit);
 process.on('uncaughtException', handleError);
 
-fs.mkdir(folder, { recursive: true }, (err) => {
-    if (err) {
-        throw err;
-    }
-
-    const appContent = [
-        "import MainContainer from './MainContainer.mjs';",
-        "",
-        "Neo.onStart = function() {",
-        "    Neo.app({",
-        "        appPath : '" + appPath + "',",
-        "        mainView: MainContainer,",
-        "        name    : '" + appName + "'",
-        "    });",
-        "};"
-    ].join('\n');
-
-    fs.writeFileSync(folder + '/app.mjs', appContent);
-});
-
 inquirer.prompt(questions).then(answers => {
     const appName  = answers['appName'],
           lAppName = appName.toLowerCase(),
           appPath  = 'apps/' + lAppName + '/',
-          dir      = '../apps/' + lAppName,
-          folder   = path.resolve(__dirname, dir);
+          folder   = lAppName;
 
     fs.mkdir(folder, { recursive: true }, (err) => {
         if (err) {
