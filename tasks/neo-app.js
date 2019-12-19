@@ -151,10 +151,10 @@ inquirer.prompt(questions).then(answers => {
         console.log(path.resolve(__dirname, '../files/.gitignore'));
         console.log(path.resolve(__dirname, '../.gitignore'));
 
-        const test = fs.readFileSync('.gitignore');
+        const test = fs.readFileSync('../.gitignore');
         console.log(test);
 
-        const test2 = fs.readFileSync('files/.gitignore');
+        const test2 = fs.readFileSync('../files/.gitignore');
         console.log(test2);
 
         fs.copyFileSync(path.resolve(__dirname, '/files/.gitignore'), folder + '/.gitignore', e => {
