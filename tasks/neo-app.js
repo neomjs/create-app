@@ -6,6 +6,7 @@ console.log('Create neo.mjs app');
 
 const fs       = require('fs'),
       inquirer = require('inquirer'),
+      os       = require('os'),
       path     = require('path');
 
 let questions = [{
@@ -170,6 +171,21 @@ inquirer.prompt(questions).then(answers => {
         ].join('\n');
 
         fs.writeFileSync(folder + '/.gitignore', gitignoreContent);
+
+        const packageJson = {
+            name: appName,
+            version: '0.1.0',
+            private: true,
+
+            dependencies: {
+                'neo.mjs': '^1.0.12'
+            }
+        };
+
+        fs.writeFileSync(
+            path.join(folder, 'package.json'),
+            JSON.stringify(packageJson, null, 4) + os.EOL
+        );
 
         /*fs.copyFileSync(path.resolve(__dirname, '/files/.gitignore'), folder + '/.gitignore', e => {
             if (e) {
