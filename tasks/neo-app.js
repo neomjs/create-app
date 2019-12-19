@@ -149,8 +149,9 @@ inquirer.prompt(questions).then(answers => {
         fs.writeFileSync(folder + '/MainContainer.mjs', mainContainerContent);
 
         console.log(path.resolve(__dirname, '../files/.gitignore'));
+        console.log(path.resolve(__dirname, '../.gitignore'));
 
-        fs.copyFileSync(require.resolve('../files/.gitignore'), folder + '/.gitignore', e => {
+        fs.copyFileSync(path.resolve('../.gitignore'), folder + '/.gitignore', e => {
             if (e) {
                 console.log(e);
             }
