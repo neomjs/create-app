@@ -148,13 +148,16 @@ inquirer.prompt(questions).then(answers => {
 
         fs.writeFileSync(folder + '/MainContainer.mjs', mainContainerContent);
 
-        console.log(process);
-        console.log(process.cwd());
-
         console.log(path.resolve(process.cwd(), '.gitignore'));
         console.log(path.resolve(__dirname, '../.gitignore'));
 
-        const test = fs.readFileSync('../.gitignore');
+        const foo2 = require('../files/test.js');
+        console.log(foo2);
+
+        const foo = require('../.gitignore');
+        console.log(foo);
+
+        const test = fs.readFileSync(path.resolve(process.cwd(), '.gitignore'));
         console.log(test);
 
         const test2 = fs.readFileSync('../files/.gitignore');
