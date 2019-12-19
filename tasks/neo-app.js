@@ -4,10 +4,14 @@
 
 console.log('Create neo.mjs app');
 
-const fs       = require('fs'),
+const cp       = require('child_process'),
+      fs       = require('fs'),
       inquirer = require('inquirer'),
       os       = require('os'),
       path     = require('path');
+
+// npm binary based on OS
+const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
 
 let questions = [{
     type   : 'input',
@@ -186,6 +190,9 @@ inquirer.prompt(questions).then(answers => {
             path.join(folder, 'package.json'),
             JSON.stringify(packageJson, null, 4) + os.EOL
         );
+
+        // install folder
+        cp.spawn(npmCmd, ['i'], { env: process.env, cwd: folder, stdio: 'inherit' });
 
         /*fs.copyFileSync(path.resolve(__dirname, '/files/.gitignore'), folder + '/.gitignore', e => {
             if (e) {
