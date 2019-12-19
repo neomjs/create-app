@@ -148,6 +148,12 @@ inquirer.prompt(questions).then(answers => {
 
         fs.writeFileSync(folder + '/MainContainer.mjs', mainContainerContent);
 
+        fs.copyFileSync('./files/.gitignore', folder + '/.gitignore', e => {
+            if (e) {
+                console.log(e);
+            }
+        });
+
         // Cleanup
         handleExit();
     });
