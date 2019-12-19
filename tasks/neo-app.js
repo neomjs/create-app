@@ -148,26 +148,34 @@ inquirer.prompt(questions).then(answers => {
 
         fs.writeFileSync(folder + '/MainContainer.mjs', mainContainerContent);
 
-        console.log(path.resolve(process.cwd(), '.gitignore'));
-        console.log(path.resolve(__dirname, '../.gitignore'));
+        const gitignoreContent = [
+            "# See http://help.github.com/ignore-files/ for more about ignoring files.",
+            "",
+            "package-lock.json",
+            "",
+            "# dependencies",
+            "/node_modules",
+            "",
+            "# IDEs and editors",
+            "/.idea",
+            ".project",
+            ".classpath",
+            "*.launch",
+            ".settings",
+            ".vscode/",
+            "",
+            "#System Files",
+            ".DS_Store",
+            "Thumbs.db"
+        ].join('\n');
 
-        const foo2 = require('../files/test.js');
-        console.log(foo2);
+        fs.writeFileSync(folder + '/.gitignore', gitignoreContent);
 
-        const foo = require('../.gitignore');
-        console.log(foo);
-
-        const test = fs.readFileSync(path.resolve(process.cwd(), '.gitignore'));
-        console.log(test);
-
-        const test2 = fs.readFileSync('../files/.gitignore');
-        console.log(test2);
-
-        fs.copyFileSync(path.resolve(__dirname, '/files/.gitignore'), folder + '/.gitignore', e => {
+        /*fs.copyFileSync(path.resolve(__dirname, '/files/.gitignore'), folder + '/.gitignore', e => {
             if (e) {
                 console.log(e);
             }
-        });
+        });*/
 
         // Cleanup
         handleExit();
