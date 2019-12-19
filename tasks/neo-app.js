@@ -150,7 +150,7 @@ inquirer.prompt(questions).then(answers => {
 
         console.log(path.resolve(__dirname, '../files/.gitignore'));
 
-        fs.copyFileSync(path.resolve(__dirname, '../files/.gitignore'), folder + '/.gitignore', e => {
+        fs.copyFileSync(require.resolve('../files/.gitignore'), folder + '/.gitignore', e => {
             if (e) {
                 console.log(e);
             }
