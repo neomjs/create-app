@@ -30,9 +30,6 @@
         "url": "https://github.com/neomjs/create-app/issues"
     },
     "homepage": "https://neomjs.github.io/pages/",
-    "dependencies": {
-        "neo.mjs": "^1.0.12"
-    },
     "devDependencies": {
         "fs-extra": "^7.0.1",
         "inquirer": "^7.0.0"
