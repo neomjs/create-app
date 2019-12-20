@@ -185,18 +185,19 @@ inquirer.prompt(questions).then(answers => {
             version: '0.1.0',
             private: true,
             scripts: {
-                'server-start': 'webpack-dev-server --open'
+                "dev-css-structure": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=neo.structure.json",
+                "server-start": "webpack-dev-server --open"
             },
             dependencies: {
                 'neo.mjs': '^1.0.12'
             },
             devDependencies: {
                 "@fortawesome/fontawesome-free": "^5.12.0",
-                'fsevents': '1.2.9', // npm i breaks without the specific include on MacOS Catalina
-                'webpack': '^4.41.2',
-                'webpack-cli': '^3.3.10',
-                'webpack-dev-server': '^3.9.0',
-                'webpack-node-externals': '^1.7.2'
+                "fsevents": "1.2.9", // npm i breaks without the specific include on MacOS Catalina
+                "webpack": "^4.41.2",
+                "webpack-cli": "^3.3.10",
+                "webpack-dev-server": "^3.9.0",
+                "webpack-node-externals": "^1.7.2"
             }
         };
 
