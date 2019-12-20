@@ -4,11 +4,12 @@
 
 console.log('Create neo.mjs app');
 
-const cp       = require('child_process'),
-      fs       = require('fs'),
-      inquirer = require('inquirer'),
-      os       = require('os'),
-      path     = require('path');
+const neoVersion = '^1.0.12',
+      cp         = require('child_process'),
+      fs         = require('fs'),
+      inquirer   = require('inquirer'),
+      os         = require('os'),
+      path       = require('path');
 
 // npm binary based on OS
 const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
@@ -53,7 +54,7 @@ inquirer.prompt(questions).then(answers => {
         }
 
         const appContent = [
-            "import MainContainer from './MainContainer.mjs';",
+            "import MainContainer from './view/MainContainer.mjs';",
             "",
             "Neo.onStart = function() {",
             "    Neo.app({",
@@ -62,7 +63,7 @@ inquirer.prompt(questions).then(answers => {
             "        name    : '" + appName + "'",
             "    });",
             "};"
-        ].join('\n');
+        ].join(os.EOL);
 
         fs.writeFileSync(folder + '/app.mjs', appContent);
 
@@ -98,12 +99,12 @@ inquirer.prompt(questions).then(answers => {
             indexContent.splice(16, 0, themeContent);
         }
 
-        fs.writeFileSync(folder + '/index.html', indexContent.join('\n'));
+        fs.writeFileSync(folder + '/index.html', indexContent.join(os.EOL));
 
         const mainContainerContent = [
-            "import {default as Component}    from '../../src/component/Base.mjs';",
-            "import {default as TabContainer} from '../../src/tab/Container.mjs';",
-            "import Viewport                  from '../../src/container/Viewport.mjs';",
+            "import {default as Component}    from '../node_modules/neo.mjs/src/component/Base.mjs';",
+            "import {default as TabContainer} from '../node_modules/neo.mjs/src/tab/Container.mjs';",
+            "import Viewport                  from '../node_modules/neo.mjs/src/container/Viewport.mjs';",
             "",
             "/**",
             " * @class " + appName + ".MainContainer",
@@ -149,9 +150,9 @@ inquirer.prompt(questions).then(answers => {
             "Neo.applyClassConfig(MainContainer);",
             "",
             "export {MainContainer as default};"
-        ].join('\n');
+        ].join(os.EOL);
 
-        fs.writeFileSync(folder + '/MainContainer.mjs', mainContainerContent);
+        fs.writeFileSync(folder + '/view/MainContainer.mjs', mainContainerContent);
 
         const gitignoreContent = [
             "# See http://help.github.com/ignore-files/ for more about ignoring files.",
@@ -172,7 +173,7 @@ inquirer.prompt(questions).then(answers => {
             "#System Files",
             ".DS_Store",
             "Thumbs.db"
-        ].join('\n');
+        ].join(os.EOL);
 
         fs.writeFileSync(folder + '/.gitignore', gitignoreContent);
 
@@ -180,9 +181,14 @@ inquirer.prompt(questions).then(answers => {
             name: appName,
             version: '0.1.0',
             private: true,
-
+            scripts: {
+                'server-start': 'webpack-dev-server --open'
+            },
             dependencies: {
-                'neo.mjs': '^1.0.12'
+                'neo.mjs': neoVersion
+            },
+            devDependencies: {
+                'webpack-dev-server': '^3.9.0'
             }
         };
 
@@ -191,8 +197,8 @@ inquirer.prompt(questions).then(answers => {
             JSON.stringify(packageJson, null, 4) + os.EOL
         );
 
-        // install folder
-        cp.spawn(npmCmd, ['i'], { env: process.env, cwd: folder, stdio: 'inherit' });
+        // npm install
+        cp.spawnSync(npmCmd, ['i'], { env: process.env, cwd: folder, stdio: 'inherit' });
 
         /*fs.copyFileSync(path.resolve(__dirname, '/files/.gitignore'), folder + '/.gitignore', e => {
             if (e) {
