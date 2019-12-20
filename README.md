@@ -7,8 +7,14 @@
 </p>
 
 # neo.mjs create-app
-
 In development, I will update the readme once this repo is usable.
+
+## <span style="color:red">Not functional yet!!!</span>
+I am aiming to get this 1-liner npx script ready by the end of this year, so feel free to bookmark it already.
+
+Right now, the best way to create a new neo.mjs app is:
+1.  Go to the <a href="https://github.com/neomjs/neo">neo.mjs GitHub repository</a>
+2.  Follow the <a href="https://github.com/neomjs/neo/blob/dev/.github/GETTING_STARTED.md">Getting Started Guide</a>
 
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
 
