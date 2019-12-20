@@ -4,12 +4,11 @@
 
 console.log('Create neo.mjs app');
 
-const neoVersion = '^1.0.12',
-      cp         = require('child_process'),
-      fs         = require('fs'),
-      inquirer   = require('inquirer'),
-      os         = require('os'),
-      path       = require('path');
+const cp       = require('child_process'),
+      fs       = require('fs'),
+      inquirer = require('inquirer'),
+      os       = require('os'),
+      path     = require('path');
 
 // npm binary based on OS
 const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
@@ -186,9 +185,11 @@ inquirer.prompt(questions).then(answers => {
                 'server-start': 'webpack-dev-server --open'
             },
             dependencies: {
-                'neo.mjs': neoVersion
+                'neo.mjs': '^1.0.12'
             },
             devDependencies: {
+                'webpack': '^4.41.2',
+                'webpack-cli': '^3.3.10',
                 'webpack-dev-server': '^3.9.0'
             }
         };
