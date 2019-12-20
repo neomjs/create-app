@@ -181,15 +181,17 @@ inquirer.prompt(questions).then(answers => {
         fs.writeFileSync(path.join(folder, '.gitignore'), gitignoreContent);
 
         const packageJson = {
-            name: appName,
+            name: appName.toLowerCase(),
             version: '0.1.0',
             private: true,
             scripts: {
                 "dev-css-structure": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=neo.structure.json",
+                "dev-theme-dark": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.dark.json",
+                "dev-theme-light": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.light.json",
                 "server-start": "webpack-dev-server --open"
             },
             dependencies: {
-                'neo.mjs': '^1.0.14'
+                'neo.mjs': '^1.0.15'
             }
         };
 
