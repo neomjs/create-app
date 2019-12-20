@@ -152,7 +152,7 @@ inquirer.prompt(questions).then(answers => {
             "export {MainContainer as default};"
         ].join(os.EOL);
 
-        fs.mkdirSync(path.join(folder + 'view'));
+        fs.mkdirSync(path.join(folder, 'view'));
         fs.writeFileSync(path.join(folder, 'view/MainContainer.mjs'), mainContainerContent);
 
         const gitignoreContent = [
