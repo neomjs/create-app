@@ -191,7 +191,8 @@ inquirer.prompt(questions).then(answers => {
                 'neo.mjs': '^1.0.12'
             },
             devDependencies: {
-                'fsevents': '1.2.9', // npm i breaks without the specific include
+                "@fortawesome/fontawesome-free": "^5.12.0",
+                'fsevents': '1.2.9', // npm i breaks without the specific include on MacOS Catalina
                 'webpack': '^4.41.2',
                 'webpack-cli': '^3.3.10',
                 'webpack-dev-server': '^3.9.0',
