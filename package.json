@@ -1,10 +1,10 @@
 {
     "name": "neo-app",
-    "version": "1.0.32",
+    "version": "1.0.33",
     "description": "neo.mjs: Create app via npx",
     "repository": {
         "type": "git",
-        "url": "https://github.com/nomjs/create-app"
+        "url": "https://github.com/neomjs/create-app"
     },
     "scripts": {
         "neo-app": "node ./tasks/neo-app.js",

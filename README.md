@@ -9,7 +9,7 @@
 # neo.mjs create-app
 In development, I will update the readme once this repo is usable.
 
-<h2 style="color:red">Not functional yet!!!</h2>
+## Not functional yet!!!
 I am aiming to get this 1-liner npx script ready by the end of this year, so feel free to bookmark it already.
 
 Right now, the best way to create a new neo.mjs app is:
