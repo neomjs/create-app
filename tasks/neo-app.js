@@ -193,7 +193,8 @@ inquirer.prompt(questions).then(answers => {
             devDependencies: {
                 'webpack': '^4.41.2',
                 'webpack-cli': '^3.3.10',
-                'webpack-dev-server': '^3.9.0'
+                'webpack-dev-server': '^3.9.0',
+                'webpack-node-externals': '^1.7.2'
             }
         };
 
