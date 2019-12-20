@@ -189,16 +189,11 @@ inquirer.prompt(questions).then(answers => {
                 "server-start": "webpack-dev-server --open"
             },
             dependencies: {
-                'neo.mjs': '^1.0.12'
-            },
+                'neo.mjs': '^1.0.13'
+            }/*,
             devDependencies: {
-                "@fortawesome/fontawesome-free": "^5.12.0",
                 "fsevents": "1.2.9", // npm i breaks without the specific include on MacOS Catalina
-                "webpack": "^4.41.2",
-                "webpack-cli": "^3.3.10",
-                "webpack-dev-server": "^3.9.0",
-                "webpack-node-externals": "^1.7.2"
-            }
+            }*/
         };
 
         fs.writeFileSync(
