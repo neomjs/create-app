@@ -65,7 +65,7 @@ inquirer.prompt(questions).then(answers => {
             "};"
         ].join(os.EOL);
 
-        fs.writeFileSync(folder + '/app.mjs', appContent);
+        fs.writeFileSync(path.join(folder, 'app.mjs'), appContent);
 
         const indexContent = [
             "<!DOCTYPE HTML>",
@@ -99,7 +99,7 @@ inquirer.prompt(questions).then(answers => {
             indexContent.splice(16, 0, themeContent);
         }
 
-        fs.writeFileSync(folder + '/index.html', indexContent.join(os.EOL));
+        fs.writeFileSync(path.join(folder, 'index.html'), indexContent.join(os.EOL));
 
         const mainContainerContent = [
             "import {default as Component}    from '../node_modules/neo.mjs/src/component/Base.mjs';",
@@ -152,7 +152,8 @@ inquirer.prompt(questions).then(answers => {
             "export {MainContainer as default};"
         ].join(os.EOL);
 
-        fs.writeFileSync(folder + '/view/MainContainer.mjs', mainContainerContent);
+        fs.mkdirSync(path.join(folder + 'view'));
+        fs.writeFileSync(path.join(folder, 'view/MainContainer.mjs'), mainContainerContent);
 
         const gitignoreContent = [
             "# See http://help.github.com/ignore-files/ for more about ignoring files.",
@@ -175,7 +176,7 @@ inquirer.prompt(questions).then(answers => {
             "Thumbs.db"
         ].join(os.EOL);
 
-        fs.writeFileSync(folder + '/.gitignore', gitignoreContent);
+        fs.writeFileSync(path.join(folder, '.gitignore'), gitignoreContent);
 
         const packageJson = {
             name: appName,
