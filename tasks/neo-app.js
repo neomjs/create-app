@@ -192,7 +192,7 @@ inquirer.prompt(questions).then(answers => {
                 "server-start": "webpack-dev-server --open"
             },
             dependencies: {
-                "fibers": "^4.0.2",
+                //"fibers": "^4.0.2",
                 'neo.mjs': '^1.0.15',
                 "sass": "^1.24.0"
             }
