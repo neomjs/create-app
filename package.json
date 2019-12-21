@@ -1,6 +1,6 @@
 {
     "name": "neo-app",
-    "version": "1.0.40",
+    "version": "1.0.41",
     "description": "neo.mjs: Create app via npx",
     "repository": {
         "type": "git",
@@ -31,10 +31,8 @@
     },
     "homepage": "https://neomjs.github.io/pages/",
     "devDependencies": {
-        "fibers": "^4.0.2",
         "fs-extra": "^7.0.1",
-        "inquirer": "^7.0.0",
-        "sass": "^1.24.0"
+        "inquirer": "^7.0.0"
     },
     "funding": {
         "type": "GitHub Sponsors",
