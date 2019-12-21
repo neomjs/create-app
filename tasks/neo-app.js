@@ -82,7 +82,7 @@ inquirer.prompt(questions).then(answers => {
             "            appPath       : '../../app.mjs',",
             "            basePath      : './',",
             "            environment   : 'development',",
-            "            isExperimental: true",
+            "            isExperimental: true,",
             "            workerBasePath: './node_modules/neo.mjs/src/worker/'",
             "        });",
             "    </script>",
