@@ -2,8 +2,6 @@
 
 'use strict';
 
-console.log('Create neo.mjs app');
-
 const chalk       = require('chalk'),
       commander   = require('commander'),
       cp          = require('child_process'),
@@ -19,12 +17,14 @@ const program = new commander.Command(packageJson.name)
     .on("--help", () => {
         console.log();
         console.log(`In case you have any issues, please create a ticket here:`);
-        console.log(`${chalk.cyan(packageJson.bugs.url)}`);
+        console.log(chalk.cyan(packageJson.bugs.url));
         console.log();
     })
     .parse(process.argv);
 
 console.log(program);
+
+console.log('Create neo.mjs app');
 
 // npm binary based on OS
 const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
