@@ -5,6 +5,7 @@
 const chalk       = require('chalk'),
       commander   = require('commander'),
       cp          = require('child_process'),
+      envinfo     = require('envinfo'),
       fs          = require('fs'),
       inquirer    = require('inquirer'),
       os          = require('os'),
@@ -13,17 +14,34 @@ const chalk       = require('chalk'),
 
 const program = new commander.Command(packageJson.name)
     .version(packageJson.version)
+    .option('-i, --info',      'print environment debug info')
     .option('-n, --name',      'name of your app in PascalCase')
     .option('-t, --themes',    'array of themes to use inside your app')
     .option('-w, --workspace', 'name of the project root folder')
     .allowUnknownOption()
     .on('--help', () => {
-        console.log();
-        console.log('In case you have any issues, please create a ticket here:');
+        console.log('\nIn case you have any issues, please create a ticket here:');
         console.log(chalk.cyan(packageJson.bugs.url));
-        console.log();
     })
     .parse(process.argv);
+
+if (program.info) {
+    console.log(chalk.bold('\nEnvironment Info:'));
+    console.log(`\n  current version of ${packageJson.name}: ${packageJson.version}`);
+    console.log(`  running from ${__dirname}`);
+    return envinfo
+        .run({
+            System: ['OS', 'CPU'],
+            Binaries: ['Node', 'npm', 'Yarn'],
+            Browsers: ['Chrome', 'Edge', 'Firefox', 'Safari'],
+            npmPackages: ['neo.mjs'],
+            npmGlobalPackages: ['neo-app']
+        }, {
+            duplicates: true,
+            showNotFound: true
+        })
+        .then(console.log);
+}
 
 console.log(program);
 
