@@ -31,7 +31,9 @@
     },
     "homepage": "https://neomjs.github.io/pages/",
     "devDependencies": {
-        "fs-extra": "^7.0.1",
+        "chalk": "^3.0.0",
+        "commander": "^4.0.0",
+        "fs-extra": "^8.1.0",
         "inquirer": "^7.0.0"
     },
     "funding": {

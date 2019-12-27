@@ -4,11 +4,27 @@
 
 console.log('Create neo.mjs app');
 
-const cp       = require('child_process'),
-      fs       = require('fs'),
-      inquirer = require('inquirer'),
-      os       = require('os'),
-      path     = require('path');
+const chalk       = require('chalk'),
+      commander   = require('commander'),
+      cp          = require('child_process'),
+      fs          = require('fs'),
+      inquirer    = require('inquirer'),
+      os          = require('os'),
+      path        = require('path'),
+      packageJson = require('../package.json');
+
+const program = new commander.Command(packageJson.name)
+    .version(packageJson.version)
+    .allowUnknownOption()
+    .on("--help", () => {
+        console.log();
+        console.log(`In case you have any issues, please create a ticket here:`);
+        console.log(`${chalk.cyan(packageJson.bugs.url)}`);
+        console.log();
+    })
+    .parse(process.argv);
+
+console.log(program);
 
 // npm binary based on OS
 const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
