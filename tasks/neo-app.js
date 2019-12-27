@@ -31,13 +31,13 @@ if (program.info) {
     console.log(`  running from ${__dirname}`);
     return envinfo
         .run({
-            System: ['OS', 'CPU'],
-            Binaries: ['Node', 'npm', 'Yarn'],
-            Browsers: ['Chrome', 'Edge', 'Firefox', 'Safari'],
-            npmPackages: ['neo.mjs'],
+            System           : ['OS', 'CPU'],
+            Binaries         : ['Node', 'npm', 'Yarn'],
+            Browsers         : ['Chrome', 'Edge', 'Firefox', 'Safari'],
+            npmPackages      : ['neo.mjs'],
             npmGlobalPackages: ['neo-app']
         }, {
-            duplicates: true,
+            duplicates  : true,
             showNotFound: true
         })
         .then(console.log);
@@ -45,7 +45,7 @@ if (program.info) {
 
 console.log(program);
 
-console.log('Create neo.mjs app');
+console.log(chalk.bold('Create neo.mjs app'));
 
 // npm binary based on OS
 const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
