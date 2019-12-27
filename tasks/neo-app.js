@@ -66,14 +66,9 @@ inquirer.prompt(questions).then(answers => {
 
         fs.writeFileSync(path.join(folder, 'app.mjs'), appContent);
 
-        const createIndexHtml = require('./createIndexHtml');
-        createIndexHtml.init(answers, appName, folder, fs, path, os);
-
-        const createMainContainer = require('./createMainContainer');
-        createMainContainer.init(appName, folder, fs, path, os);
-
-        const createGitignore = require('./createGitignore');
-        createGitignore.init(folder, fs, path, os);
+        require('./createIndexHtml')    .init(answers, appName, folder, fs, path, os);
+        require('./createMainContainer').init(appName, folder, fs, path, os);
+        require('./createGitignore')    .init(folder, fs, path, os);
 
         const packageJson = {
             name: appName.toLowerCase(),
