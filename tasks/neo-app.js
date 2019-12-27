@@ -52,11 +52,11 @@ inquirer.prompt(questions).then(answers => {
             throw err;
         }
 
-        require('./createApp')          .init(appName, folder, fs, path, os);
-        require('./createIndexHtml')    .init(answers, appName, folder, fs, path, os);
-        require('./createMainContainer').init(appName, folder, fs, path, os);
-        require('./createGitignore')    .init(folder, fs, path, os);
-        require('./createPackageJson')  .init(appName, folder, fs, path, os);
+        require('./createApp')          .init(appName, folder, fs, os, path);
+        require('./createIndexHtml')    .init(answers, appName, folder, fs, os, path);
+        require('./createMainContainer').init(appName, folder, fs, os, path);
+        require('./createGitignore')    .init(folder, fs, os, path);
+        require('./createPackageJson')  .init(appName, folder, fs, os, path);
 
         // npm install
         cp.spawnSync(npmCmd, ['i'], { env: process.env, cwd: folder, stdio: 'inherit' });

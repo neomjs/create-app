@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    init: function (appName, folder, fs, path, os) {
+    init: function (appName, folder, fs, os, path) {
         const packageJson = {
             name: appName.toLowerCase(),
             version: '0.1.0',

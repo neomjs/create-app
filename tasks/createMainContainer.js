@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    init: function (appName, folder, fs, path, os) {
+    init: function (appName, folder, fs, os, path) {
         const mainContainerContent = [
             "import {default as Component}    from '../node_modules/neo.mjs/src/component/Base.mjs';",
             "import {default as TabContainer} from '../node_modules/neo.mjs/src/tab/Container.mjs';",

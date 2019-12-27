@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    init: function (answers, appName, folder, fs, path, os) {
+    init: function (answers, appName, folder, fs, os, path) {
         const indexContent = [
             "<!DOCTYPE HTML>",
             "<html>",
