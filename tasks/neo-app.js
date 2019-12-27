@@ -13,6 +13,9 @@ const cp       = require('child_process'),
 // npm binary based on OS
 const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
 
+const createIndexHtml = require('./createIndexHtml');
+createIndexHtml.init();
+
 let questions = [{
     type   : 'input',
     name   : 'appName',
