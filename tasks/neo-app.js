@@ -13,6 +13,7 @@ const chalk       = require('chalk'),
 
 const program = new commander.Command(packageJson.name)
     .version(packageJson.version)
+    .option('-t, --themes',    'array of themes to use inside your app')
     .option('-w, --workspace', 'name of the project root folder')
     .allowUnknownOption()
     .on('--help', () => {
