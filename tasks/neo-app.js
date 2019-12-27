@@ -13,10 +13,11 @@ const chalk       = require('chalk'),
 
 const program = new commander.Command(packageJson.name)
     .version(packageJson.version)
+    .option('-w, --workspace', 'name of the project root folder')
     .allowUnknownOption()
-    .on("--help", () => {
+    .on('--help', () => {
         console.log();
-        console.log(`In case you have any issues, please create a ticket here:`);
+        console.log('In case you have any issues, please create a ticket here:');
         console.log(chalk.cyan(packageJson.bugs.url));
         console.log();
     })
