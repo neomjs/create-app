@@ -13,7 +13,12 @@ const cp       = require('child_process'),
 // npm binary based on OS
 const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
 
-let questions = [{
+const questions = [{
+    type   : 'input',
+    name   : 'workspace',
+    message: 'Please choose a name for your neo workspace:',
+    default: 'workspace'
+}, {
     type   : 'input',
     name   : 'appName',
     message: 'Please choose a name for your neo app:',
@@ -26,11 +31,6 @@ let questions = [{
     default: 'both'
 }];
 
-const handleExit = () => {
-    console.log('Exiting without error.');
-    process.exit();
-};
-
 const handleError = e => {
     console.error('ERROR! An error was encountered while executing');
     console.error(e);
@@ -38,14 +38,22 @@ const handleError = e => {
     process.exit(1);
 };
 
+const handleExit = () => {
+    console.log('Exiting without error.');
+    process.exit();
+};
+
 process.on('SIGINT', handleExit);
 process.on('uncaughtException', handleError);
 
 inquirer.prompt(questions).then(answers => {
-    const appName  = answers['appName'],
-          lAppName = appName.toLowerCase(),
-          appPath  = 'apps/' + lAppName + '/',
-          folder   = lAppName;
+    const workspace = answers['workspace'],
+          appName   = answers['appName'],
+          lAppName  = appName.toLowerCase(),
+          appPath   = 'apps/' + lAppName + '/',
+          folder    = lAppName;
+
+    console.log(workspace);
 
     fs.mkdir(folder, { recursive: true }, (err) => {
         if (err) {
