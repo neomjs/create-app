@@ -52,26 +52,11 @@ inquirer.prompt(questions).then(answers => {
             throw err;
         }
 
-        const appContent = [
-            "import MainContainer from './view/MainContainer.mjs';",
-            "",
-            "Neo.onStart = function() {",
-            "    Neo.app({",
-            "        appPath : './',",
-            "        mainView: MainContainer,",
-            "        name    : '" + appName + "'",
-            "    });",
-            "};"
-        ].join(os.EOL);
-
-        fs.writeFileSync(path.join(folder, 'app.mjs'), appContent);
-
+        require('./createApp')          .init(appName, folder, fs, path, os);
         require('./createIndexHtml')    .init(answers, appName, folder, fs, path, os);
         require('./createMainContainer').init(appName, folder, fs, path, os);
         require('./createGitignore')    .init(folder, fs, path, os);
         require('./createPackageJson')  .init(appName, folder, fs, path, os);
-
-
 
         // npm install
         cp.spawnSync(npmCmd, ['i'], { env: process.env, cwd: folder, stdio: 'inherit' });
