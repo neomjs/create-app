@@ -72,28 +72,8 @@ inquirer.prompt(questions).then(answers => {
         const createMainContainer = require('./createMainContainer');
         createMainContainer.init(appName, folder, fs, path, os);
 
-        const gitignoreContent = [
-            "# See http://help.github.com/ignore-files/ for more about ignoring files.",
-            "",
-            "package-lock.json",
-            "",
-            "# dependencies",
-            "/node_modules",
-            "",
-            "# IDEs and editors",
-            "/.idea",
-            ".project",
-            ".classpath",
-            "*.launch",
-            ".settings",
-            ".vscode/",
-            "",
-            "#System Files",
-            ".DS_Store",
-            "Thumbs.db"
-        ].join(os.EOL);
-
-        fs.writeFileSync(path.join(folder, '.gitignore'), gitignoreContent);
+        const createGitignore = require('./createGitignore');
+        createGitignore.init(folder, fs, path, os);
 
         const packageJson = {
             name: appName.toLowerCase(),
@@ -129,12 +109,6 @@ inquirer.prompt(questions).then(answers => {
 
         // npm install
         cp.spawnSync(npmCmd, ['i'], { env: process.env, cwd: folder, stdio: 'inherit' });
-
-        /*fs.copyFileSync(path.resolve(__dirname, '/files/.gitignore'), folder + '/.gitignore', e => {
-            if (e) {
-                console.log(e);
-            }
-        });*/
 
         // Cleanup
         handleExit();
