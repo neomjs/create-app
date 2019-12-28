@@ -10,8 +10,8 @@ const chalk       = require('chalk'),
       inquirer    = require('inquirer'),
       mkdirp      = require('mkdirp'),
       os          = require('os'),
-      path        = require('path'),
-      packageJson = require('../package.json');
+      packageJson = require('../package.json'),
+      path        = require('path');
 
 const program = new commander.Command(packageJson.name)
     .version(packageJson.version)
@@ -99,10 +99,7 @@ inquirer.prompt(questions).then(answers => {
           appName   = program.appName   || answers['appName'],
           themes    = program.themes    || answers['themes'],
           lAppName  = appName.toLowerCase(),
-          appPath   = path.join(workspace, '/apps/', lAppName, '/'),
-          folder    = lAppName;
-
-    console.log(appPath);
+          appPath   = path.join(workspace, '/apps/', lAppName, '/');
 
     fs.mkdirp(appPath, err => {
         if (err) {
