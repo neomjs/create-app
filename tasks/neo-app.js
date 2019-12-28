@@ -8,7 +8,6 @@ const chalk       = require('chalk'),
       envinfo     = require('envinfo'),
       fs          = require('fs-extra'),
       inquirer    = require('inquirer'),
-      mkdirp      = require('mkdirp'),
       os          = require('os'),
       packageJson = require('../package.json'),
       path        = require('path');
@@ -98,8 +97,7 @@ inquirer.prompt(questions).then(answers => {
     const workspace = program.workspace || answers['workspace'],
           appName   = program.appName   || answers['appName'],
           themes    = program.themes    || answers['themes'],
-          lAppName  = appName.toLowerCase(),
-          appPath   = path.join(workspace, '/apps/', lAppName, '/');
+          appPath   = path.join(workspace, '/apps/', appName.toLowerCase(), '/');
 
     fs.mkdirp(appPath, err => {
         if (err) {
