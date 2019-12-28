@@ -10,7 +10,8 @@ const chalk       = require('chalk'),
       inquirer    = require('inquirer'),
       os          = require('os'),
       packageJson = require('../package.json'),
-      path        = require('path');
+      path        = require('path'),
+      startDate   = new Date();
 
 const program = new commander.Command(packageJson.name)
     .version(packageJson.version)
@@ -87,6 +88,8 @@ const handleError = e => {
 
 const handleExit = () => {
     console.log('Exiting without error.');
+    const processTime = (Math.round((new Date - startDate) * 100) / 100000).toFixed(2);
+    console.log(`Total time: ${processTime}s`);
     process.exit();
 };
 
