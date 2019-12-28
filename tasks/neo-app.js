@@ -114,6 +114,12 @@ inquirer.prompt(questions).then(answers => {
         cp.spawnSync(npmCmd, ['i'], { env: process.env, cwd: workspace, stdio: 'inherit' });
 
         cp.spawnSync(npmCmd, ['run', 'dev-css-structure'], { env: process.env, cwd: workspace, stdio: 'inherit' });
+        cp.spawnSync(npmCmd, ['run', 'dev-theme-dark'],    { env: process.env, cwd: workspace, stdio: 'inherit' });
+        cp.spawnSync(npmCmd, ['run', 'dev-theme-light'],   { env: process.env, cwd: workspace, stdio: 'inherit' });
+
+        cp.spawnSync(npmCmd, ['run', 'prod-css-structure'], { env: process.env, cwd: workspace, stdio: 'inherit' });
+        cp.spawnSync(npmCmd, ['run', 'prod-theme-dark'],    { env: process.env, cwd: workspace, stdio: 'inherit' });
+        cp.spawnSync(npmCmd, ['run', 'prod-theme-light'],   { env: process.env, cwd: workspace, stdio: 'inherit' });
 
         // Cleanup
         handleExit();
