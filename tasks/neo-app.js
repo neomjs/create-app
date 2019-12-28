@@ -17,7 +17,7 @@ const program = new commander.Command(packageJson.name)
     .option('-i, --info',      'print environment debug info')
     .option('-n, --name',      'name of your app in PascalCase')
     .option('-t, --themes',    'array of themes to use inside your app')
-    .option('-w, --workspace', 'name of the project root folder')
+    .option('-w, --workspace <name>', 'name of the project root folder')
     .allowUnknownOption()
     .on('--help', () => {
         console.log('\nIn case you have any issues, please create a ticket here:');
@@ -43,14 +43,16 @@ if (program.info) {
         .then(console.log);
 }
 
-console.log(program);
-
 console.log(chalk.bold('Create neo.mjs app'));
+
+console.log(program.workspace);
 
 // npm binary based on OS
 const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
 
-const questions = [{
+const questions = [];
+
+let foo = [{
     type   : 'input',
     name   : 'workspace',
     message: 'Please choose a name for your neo workspace:',
@@ -84,6 +86,8 @@ process.on('SIGINT', handleExit);
 process.on('uncaughtException', handleError);
 
 inquirer.prompt(questions).then(answers => {
+    console.log(answers);
+
     const workspace = answers['workspace'],
           appName   = answers['appName'],
           lAppName  = appName.toLowerCase(),
