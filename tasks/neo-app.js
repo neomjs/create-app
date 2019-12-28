@@ -17,6 +17,7 @@ const program = new commander.Command(packageJson.name)
     .version(packageJson.version)
     .option('-i, --info',             'print environment debug info')
     .option('-n, --app-name <name>',  'name of your app in PascalCase')
+    .option('-s, --start <name>',     'start a web-server right after the build. Boolean, defaults to true', true)
     .option('-t, --themes <name>',    '"neo-theme-dark", "neo-theme-light", "both", "none"')
     .option('-w, --workspace <name>', 'name of the project root folder')
     .allowUnknownOption()
@@ -137,7 +138,7 @@ inquirer.prompt(questions).then(answers => {
             }
         }
 
-        if (true) {
+        if (program.start) {
             logBuildTime();
             cp.spawnSync(npmCmd, ['run', 'server-start'], cpOpts);
         } else {
