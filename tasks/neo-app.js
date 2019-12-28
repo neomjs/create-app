@@ -45,19 +45,21 @@ if (program.info) {
 
 console.log(chalk.bold('Create neo.mjs app'));
 
-console.log(program.workspace);
-
 // npm binary based on OS
 const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
 
 const questions = [];
 
+if (!program.workspace) {
+    questions.push({
+        type   : 'input',
+        name   : 'workspace',
+        message: 'Please choose a name for your neo workspace:',
+        default: 'workspace'
+    })
+}
+
 let foo = [{
-    type   : 'input',
-    name   : 'workspace',
-    message: 'Please choose a name for your neo workspace:',
-    default: 'workspace'
-}, {
     type   : 'input',
     name   : 'appName',
     message: 'Please choose a name for your neo app:',
