@@ -8,6 +8,7 @@ const chalk       = require('chalk'),
       envinfo     = require('envinfo'),
       fs          = require('fs-extra'),
       inquirer    = require('inquirer'),
+      mkdirp      = require('mkdirp'),
       os          = require('os'),
       path        = require('path'),
       packageJson = require('../package.json');
@@ -100,8 +101,6 @@ inquirer.prompt(questions).then(answers => {
           lAppName  = appName.toLowerCase(),
           appPath   = 'apps/' + lAppName + '/',
           folder    = lAppName;
-
-    console.log(workspace);
 
     fs.mkdir(folder, { recursive: true }, (err) => {
         if (err) {

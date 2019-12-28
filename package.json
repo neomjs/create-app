@@ -35,7 +35,8 @@
         "commander": "^4.0.0",
         "envinfo": "^7.5.0",
         "fs-extra": "^8.1.0",
-        "inquirer": "^7.0.0"
+        "inquirer": "^7.0.0",
+        "mkdirp": "^0.5.1"
     },
     "funding": {
         "type": "GitHub Sponsors",
