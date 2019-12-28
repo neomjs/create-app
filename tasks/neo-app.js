@@ -99,22 +99,24 @@ inquirer.prompt(questions).then(answers => {
           appName   = program.appName   || answers['appName'],
           themes    = program.themes    || answers['themes'],
           lAppName  = appName.toLowerCase(),
-          appPath   = 'apps/' + lAppName + '/',
+          appPath   = path.join(workspace, '/apps/', lAppName, '/'),
           folder    = lAppName;
 
-    fs.mkdir(folder, { recursive: true }, (err) => {
+    console.log(appPath);
+
+    fs.mkdirp(appPath, err => {
         if (err) {
             throw err;
         }
 
-        require('./createApp')          .init(appName, folder, fs, os, path);
-        require('./createIndexHtml')    .init(appName, folder, fs, os, path, themes);
-        require('./createMainContainer').init(appName, folder, fs, os, path);
-        require('./createGitignore')    .init(folder, fs, os, path);
-        require('./createPackageJson')  .init(appName, folder, fs, os, path);
+        require('./createApp')          .init(appName, appPath, fs, os, path);
+        require('./createIndexHtml')    .init(appName, appPath, fs, os, path, themes);
+        require('./createMainContainer').init(appName, appPath, fs, os, path);
+        require('./createGitignore')    .init(workspace, fs, os, path);
+        require('./createPackageJson')  .init(appName, workspace, fs, os, path);
 
         // npm install
-        cp.spawnSync(npmCmd, ['i'], { env: process.env, cwd: folder, stdio: 'inherit' });
+        cp.spawnSync(npmCmd, ['i'], { env: process.env, cwd: workspace, stdio: 'inherit' });
 
         // Cleanup
         handleExit();

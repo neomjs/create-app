@@ -25,7 +25,7 @@ module.exports = {
             "",
             '    <script src="./node_modules/neo.mjs/src/Main.mjs" type="module"></script>',
             "</body>",
-            "</html>",
+            "</html>"
         ];
 
         if (themes !== 'both') { // both is the default value
