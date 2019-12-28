@@ -3,17 +3,17 @@
 module.exports = {
     init: function (appName, folder, fs, os, path) {
         const mainContainerContent = [
-            "import {default as Component}    from '../node_modules/neo.mjs/src/component/Base.mjs';",
-            "import {default as TabContainer} from '../node_modules/neo.mjs/src/tab/Container.mjs';",
-            "import Viewport                  from '../node_modules/neo.mjs/src/container/Viewport.mjs';",
+            "import {default as Component}    from '../../../node_modules/neo.mjs/src/component/Base.mjs';",
+            "import {default as TabContainer} from '../../../node_modules/neo.mjs/src/tab/Container.mjs';",
+            "import Viewport                  from '../../../node_modules/neo.mjs/src/container/Viewport.mjs';",
             "",
             "/**",
-            " * @class " + appName + ".MainContainer",
+            " * @class " + appName + ".view.MainContainer",
             " * @extends Neo.container.Viewport",
             " */",
             "class MainContainer extends Viewport {",
             "    static getConfig() {return {",
-            "        className: '" + appName + ".MainContainer',",
+            "        className: '" + appName + ".view.MainContainer',",
             "        ntype    : 'main-container',",
             "",
             "        autoMount: true,",

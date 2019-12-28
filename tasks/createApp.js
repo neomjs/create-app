@@ -7,7 +7,7 @@ module.exports = {
             "",
             "Neo.onStart = function() {",
             "    Neo.app({",
-            "        appPath : './',",
+            "        appPath : 'apps/" + appName.toLowerCase() + "/',",
             "        mainView: MainContainer,",
             "        name    : '" + appName + "'",
             "    });",
