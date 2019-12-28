@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    init: function (answers, appName, folder, fs, os, path) {
+    init: function (appName, folder, fs, os, path, themes) {
         const indexContent = [
             "<!DOCTYPE HTML>",
             "<html>",
@@ -28,10 +28,15 @@ module.exports = {
             "</html>",
         ];
 
-        if (answers['theme'] !== 'both') {
-            console.log('add theme');
-            indexContent[15] += ',';
-            const themeContent = "            themes        : ['" + answers['theme'] + "']";
+        if (themes !== 'both') { // both is the default value
+            let themeContent;
+
+            if (themes === 'none') {
+                themeContent = "            themes        : [],";
+            } else {
+                themeContent = "            themes        : ['" + themes + "'],";
+            }
+
             indexContent.splice(16, 0, themeContent);
         }
 

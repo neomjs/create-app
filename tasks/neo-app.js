@@ -71,7 +71,7 @@ if (!program.appName) {
 if (!program.themes) {
     questions.push({
         type   : 'list',
-        name   : 'theme',
+        name   : 'themes',
         message: 'Please choose a theme for your neo app:',
         choices: ['neo-theme-dark', 'neo-theme-light', 'both', 'none'],
         default: 'both'
@@ -94,10 +94,9 @@ process.on('SIGINT', handleExit);
 process.on('uncaughtException', handleError);
 
 inquirer.prompt(questions).then(answers => {
-    console.log(answers);
-
-    const workspace = answers['workspace'],
-          appName   = answers['appName'],
+    const workspace = program.workspace || answers['workspace'],
+          appName   = program.appName   || answers['appName'],
+          themes    = program.themes    || answers['themes'],
           lAppName  = appName.toLowerCase(),
           appPath   = 'apps/' + lAppName + '/',
           folder    = lAppName;
@@ -110,7 +109,7 @@ inquirer.prompt(questions).then(answers => {
         }
 
         require('./createApp')          .init(appName, folder, fs, os, path);
-        require('./createIndexHtml')    .init(answers, appName, folder, fs, os, path);
+        require('./createIndexHtml')    .init(appName, folder, fs, os, path, themes);
         require('./createMainContainer').init(appName, folder, fs, os, path);
         require('./createGitignore')    .init(folder, fs, os, path);
         require('./createPackageJson')  .init(appName, folder, fs, os, path);
