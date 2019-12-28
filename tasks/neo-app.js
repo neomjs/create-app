@@ -113,6 +113,8 @@ inquirer.prompt(questions).then(answers => {
         // npm install
         cp.spawnSync(npmCmd, ['i'], { env: process.env, cwd: workspace, stdio: 'inherit' });
 
+        cp.spawnSync(npmCmd, ['run', 'dev-css-structure'], { env: process.env, cwd: workspace, stdio: 'inherit' });
+
         // Cleanup
         handleExit();
     });
