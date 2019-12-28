@@ -15,7 +15,7 @@ const chalk       = require('chalk'),
 const program = new commander.Command(packageJson.name)
     .version(packageJson.version)
     .option('-i, --info',      'print environment debug info')
-    .option('-n, --name',      'name of your app in PascalCase')
+    .option('-n, --app-name <name>',      'name of your app in PascalCase')
     .option('-t, --themes',    'array of themes to use inside your app')
     .option('-w, --workspace <name>', 'name of the project root folder')
     .allowUnknownOption()
@@ -44,6 +44,7 @@ if (program.info) {
 }
 
 console.log(chalk.bold('Create neo.mjs app'));
+console.log(program.appName);
 
 // npm binary based on OS
 const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
@@ -56,15 +57,19 @@ if (!program.workspace) {
         name   : 'workspace',
         message: 'Please choose a name for your neo workspace:',
         default: 'workspace'
-    })
+    });
+}
+
+if (!program.appName) {
+    questions.push({
+        type   : 'input',
+        name   : 'appName',
+        message: 'Please choose a name for your neo app:',
+        default: 'MyApp'
+    });
 }
 
 let foo = [{
-    type   : 'input',
-    name   : 'appName',
-    message: 'Please choose a name for your neo app:',
-    default: 'MyApp'
-}, {
     type   : 'list',
     name   : 'theme',
     message: 'Please choose a theme for your neo app:',
