@@ -14,9 +14,9 @@ const chalk       = require('chalk'),
 
 const program = new commander.Command(packageJson.name)
     .version(packageJson.version)
-    .option('-i, --info',      'print environment debug info')
-    .option('-n, --app-name <name>',      'name of your app in PascalCase')
-    .option('-t, --themes',    'array of themes to use inside your app')
+    .option('-i, --info',             'print environment debug info')
+    .option('-n, --app-name <name>',  'name of your app in PascalCase')
+    .option('-t, --themes <name>',    '"neo-theme-dark", "neo-theme-light", "both", "none"')
     .option('-w, --workspace <name>', 'name of the project root folder')
     .allowUnknownOption()
     .on('--help', () => {
@@ -44,7 +44,6 @@ if (program.info) {
 }
 
 console.log(chalk.bold('Create neo.mjs app'));
-console.log(program.appName);
 
 // npm binary based on OS
 const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
@@ -69,13 +68,15 @@ if (!program.appName) {
     });
 }
 
-let foo = [{
-    type   : 'list',
-    name   : 'theme',
-    message: 'Please choose a theme for your neo app:',
-    choices: ['neo-theme-dark', 'neo-theme-light', 'both'],
-    default: 'both'
-}];
+if (!program.themes) {
+    questions.push({
+        type   : 'list',
+        name   : 'theme',
+        message: 'Please choose a theme for your neo app:',
+        choices: ['neo-theme-dark', 'neo-theme-light', 'both', 'none'],
+        default: 'both'
+    });
+}
 
 const handleError = e => {
     console.error('ERROR! An error was encountered while executing');
