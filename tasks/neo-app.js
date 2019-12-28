@@ -87,10 +87,14 @@ const handleError = e => {
 };
 
 const handleExit = () => {
+    logBuildTime();
     console.log('Exiting without error.');
+    process.exit();
+};
+
+const logBuildTime = () => {
     const processTime = (Math.round((new Date - startDate) * 100) / 100000).toFixed(2);
     console.log(`Total time: ${processTime}s`);
-    process.exit();
 };
 
 process.on('SIGINT', handleExit);
@@ -133,7 +137,12 @@ inquirer.prompt(questions).then(answers => {
             }
         }
 
-        // Cleanup
-        handleExit();
+        if (true) {
+            logBuildTime();
+            cp.spawnSync(npmCmd, ['run', 'server-start'], cpOpts);
+        } else {
+            // Cleanup
+            handleExit();
+        }
     });
 });
