@@ -110,21 +110,23 @@ inquirer.prompt(questions).then(answers => {
         require('./createGitignore')    .init(workspace, fs, os, path);
         require('./createPackageJson')  .init(appName, workspace, fs, os, path);
 
+        const cpOpts = { env: process.env, cwd: workspace, stdio: 'inherit' };
+
         // npm install
-        cp.spawnSync(npmCmd, ['i'], { env: process.env, cwd: workspace, stdio: 'inherit' });
+        cp.spawnSync(npmCmd, ['i'], cpOpts);
 
         if (themes !== 'none') {
-            cp.spawnSync(npmCmd, ['run', 'dev-css-structure'],  { env: process.env, cwd: workspace, stdio: 'inherit' });
-            cp.spawnSync(npmCmd, ['run', 'prod-css-structure'], { env: process.env, cwd: workspace, stdio: 'inherit' });
+            cp.spawnSync(npmCmd, ['run', 'dev-css-structure'],  cpOpts);
+            cp.spawnSync(npmCmd, ['run', 'prod-css-structure'], cpOpts);
 
             if (themes === 'both' || themes === 'neo-theme-dark') {
-                cp.spawnSync(npmCmd, ['run', 'dev-theme-dark'],  { env: process.env, cwd: workspace, stdio: 'inherit' });
-                cp.spawnSync(npmCmd, ['run', 'prod-theme-dark'], { env: process.env, cwd: workspace, stdio: 'inherit' });
+                cp.spawnSync(npmCmd, ['run', 'dev-theme-dark'],  cpOpts);
+                cp.spawnSync(npmCmd, ['run', 'prod-theme-dark'], cpOpts);
             }
 
             if (themes === 'both' || themes === 'neo-theme-light') {
-                cp.spawnSync(npmCmd, ['run', 'dev-theme-light'],  { env: process.env, cwd: workspace, stdio: 'inherit' });
-                cp.spawnSync(npmCmd, ['run', 'prod-theme-light'], { env: process.env, cwd: workspace, stdio: 'inherit' });
+                cp.spawnSync(npmCmd, ['run', 'dev-theme-light'],  cpOpts);
+                cp.spawnSync(npmCmd, ['run', 'prod-theme-light'], cpOpts);
             }
         }
 
