@@ -19,8 +19,15 @@ module.exports = {
         indexData = indexData.replace("isExperimental: true",           "isExperimental: true,\n            workerBasePath: '../node_modules/neo.mjs/src/worker/'");
         indexData = indexData.replace('../src/',                        '../node_modules/neo.mjs/src/');
 
-        console.log(indexData);
-
         fs.writeFileSync(indexPath, indexData, 'utf8');
+
+        const srcRegex = /..\/..\/..\/src\//gi;
+        const srcPath  = '../../../node_modules/neo.mjs/src/';
+
+        const apiTreeListPath = path.join(docsPath, 'app/view/ApiTreeList.mjs');
+        fs.writeFileSync(apiTreeListPath, fs.readFileSync(apiTreeListPath, 'utf8').replace(srcRegex, srcPath), 'utf8');
+
+        const mainContainerPath = path.join(docsPath, 'app/view/MainContainer.mjs');
+        fs.writeFileSync(mainContainerPath, fs.readFileSync(mainContainerPath, 'utf8').replace(srcRegex, srcPath), 'utf8');
     }
 };
