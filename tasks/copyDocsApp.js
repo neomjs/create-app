@@ -4,12 +4,7 @@ module.exports = {
     init: function(fs, os, path, workspace) {
         const docsPath = path.join(workspace, 'docs');
 
-        fs.mkdirpSync(docsPath, err => {
-            if (err) {
-                throw err;
-            }
-        });
-
+        fs.mkdirpSync(docsPath);
         fs.copySync(path.join(workspace, 'node_modules/neo.mjs/docs'), docsPath);
 
         const indexPath = path.join(docsPath, 'index.html');
@@ -32,6 +27,25 @@ module.exports = {
         adjustPaths('ApiTreeList.mjs');
         adjustPaths('ContentTabContainer.mjs');
         adjustPaths('ExamplesTreeList.mjs');
+        adjustPaths('HeaderContainer.mjs');
         adjustPaths('MainContainer.mjs');
+        adjustPaths('MainContainerController.mjs');
+        adjustPaths('TutorialsTreeList.mjs');
+
+        const subSrcRegex = /..\/..\/..\/..\/src\//gi;
+        const subSrcPath  = '../../../../node_modules/neo.mjs/src/';
+
+        function adjustSubPaths(cls) {
+            const clsPath = path.join(docsPath, 'app/view', cls);
+            fs.writeFileSync(clsPath, fs.readFileSync(clsPath, 'utf8').replace(subSrcRegex, subSrcPath), 'utf8');
+        }
+
+        adjustSubPaths('classdetails/HeaderComponent.mjs');
+        adjustSubPaths('classdetails/HierarchyTreeList.mjs');
+        adjustSubPaths('classdetails/MainContainer.mjs');
+        adjustSubPaths('classdetails/MainContainerController.mjs');
+        adjustSubPaths('classdetails/MembersList.mjs');
+        adjustSubPaths('classdetails/SourceViewComponent.mjs');
+        adjustSubPaths('classdetails/TutorialComponent.mjs');
     }
 };
