@@ -24,7 +24,7 @@ module.exports = {
             },
             dependencies: {
                 //"fibers": "^4.0.2",
-                'neo.mjs': '^1.0.18',
+                'neo.mjs': '^1.0.19',
                 "sass": "^1.24.0"
             }
         };
