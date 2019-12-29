@@ -123,15 +123,7 @@ inquirer.prompt(questions).then(answers => {
         // npm install
         cp.spawnSync(npmCmd, ['i'], cpOpts);
 
-        const docsPath = path.join(workspace, 'docs');
-
-        fs.mkdirSync(docsPath, err => {
-            if (err) {
-                throw err;
-            }
-        });
-
-        fs.copySync(path.join(workspace, 'node_modules/neo.mjs/docs'), docsPath);
+        require('./copyDocsApp').init(fs, path, workspace);
 
         if (themes !== 'none') {
             cp.spawnSync(npmCmd, ['run', 'dev-css-structure'],  cpOpts);
