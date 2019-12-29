@@ -27,6 +27,9 @@ module.exports = {
         const apiTreeListPath = path.join(docsPath, 'app/view/ApiTreeList.mjs');
         fs.writeFileSync(apiTreeListPath, fs.readFileSync(apiTreeListPath, 'utf8').replace(srcRegex, srcPath), 'utf8');
 
+        const contentTabContainerPath = path.join(docsPath, 'app/view/ContentTabContainer.mjs');
+        fs.writeFileSync(contentTabContainerPath, fs.readFileSync(contentTabContainerPath, 'utf8').replace(srcRegex, srcPath), 'utf8');
+
         const mainContainerPath = path.join(docsPath, 'app/view/MainContainer.mjs');
         fs.writeFileSync(mainContainerPath, fs.readFileSync(mainContainerPath, 'utf8').replace(srcRegex, srcPath), 'utf8');
     }
