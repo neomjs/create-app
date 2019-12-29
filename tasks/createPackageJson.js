@@ -8,6 +8,7 @@ module.exports = {
             private: true,
             scripts: {
                 "server-start": "webpack-dev-server --open",
+                "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
                 "build-development": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.js",
                 "build-production": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.js",
                 "dev-css-structure": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=neo.structure.json",
