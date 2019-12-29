@@ -125,6 +125,8 @@ inquirer.prompt(questions).then(answers => {
 
         require('./copyDocsApp').init(fs, os, path, workspace);
 
+        cp.spawnSync(npmCmd, ['run', 'generate-docs-json'], cpOpts);
+
         if (themes !== 'none') {
             cp.spawnSync(npmCmd, ['run', 'dev-css-structure'],  cpOpts);
             cp.spawnSync(npmCmd, ['run', 'prod-css-structure'], cpOpts);
