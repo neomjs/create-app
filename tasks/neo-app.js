@@ -17,7 +17,7 @@ const program = new commander.Command(packageJson.name)
     .version(packageJson.version)
     .option('-i, --info',             'print environment debug info')
     .option('-n, --app-name <name>',  'name of your app in PascalCase')
-    .option('-s, --start <name>',     'start a web-server right after the build. Boolean, defaults to true', true)
+    .option('-s, --start <name>',     'start a web-server right after the build. Defaults to "true"', 'true')
     .option('-t, --themes <name>',    '"neo-theme-dark", "neo-theme-light", "both", "none"')
     .option('-w, --workspace <name>', 'name of the project root folder')
     .allowUnknownOption()
@@ -123,7 +123,7 @@ inquirer.prompt(questions).then(answers => {
         // npm install
         cp.spawnSync(npmCmd, ['i'], cpOpts);
 
-        require('./copyDocsApp').init(fs, path, workspace);
+        require('./copyDocsApp').init(fs, os, path, workspace);
 
         if (themes !== 'none') {
             cp.spawnSync(npmCmd, ['run', 'dev-css-structure'],  cpOpts);
@@ -140,7 +140,7 @@ inquirer.prompt(questions).then(answers => {
             }
         }
 
-        if (program.start) {
+        if (program.start === 'true') {
             logBuildTime();
             cp.spawnSync(npmCmd, ['run', 'server-start'], cpOpts);
         } else {
