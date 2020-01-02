@@ -9,8 +9,8 @@ module.exports = {
             scripts: {
                 "server-start": "webpack-dev-server --open",
                 "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
-                "build-development": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.js",
-                "build-production": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.js",
+                "dev-build-my-apps": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.myapps.js",
+                "prod-build-my-apps": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.myapps.js",
                 "dev-css-structure": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=neo.structure.json",
                 "dev-theme-dark": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.dark.json",
                 "dev-theme-light": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.light.json",
