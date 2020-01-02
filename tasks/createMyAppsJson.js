@@ -15,7 +15,6 @@ module.exports = {
         } else {
             appsJson = {
                 "bodyTag": "<body>",
-                "environment": "development",
                 "mainInput": "./src/Main.mjs",
                 "mainOutput": "main.js",
                 "workers": {
