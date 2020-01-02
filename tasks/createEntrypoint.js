@@ -8,8 +8,8 @@ module.exports = {
         fs.mkdirpSync(entrypointPath);
 
         const entryData = [
-            "import './node_modules/neo.mjs/src/worker/App.mjs';",
-            "import './apps/" + appName + "/app.mjs';"
+            "import '../../node_modules/neo.mjs/src/worker/App.mjs';",
+            "import '../../apps/" + appName + "/app.mjs';"
         ].join(os.EOL);
 
         fs.writeFileSync(appEntrypoint, entryData, 'utf8');
