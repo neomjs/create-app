@@ -128,6 +128,9 @@ inquirer.prompt(questions).then(answers => {
 
         cp.spawnSync(npmCmd, ['run', 'generate-docs-json'], cpOpts);
 
+        cp.spawnSync(npmCmd, ['run', 'dev-build-my-apps'],  cpOpts);
+        cp.spawnSync(npmCmd, ['run', 'prod-build-my-apps'], cpOpts);
+
         if (themes !== 'none') {
             cp.spawnSync(npmCmd, ['run', 'dev-css-structure'],  cpOpts);
             cp.spawnSync(npmCmd, ['run', 'prod-css-structure'], cpOpts);
