@@ -11,7 +11,7 @@ module.exports = {
         let indexData = fs.readFileSync(indexPath, 'utf8');
 
         indexData = indexData.replace("appPath       : 'docs/app.mjs'", "appPath       : '../../docs/app.mjs'");
-        indexData = indexData.replace("isExperimental: true",           "isExperimental: true,\n            workerBasePath: '../node_modules/neo.mjs/src/worker/'");
+        indexData = indexData.replace("isExperimental: true",           "isExperimental: true,\n            resourcesPath : '../node_modules/neo.mjs/resources/',\n            workerBasePath: '../node_modules/neo.mjs/src/worker/'");
         indexData = indexData.replace('../src/',                        '../node_modules/neo.mjs/src/');
 
         fs.writeFileSync(indexPath, indexData, 'utf8');
