@@ -7,11 +7,18 @@ module.exports = {
 
         fs.mkdirpSync(entrypointPath);
 
-        const entryData = [
+        let entryData = [
             "import '../../node_modules/neo.mjs/src/worker/App.mjs';",
             "import '../../apps/" + appName + "/app.mjs';"
         ].join(os.EOL);
 
         fs.writeFileSync(appEntrypoint, entryData, 'utf8');
+
+        entryData = [
+            "import '../../node_modules/neo.mjs/src/worker/App.mjs';",
+            "import '../../docs/app.mjs';"
+        ].join(os.EOL);
+
+        fs.writeFileSync(path.join(entrypointPath, 'Docs.mjs'), entryData, 'utf8');
     }
 };

@@ -30,7 +30,7 @@ module.exports = {
                 "apps": {
                     "Docs": {
                         "indexPath": "node_modules/neo.mjs/docs/index.ejs",
-                        "input": "docs/app.mjs",
+                        "input": "buildScripts/entrypoints/Docs.mjs",
                         "output": "/docs/",
                         "title" : "Neo Docs"
                     }
