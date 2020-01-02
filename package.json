@@ -1,6 +1,6 @@
 {
     "name": "neo-app",
-    "version": "1.0.57",
+    "version": "1.0.58",
     "description": "neo.mjs: Create app via npx",
     "repository": {
         "type": "git",
@@ -30,7 +30,7 @@
         "url": "https://github.com/neomjs/create-app/issues"
     },
     "homepage": "https://neomjs.github.io/pages/",
-    "devDependencies": {
+    "dependencies": {
         "chalk": "^3.0.0",
         "commander": "^4.0.0",
         "envinfo": "^7.5.0",
