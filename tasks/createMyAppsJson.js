@@ -2,7 +2,7 @@
 
 module.exports = {
     init: function (appName, folder, fs, os, path) {
-        const filePath = path.join(folder, 'myApps.json');
+        const filePath = path.join(folder, 'buildScripts/myApps.json');
         let appsJson;
 
         if (fs.existsSync(filePath)) {
