@@ -40,7 +40,7 @@ module.exports = {
         }
 
         appsJson.apps[appName] = {
-            "input": "myApps/"+appName+".mjs", // todo: create the entry point
+            "input": "buildScripts/entrypoints/"+appName+".mjs",
             "output": "/apps/"+appName.toLowerCase()+"/",
             "title": appName
         };
