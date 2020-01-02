@@ -16,15 +16,15 @@ module.exports = {
             appsJson = {
                 "bodyTag": "<body>",
                 "environment": "development",
-                "mainInput": "./node_modules/neo.mjs/src/Main.mjs",
+                "mainInput": "./src/Main.mjs",
                 "mainOutput": "main.js",
                 "workers": {
                     "data": {
-                        "input": "./node_modules/neo.mjs/src/worker/Data.mjs",
+                        "input": "./src/worker/Data.mjs",
                         "output": "dataworker.js"
                     },
                     "vdom": {
-                        "input": "./node_modules/neo.mjs/src/worker/VDom.mjs",
+                        "input": "./src/worker/VDom.mjs",
                         "output": "vdomworker.js"
                     }
                 },
