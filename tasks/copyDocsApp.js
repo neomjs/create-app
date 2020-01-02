@@ -4,8 +4,19 @@ module.exports = {
     init: function(fs, os, path, workspace) {
         const docsPath = path.join(workspace, 'docs');
 
+        // copy the full app
         fs.mkdirpSync(docsPath);
         fs.copySync(path.join(workspace, 'node_modules/neo.mjs/docs'), docsPath);
+
+        // copy the resources folder
+        const docsDevPath = path.join(workspace, 'dist/development/docs/resources');
+        fs.mkdirpSync(docsDevPath);
+        fs.copySync(path.join(workspace, 'node_modules/neo.mjs/docs/resources'), docsDevPath);
+
+        // copy the resources folder
+        const docsProdPath = path.join(workspace, 'dist/production/docs/resources');
+        fs.mkdirpSync(docsProdPath);
+        fs.copySync(path.join(workspace, 'node_modules/neo.mjs/docs/resources'), docsProdPath);
 
         const indexPath = path.join(docsPath, 'index.html');
         let indexData = fs.readFileSync(indexPath, 'utf8');
