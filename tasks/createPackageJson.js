@@ -9,6 +9,8 @@ module.exports = {
             scripts: {
                 "server-start": "webpack-dev-server --open",
                 "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
+                "dev-build-all-my-apps": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.myapps.js --env.build_all=true",
+                "prod-build-all-my-apps": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.myapps.js --env.build_all=true",
                 "dev-build-my-apps": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.myapps.js",
                 "prod-build-my-apps": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.myapps.js",
                 "dev-css-structure": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=neo.structure.json",
