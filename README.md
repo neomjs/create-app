@@ -203,7 +203,7 @@ Feel free to use one of these options (or all):<br>
 <a href="https://discord.gg/6p8paPq">Discord Chat Invite Link</a>
 
 ## Kudos
-Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
+The npx neo-app script is deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
 
 <br><br>
 Copyright (c) 2019 - today, Tobias Uhlig
