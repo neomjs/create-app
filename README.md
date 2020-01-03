@@ -105,10 +105,12 @@ For the dist versions you do ***not*** need a Chrome flag and they can run in Fi
 
 Dist development is using webpack based builds (source-maps, not minified)
 > http://localhost:8096/dist/development/apps/myapp/
+
 <img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/Safari.png">
 
 Dist development is using webpack based builds (no source-maps, minified)
 > http://localhost:8096/dist/production/apps/myapp/
+
 <img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/Firefox.png">
 
 ## Workspace Content
