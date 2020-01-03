@@ -25,7 +25,7 @@ You ***do not*** need to clone this repository or globally install the neo-app n
 5.  <a href="#viewing-your-app-in-dist-modes">Viewing your app in dist modes</a>
 6.  <a href="#workspace-content">Workspace Content</a>
 7.  <a href="#package.json-scripts">package.json Scripts</a>
-7.  <a href="#kudos">Kudos</a>
+8.  <a href="#kudos">Kudos</a>
 
 ## Quick Overview
 > npx neo-app
@@ -140,6 +140,27 @@ your app as well as all neo.mjs examples
 "prod-theme-light-no-css4": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=theme.light.noCss4.json",
 "test"                    : "echo \"Error: no test specified\" && exit 1"
 ```
+
+You need to enter the workspace folder inside your terminal / CMD.
+> cd workspace
+
+You can run each script via
+> npm run <script-name>
+
+Some IDEs like webstorm can show npm scripts as a toolbox, so you can just click on them instead.
+
+1.  server-start: As mentioned in <a href="#starting-a-local-web-server">Starting a local web-server</a>, this will throw
+2 errors which you can ignore.
+2.  generate-docs-json: When you change your app code (e.g. adding new files) and want to see those changes inside the
+Docs app, you need to run this script to update the content.
+3.  dev-build-all-my-apps: creates the dist/development versions for your app(s) as well as the Docs app
+4.  prod-build-all-my-apps: creates the dist/production versions for your app(s) as well as the Docs app
+5.  dev-build-my-apps: creates the dist/development versions for your app(s) as well as the Docs app.
+You can choose which apps you want to build. Might not work on Windows 10 (issues with the deasync npm package)
+6.  prod-build-my-apps: creates the dist/production versions for your app(s) as well as the Docs app.
+You can choose which apps you want to build. Might not work on Windows 10 (issues with the deasync npm package)
+7.  theme related builds. You should run those when upgrading to a newer neo.mjs version, in case there were changes
+inside the scss files.
 
 ## Kudos
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
