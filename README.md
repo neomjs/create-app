@@ -27,8 +27,9 @@ Please take a couple of minutes to read this <a href="https://github.com/neomjs/
 5.  <a href="#viewing-your-app-in-dist-modes">Viewing your app in dist modes</a>
 6.  <a href="#workspace-content">Workspace Content</a>
 7.  <a href="#packagejson-scripts">package.json Scripts</a>
-8.  <a href="#working-on-your-new-neo.mjs-app">Working on your new neo.mjs App</a>
-9.  <a href="#kudos">Kudos</a>
+8.  <a href="#working-on-your-new-neomjs-app">Working on your new neo.mjs App</a>
+9.  <a href="#learning-neomjs">Learning neo.mjs</a>
+10.  <a href="#kudos">Kudos</a>
 
 ## Quick Overview
 > npx neo-app
@@ -173,6 +174,27 @@ You ideally want to start with changing the view/MainContainer.mjs file.
 
 Once you get to a point where you want to test your changes inside the dist versions, take a look at:
 <a href="#packagejson-scripts">package.json Scripts</a>.
+
+## Learning neo.mjs
+To be fair, neo.mjs just got released to the public on November 23, 2019.
+
+At this point getting up to speed is not as easy as it could be. There are a couple of guides inside the Docs app,
+but on the long term we definitely need more (help on this one is greatly appreciated!).
+
+I recommend to take a look at the code base of the <a href="https://github.com/neomjs/neo/tree/dev/docs/app/view">Docs app source</a> (which is a neo.mjs App).
+
+The <a href="https://github.com/neomjs/neo/tree/dev/apps/realworld">Real World App</a> is also worth a look.
+This one is not using a neo.mjs theme, since a given Bootstrap theme was a requirement, but it can help you to get
+the idea of how to craft custom components and work with Controllers.
+
+The <a href="https://github.com/neomjs/neo/tree/dev/apps/realworld2">Real World App v2</a> is intended to fill this gap
+and will be my next major focus.
+
+In general it does make a lot of sense to dive into the neo.mjs code base. Some starting points:<br>
+<a href="https://github.com/neomjs/neo/blob/dev/src/Neo.mjs">Neo.mjs</a> (class system enhancements)<br>
+<a href="https://github.com/neomjs/neo/blob/dev/src/Main.mjs">Main.mjs</a> (main thread starting point)<br>
+<a href="https://github.com/neomjs/neo/blob/dev/src/worker/Manager.mjs">worker.Manager</a> (Creates the 3 workers)<br>
+<a href="https://github.com/neomjs/neo/blob/dev/src/core/Base.mjs">core.Base</a> (Base class for almost everything)<br>
 
 ## Kudos
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
