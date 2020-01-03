@@ -23,6 +23,7 @@ You ***do not*** need to clone this repository or globally install the neo-app n
 3.  <a href="#starting-a-local-web-server">Starting a local web-server</a>
 4.  <a href="#viewing-your-app-in-development-mode">Viewing your app in development mode</a>
 5.  <a href="#viewing-your-app-in-dist-modes">Viewing your app in dist modes</a>
+6.  <a href="#workspace-content">Workspace Content</a>
 
 ## Quick Overview
 > npx neo-app
@@ -102,6 +103,10 @@ Dist development is using webpack based builds (source-maps, not minified)
 Dist development is using webpack based builds (no source-maps, minified)
 > http://localhost:8096/dist/production/apps/myapp/
 <img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/Firefox.png">
+
+## Workspace Content
+Using the script will create the following content:<br>
+<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/workspaceContent.png">
 
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
 
