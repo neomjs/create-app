@@ -50,11 +50,19 @@ By default, npx neo-app will start a webpack dev-server right after the build.<b
 ***Important:*** The server-script will throw 2 errors.<br>
 <img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/serverErrors.png">
 
-You can ***ignore*** those. The reason is, that the webpack dev-server is supposed to serve the dist folders.
+You can ***ignore*** those. The reason is that the webpack dev-server is supposed to serve the dist folders.
 Inside the neo.mjs context, we do want to use the non dist versions as well.
 
 A new browser tab should open right away:<br>
 <img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/serverStart.png">
+
+In case you do not want to start the dev-server automatically, you can use the -s option:
+> npx neo-app -s false
+
+You can use a different web-server of your choice (e.g. webstorm) or you can start the default one manually later:
+> cd workspace
+>
+> npm run server-start
 
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
 
