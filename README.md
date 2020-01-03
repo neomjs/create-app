@@ -17,7 +17,7 @@ Please ensure you have node & npm installed (npx is available for npm 5.2+).
 
 You ***do not*** need to clone this repository or globally install the neo-app npm package.
 
-### Quick Overview
+## Quick Overview
 > npx neo-app
 
 Running the script will prompt 3 questions:
@@ -29,7 +29,7 @@ Running the script will prompt 3 questions:
 3. Choose the themes you want to use (you can change this later on inside the index.html)<br>
     <img width="550px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/themes.png">
 
-### Script Options
+## Script Options
 You can pass additional params to the script:<br>
 <img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/scriptOptions.png">
 
@@ -45,7 +45,7 @@ Choose the themes:
 Of course you can combine the options, e.g.:
 > npx neo-app -w workspace -n MyApp -t both
 
-### Starting a local web-server
+## Starting a local web-server
 By default, npx neo-app will start a webpack dev-server right after the build.<br>
 ***Important:*** The server-script will throw 2 errors.<br>
 <img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/serverErrors.png">
@@ -64,7 +64,7 @@ You can use a different web-server of your choice (e.g. webstorm) or you can sta
 >
 > npm run server-start
 
-### Viewing your app in development mode
+## Viewing your app in development mode
 At this point, the dev-mode only works in Google Chrome, since other browsers do not support JS modules inside the
 worker scope yet. For more infos, take a look at the <a href="https://github.com/neomjs/neo/issues">pinned neo.mjs issues</a>.
 
@@ -78,6 +78,16 @@ To view your new app, you can navigate to:
 
 <img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/serverMyApp.png">
 
+## Viewing your app in dist modes
+For the dist versions you do ***not*** need a Chrome flag and they can run in Firefox & Safari.
+
+Dist development is using webpack based builds (source-maps, not minified)
+> http://localhost:8096/dist/development/apps/myapp/
+<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/Safari.png">
+
+Dist development is using webpack based builds (no source-maps, minified)
+> http://localhost:8096/dist/production/apps/myapp/
+<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/Firefox.png">
 
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
 
