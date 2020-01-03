@@ -106,7 +106,17 @@ Dist development is using webpack based builds (no source-maps, minified)
 
 ## Workspace Content
 Using the script will create the following content:<br>
-<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/workspaceContent.png">
+<img width="800px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/workspaceContent.png">
+
+1.  .gitignore has a basic setup excluding IDE related files, the dist folder & the package-lock.json
+2.  apps contains the source files of your new app. You can create multiple apps as needed
+3.  buildScripts contains meta-infos (in theory this could get stored inside the neo.mjs node_module, but then every
+framework version update would require to re-create it)
+4.  dist contains the development & production builds of your app, as well as the docs app
+5.  docs contains a copy of the neo.mjs non dist version of the docs app. This version does show documentation views of
+your app as well as all neo.mjs examples
+6.  node_modules => all related dependencies which are required for the build scripts & the dev-server
+7.  package.json => a dummy version; feel free to change it
 
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
 
