@@ -17,6 +17,17 @@ Please ensure you have node & npm installed (npx is available for npm 5.2+).
 
 You ***do not*** need to clone this repository or globally install the neo-app npm package.
 
+### Quick Overview
+> npx neo-app
+
+Running the script will prompt 3 questions
+
+<img width="150px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/workspace.png">
+
+<img width="150px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/appname.png">
+
+<img width="150px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/themes.png">
+
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
 
 Copyright (c) 2019 - today, Tobias Uhlig
