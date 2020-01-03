@@ -145,7 +145,7 @@ You need to enter the workspace folder inside your terminal / CMD.
 > cd workspace
 
 You can run each script via
-> npm run "<script-name>"
+> npm run \<script-name\>
 
 Some IDEs like webstorm can show npm scripts as a toolbox, so you can just click on them instead.
 
