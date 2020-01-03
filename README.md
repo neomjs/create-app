@@ -27,7 +27,8 @@ Please take a couple of minutes to read this <a href="https://github.com/neomjs/
 5.  <a href="#viewing-your-app-in-dist-modes">Viewing your app in dist modes</a>
 6.  <a href="#workspace-content">Workspace Content</a>
 7.  <a href="#package.json-scripts">package.json Scripts</a>
-8.  <a href="#kudos">Kudos</a>
+8.  <a href="#working-on-your-new-neo.mjs-app">Working on your new neo.mjs App</a>
+9.  <a href="#kudos">Kudos</a>
 
 ## Quick Overview
 > npx neo-app
@@ -163,6 +164,15 @@ You can choose which apps you want to build. Might not work on Windows 10 (issue
 You can choose which apps you want to build. Might not work on Windows 10 (issues with the deasync npm package)
 7.  theme related builds. You should run those when upgrading to a newer neo.mjs version, in case there were changes
 inside the scss files.
+
+## Working on your new neo.mjs App
+It is recommended to use the non dist version for development (Chrome with flag). This way you can just reload the App page whenever you
+change the code base. No need for source-maps and a very smooth debugging experience.
+
+You ideally want to start with changing the view/MainContainer.mjs file.
+
+Once you get to a point where you want to test your changes inside the dist versions, take a look at:
+<a href="#package.json-scripts">package.json Scripts</a>.
 
 ## Kudos
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
