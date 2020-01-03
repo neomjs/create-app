@@ -199,4 +199,5 @@ In general it does make a lot of sense to dive into the neo.mjs code base. Some 
 ## Kudos
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
 
+<br><br>
 Copyright (c) 2019 - today, Tobias Uhlig
