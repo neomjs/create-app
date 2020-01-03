@@ -7,7 +7,7 @@
 </p>
 
 # neo.mjs create-app
-Create a new neo.mjs app using the 1-liner:
+Create a new <a href="https://github.com/neomjs/neo">neo.mjs</a> app using the 1-liner:
 > npx neo-app
 
 npx neo-app works on macOS, Linux and Windows 10.<br>
