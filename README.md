@@ -2,7 +2,7 @@
   <a href="https://npmcharts.com/compare/neo-app?minimal=true"><img src="https://img.shields.io/npm/dm/neo-app.svg" alt="Downloads"></a>
   <a href="https://www.npmjs.com/package/neo-app"><img src="https://img.shields.io/npm/v/neo-app.svg" alt="Version"></a>
   <a href="https://www.npmjs.com/package/neo-app"><img src="https://img.shields.io/npm/l/neo-app.svg" alt="License"></a>
-  <a href="https://discordapp.com/channels/656620537514164249"><img src="https://img.shields.io/discord/656620537514164249?label=discord%20chat" alt="Chat"></a>
+  <a href="https://discord.gg/6p8paPq"><img src="https://img.shields.io/discord/656620537514164249?label=discord%20chat" alt="Chat"></a>
   <a href="./CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-green.svg" alt="PRs Welcome"></a>
 </p>
 
@@ -29,7 +29,8 @@ Please take a couple of minutes to read this <a href="https://github.com/neomjs/
 7.  <a href="#packagejson-scripts">package.json Scripts</a>
 8.  <a href="#working-on-your-new-neomjs-app">Working on your new neo.mjs App</a>
 9.  <a href="#learning-neomjs">Learning neo.mjs</a>
-10.  <a href="#kudos">Kudos</a>
+10.  <a href="#feedback-and-questions">Feedback and Questions</a>
+11.  <a href="#kudos">Kudos</a>
 
 ## Quick Overview
 > npx neo-app
@@ -195,6 +196,11 @@ In general it does make a lot of sense to dive into the neo.mjs code base. Some 
 <a href="https://github.com/neomjs/neo/blob/dev/src/Main.mjs">Main.mjs</a> (main thread starting point)<br>
 <a href="https://github.com/neomjs/neo/blob/dev/src/worker/Manager.mjs">worker.Manager</a> (Creates the 3 workers)<br>
 <a href="https://github.com/neomjs/neo/blob/dev/src/core/Base.mjs">core.Base</a> (Base class for almost everything)<br>
+
+## Feedback and Questions
+Feel free to use one of these options (or all):<br>
+<a href="https://join.slack.com/t/neotericjs/shared_invite/enQtNDk2NjEwMTIxODQ2LWRjNGQ3ZTMzODRmZGM2NDM2NzZmZTMzZmE2YjEwNDM4NDhjZDllNWY2ZDkwOWQ5N2JmZWViYjYzZTg5YjdiMDc">Slack Channel Invite Link</a><br>
+<a href="https://discord.gg/6p8paPq">Discord Chat Invite Link</a>
 
 ## Kudos
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
