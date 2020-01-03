@@ -83,7 +83,7 @@ Chrome Canary does no longer need the flag, so it should not take too long until
 To view your new app, you can navigate to:
 > http://localhost:8096/apps/myapp/
 
-<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/serverMyApp.png">
+<img width="1100px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/serverMyApp.png">
 
 ## Viewing your app in dist modes
 For the dist versions you do ***not*** need a Chrome flag and they can run in Firefox & Safari.
