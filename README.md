@@ -30,11 +30,11 @@ You ***do not*** need to clone this repository or globally install the neo-app n
 Running the script will prompt 3 questions:
 1. Choose a workspace folder name. This folder will get created inside the terminal / CMD folder you are in.<br>
     You can rename it later on if needed.<br>
-    <img width="550px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/workspace.png">
+    <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/workspace.png">
 2. Choose an app name (Pascal Case)<br>
-    <img width="550px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/appname.png">
+    <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/appname.png">
 3. Choose the themes you want to use (you can change this later on inside the index.html)<br>
-    <img width="550px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/themes.png">
+    <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/themes.png">
 
 ## Script Options
 You can pass additional params to the script:<br>
