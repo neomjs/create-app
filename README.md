@@ -24,6 +24,7 @@ You ***do not*** need to clone this repository or globally install the neo-app n
 4.  <a href="#viewing-your-app-in-development-mode">Viewing your app in development mode</a>
 5.  <a href="#viewing-your-app-in-dist-modes">Viewing your app in dist modes</a>
 6.  <a href="#workspace-content">Workspace Content</a>
+7.  <a href="#package.json-scripts">package.json Scripts</a>
 
 ## Quick Overview
 > npx neo-app
@@ -109,7 +110,7 @@ Using the script will create the following content:<br>
 <img width="800px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/workspaceContent.png">
 
 1.  .gitignore has a basic setup excluding IDE related files, the dist folder & the package-lock.json
-2.  apps contains the source files of your new app. You can create multiple apps as needed
+2.  apps contains the source files of your new app. You can create multiple apps as needed.
 3.  buildScripts contains meta-infos (in theory this could get stored inside the neo.mjs node_module, but then every
 framework version update would require to re-create it)
 4.  dist contains the development & production builds of your app, as well as the docs app
@@ -117,6 +118,27 @@ framework version update would require to re-create it)
 your app as well as all neo.mjs examples
 6.  node_modules => all related dependencies which are required for the build scripts & the dev-server
 7.  package.json => a dummy version; feel free to change it
+
+## package.json Scripts
+```
+"server-start"            : "webpack-dev-server --open",
+"generate-docs-json"      : "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
+"dev-build-all-my-apps"   : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.myapps.js --env.build_all=true",
+"prod-build-all-my-apps"  : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.myapps.js --env.build_all=true",
+"dev-build-my-apps"       : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.myapps.js",
+"prod-build-my-apps"      : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.myapps.js",
+"dev-css-structure"       : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=neo.structure.json",
+"dev-theme-dark"          : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.dark.json",
+"dev-theme-light"         : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.light.json",
+"prod-css-structure"      : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=neo.structure.json",
+"prod-theme-dark"         : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=theme.dark.json",
+"prod-theme-light"        : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=theme.light.json",
+"dev-theme-dark-no-css4"  : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.dark.noCss4.json",
+"dev-theme-light-no-css4" : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.light.noCss4.json",
+"prod-theme-dark-no-css4" : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=theme.dark.noCss4.json",
+"prod-theme-light-no-css4": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=theme.light.noCss4.json",
+"test"                    : "echo \"Error: no test specified\" && exit 1"
+```
 
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
 
