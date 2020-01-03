@@ -22,11 +22,11 @@ You ***do not*** need to clone this repository or globally install the neo-app n
 
 Running the script will prompt 3 questions
 
-<img width="150px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/workspace.png">
+<img src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/workspace.png">
 
-<img width="150px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/appname.png">
+<img src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/appname.png">
 
-<img width="150px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/themes.png">
+<img src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/themes.png">
 
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
 
