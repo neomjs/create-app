@@ -17,6 +17,8 @@ Please ensure you have node & npm installed (npx is available for npm 5.2+).
 
 You ***do not*** need to clone this repository or globally install the neo-app npm package.
 
+Please take a couple of minutes to read this <a href="https://github.com/neomjs/create-app/README.md">README.md</a> file first.
+
 ## Content
 1.  <a href="#quick-overview">Quick Overview</a>
 2.  <a href="#script-options">Script Options</a>
