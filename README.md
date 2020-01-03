@@ -25,6 +25,7 @@ You ***do not*** need to clone this repository or globally install the neo-app n
 5.  <a href="#viewing-your-app-in-dist-modes">Viewing your app in dist modes</a>
 6.  <a href="#workspace-content">Workspace Content</a>
 7.  <a href="#package.json-scripts">package.json Scripts</a>
+7.  <a href="#kudos">Kudos</a>
 
 ## Quick Overview
 > npx neo-app
@@ -140,6 +141,7 @@ your app as well as all neo.mjs examples
 "test"                    : "echo \"Error: no test specified\" && exit 1"
 ```
 
+## Kudos
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
 
 Copyright (c) 2019 - today, Tobias Uhlig
