@@ -85,6 +85,13 @@ To view your new app, you can navigate to:
 
 <img width="1100px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/serverMyApp.png">
 
+The beauty inside this screen is:
+1.  You can see 4 threads inside the bottom left edge of the console
+2.  Your app as well as most parts of neo.mjs run within the App thread
+3.  You get the real JS modules directly into your browser
+    1.  No need to transpile JS code in this mode
+    2.  No need for source-maps
+
 ## Viewing your app in dist modes
 For the dist versions you do ***not*** need a Chrome flag and they can run in Firefox & Safari.
 
