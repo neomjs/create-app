@@ -26,7 +26,7 @@ Please take a couple of minutes to read this <a href="https://github.com/neomjs/
 4.  <a href="#viewing-your-app-in-development-mode">Viewing your app in development mode</a>
 5.  <a href="#viewing-your-app-in-dist-modes">Viewing your app in dist modes</a>
 6.  <a href="#workspace-content">Workspace Content</a>
-7.  <a href="#package.json-scripts">package.json Scripts</a>
+7.  <a href="#packagejson-scripts">package.json Scripts</a>
 8.  <a href="#working-on-your-new-neo.mjs-app">Working on your new neo.mjs App</a>
 9.  <a href="#kudos">Kudos</a>
 
@@ -172,7 +172,7 @@ change the code base. No need for source-maps and a very smooth debugging experi
 You ideally want to start with changing the view/MainContainer.mjs file.
 
 Once you get to a point where you want to test your changes inside the dist versions, take a look at:
-<a href="#package.json-scripts">package.json Scripts</a>.
+<a href="#packagejson-scripts">package.json Scripts</a>.
 
 ## Kudos
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
