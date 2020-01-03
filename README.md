@@ -64,6 +64,21 @@ You can use a different web-server of your choice (e.g. webstorm) or you can sta
 >
 > npm run server-start
 
+### Viewing your app in development mode
+At this point, the dev-mode only works in Google Chrome, since other browsers do not support JS modules inside the
+worker scope yet. For more infos, take a look at the <a href="https://github.com/neomjs/neo/issues">pinned neo.mjs issues</a>.
+
+Chrome v80 will support this out of the box, until then you need to set a custom flag:
+> chrome://flags/#enable-experimental-web-platform-features
+
+Chrome Canary does no longer need the flag, so it should not take too long until the update goes live.
+
+To view your new app, you can navigate to:
+> http://localhost:8096/apps/myapp/
+
+<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/serverMyApp.png">
+
+
 Deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
 
 Copyright (c) 2019 - today, Tobias Uhlig
