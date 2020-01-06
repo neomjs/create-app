@@ -30,7 +30,8 @@ Please take a couple of minutes to read this <a href="https://github.com/neomjs/
 8.  <a href="#working-on-your-new-neomjs-app">Working on your new neo.mjs App</a>
 9.  <a href="#learning-neomjs">Learning neo.mjs</a>
 10.  <a href="#feedback-and-questions">Feedback and Questions</a>
-11.  <a href="#kudos">Kudos</a>
+11.  <a href="#alternative-options-to-create-an-app">Alternative options to create an App</a>
+12.  <a href="#kudos">Kudos</a>
 
 ## Quick Overview
 > npx neo-app
@@ -203,6 +204,13 @@ In general it does make a lot of sense to dive into the neo.mjs code base. Some 
 Feel free to use one of these options (or all):<br>
 <a href="https://join.slack.com/t/neotericjs/shared_invite/enQtNDk2NjEwMTIxODQ2LWRjNGQ3ZTMzODRmZGM2NDM2NzZmZTMzZmE2YjEwNDM4NDhjZDllNWY2ZDkwOWQ5N2JmZWViYjYzZTg5YjdiMDc">Slack Channel Invite Link</a><br>
 <a href="https://discord.gg/6p8paPq">Discord Chat Invite Link</a>
+
+## Alternative options to create an App
+1. Use <a href="https://github.com/neomjs/create-app">npx neo-app</a>
+2. Fork the <a href="https://github.com/neomjs/workspace">neo.mjs workspace</a>
+3. In case you want to get the neo.mjs repository running locally, please take a look at
+   the <a href="https://github.com/neomjs/neo/blob/dev/.github/GETTING_STARTED.md">neo.mjs Getting Started Guide</a>.
+   Step 6 creates a new App inside neo/apps
 
 ## Kudos
 The npx neo-app script is deeply inspired by <a href="https://github.com/facebook/create-react-app">Create React App</a>.
