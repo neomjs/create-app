@@ -8,6 +8,7 @@ module.exports = {
             private: true,
             scripts: {
                 "server-start": "webpack-dev-server --open",
+                "build-all": "node ./node_modules/neo.mjs/buildScripts/buildAll.js",
                 "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
                 "dev-build-all-my-apps": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.myapps.js --env.build_all=true",
                 "prod-build-all-my-apps": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.myapps.js --env.build_all=true",
@@ -27,7 +28,7 @@ module.exports = {
             },
             dependencies: {
                 //"fibers": "^4.0.2",
-                'neo.mjs': '^1.0.39',
+                'neo.mjs': '^1.0.41',
                 "sass": "^1.24.0"
             }
         };
