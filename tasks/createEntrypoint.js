@@ -9,7 +9,7 @@ module.exports = {
 
         let entryData = [
             "import '../../node_modules/neo.mjs/src/worker/App.mjs';",
-            "import '../../apps/" + appName + "/app.mjs';"
+            "import '../../apps/" + (appName.toLowerCase()) + "/app.mjs';"
         ].join(os.EOL);
 
         fs.writeFileSync(appEntrypoint, entryData, 'utf8');
