@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    init: function (appName, folder, fs, os, path) {
+    init: function (appName, folder, fs, mainThreadAddons, os, path, themes) {
         const filePath = path.join(folder, 'buildScripts/myApps.json');
         let appsJson;
 
@@ -29,8 +29,8 @@ module.exports = {
                 },
                 "apps": {
                     "Docs": {
-                        "indexPath": "node_modules/neo.mjs/docs/index.ejs",
                         "input": "buildScripts/entrypoints/Docs.mjs",
+                        "mainThreadAddons": "'GoogleAnalytics', 'HighlightJS', 'Stylesheet'",
                         "output": "/docs/",
                         "title" : "Neo Docs"
                     }
@@ -43,6 +43,14 @@ module.exports = {
             "output": "/apps/"+appName.toLowerCase()+"/",
             "title": appName
         };
+
+        if (!(mainThreadAddons.includes('Stylesheet') && mainThreadAddons.length === 1)) {
+            appsJson.apps[appName].mainThreadAddons = mainThreadAddons.map(e => "'" + e + "'").join(', ');
+        }
+
+        if (!(themes.includes('both') && themes.length === 1)) {
+            appsJson.apps[appName].themes = themes.map(e => "'" + e + "'").join(', ');
+        }
 
         fs.writeFileSync(
             filePath,

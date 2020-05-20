@@ -15,11 +15,12 @@ const chalk       = require('chalk'),
 
 const program = new commander.Command(packageJson.name)
     .version(packageJson.version)
-    .option('-i, --info',             'print environment debug info')
-    .option('-n, --app-name <name>',  'name of your app in PascalCase')
-    .option('-s, --start <name>',     'start a web-server right after the build.', 'true')
-    .option('-t, --themes <name>',    '"neo-theme-dark", "neo-theme-light", "both", "none"')
-    .option('-w, --workspace <name>', 'name of the project root folder')
+    .option('-i, --info',                    'print environment debug info')
+    .option('-n, --app-name <name>',         'name of your app in PascalCase')
+    .option('-m, --mainThreadAddons <name>', '"AmCharts", "GoogleAnalytics", "HighlightJS", "LocalStorage", "MapboxGL", "Markdown", "Siesta", "Stylesheet"')
+    .option('-s, --start <name>',            'start a web-server right after the build.', 'true')
+    .option('-t, --themes <name>',           '"neo-theme-dark", "neo-theme-light", "both", "none"')
+    .option('-w, --workspace <name>',        'name of the project root folder')
     .allowUnknownOption()
     .on('--help', () => {
         console.log('\nIn case you have any issues, please create a ticket here:');
@@ -80,6 +81,16 @@ if (!program.themes) {
     });
 }
 
+if (!program.mainThreadAddons) {
+    questions.push({
+        type   : 'checkbox',
+        name   : 'mainThreadAddons',
+        message: 'Please choose your main thread addons:',
+        choices: ['AmCharts', 'GoogleAnalytics', 'HighlightJS', 'LocalStorage', 'MapboxGL', 'Markdown', 'Siesta', 'Stylesheet'],
+        default: ['Stylesheet']
+    });
+}
+
 const handleError = e => {
     console.error('ERROR! An error was encountered while executing');
     console.error(e);
@@ -102,10 +113,15 @@ process.on('SIGINT', handleExit);
 process.on('uncaughtException', handleError);
 
 inquirer.prompt(questions).then(answers => {
-    const workspace = program.workspace || answers['workspace'],
-          appName   = program.appName   || answers['appName'],
-          themes    = program.themes    || answers['themes'],
-          appPath   = path.join(workspace, '/apps/', appName.toLowerCase(), '/');
+    let workspace        = program.workspace || answers['workspace'],
+        appName          = program.appName   || answers['appName'],
+        mainThreadAddons = program.appName   || answers['mainThreadAddons'],
+        themes           = program.themes    || answers['themes'],
+        appPath          = path.join(workspace, '/apps/', appName.toLowerCase(), '/');
+
+    if (!Array.isArray(themes)) {
+        themes = [themes];
+    }
 
     fs.mkdirp(appPath, err => {
         if (err) {
@@ -113,11 +129,11 @@ inquirer.prompt(questions).then(answers => {
         }
 
         require('./createApp')          .init(appName, appPath, fs, os, path);
-        require('./createIndexHtml')    .init(appName, appPath, fs, os, path, themes);
+        require('./createIndexHtml')    .init(appName, appPath, fs, mainThreadAddons, os, path, themes);
         require('./createMainContainer').init(appName, appPath, fs, os, path);
         require('./createEntrypoint')   .init(appName, fs, os, path, workspace);
         require('./createGitignore')    .init(workspace, fs, os, path);
-        require('./createMyAppsJson')   .init(appName, workspace, fs, os, path);
+        require('./createMyAppsJson')   .init(appName, workspace, fs, mainThreadAddons, os, path, themes);
         require('./createPackageJson')  .init(appName, workspace, fs, os, path);
 
         const cpOpts = { env: process.env, cwd: workspace, stdio: 'inherit' };
@@ -127,18 +143,21 @@ inquirer.prompt(questions).then(answers => {
 
         require('./copyDocsApp').init(fs, os, path, workspace);
 
-        cp.spawnSync(npmCmd, ['run', 'generate-docs-json'], cpOpts);
+        cp.spawnSync(npmCmd, ['run', 'generate-docs-json'],       cpOpts);
 
-        cp.spawnSync(npmCmd, ['run', 'dev-build-all-my-apps'],  cpOpts);
-        cp.spawnSync(npmCmd, ['run', 'prod-build-all-my-apps'], cpOpts);
+        cp.spawnSync(npmCmd, ['run', 'dev-build-all-my-apps'],    cpOpts);
+        cp.spawnSync(npmCmd, ['run', 'prod-build-all-my-apps'],   cpOpts);
+
+        cp.spawnSync(npmCmd, ['run', 'dev-build-main'],           cpOpts);
+        cp.spawnSync(npmCmd, ['run', 'prod-build-main'],          cpOpts);
 
         if (themes !== 'none') {
-            cp.spawnSync(npmCmd, ['run', 'dev-css-structure'],  cpOpts);
-            cp.spawnSync(npmCmd, ['run', 'prod-css-structure'], cpOpts);
+            cp.spawnSync(npmCmd, ['run', 'dev-css-structure'],    cpOpts);
+            cp.spawnSync(npmCmd, ['run', 'prod-css-structure'],   cpOpts);
 
             if (themes === 'both' || themes === 'neo-theme-dark') {
-                cp.spawnSync(npmCmd, ['run', 'dev-theme-dark'],  cpOpts);
-                cp.spawnSync(npmCmd, ['run', 'prod-theme-dark'], cpOpts);
+                cp.spawnSync(npmCmd, ['run', 'dev-theme-dark'],   cpOpts);
+                cp.spawnSync(npmCmd, ['run', 'prod-theme-dark'],  cpOpts);
             }
 
             if (themes === 'both' || themes === 'neo-theme-light') {

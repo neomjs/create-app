@@ -5,7 +5,7 @@ module.exports = {
         const appContent = [
             "import MainContainer from './view/MainContainer.mjs';",
             "",
-            "Neo.onStart = function() {",
+            "Neo.onStart = () => {",
             "    Neo.app({",
             "        appPath : 'apps/" + appName.toLowerCase() + "/',",
             "        mainView: MainContainer,",
