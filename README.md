@@ -49,7 +49,7 @@ Running the script will prompt 3 questions:
 
 ## Script Options
 You can pass additional params to the script:<br>
-<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/scriptOptions.png">
+<img src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/scriptOptions.png">
 
 Choose a workspace folder name:
 > npx neo-app -w workspace
@@ -198,7 +198,7 @@ the idea of how to craft custom components and work with Controllers.
 The <a href="https://github.com/neomjs/neo/tree/dev/apps/realworld2">Real World App v2</a> is intended to fill this gap
 and will be my next major focus.
 
-In general it does make a lot of sense to dive into the neo.mjs code base. Some starting points:<br>
+In general, it does make a lot of sense to dive into the neo.mjs code base. Some starting points:<br>
 <a href="https://github.com/neomjs/neo/blob/dev/src/Neo.mjs">Neo.mjs</a> (class system enhancements)<br>
 <a href="https://github.com/neomjs/neo/blob/dev/src/Main.mjs">Main.mjs</a> (main thread starting point)<br>
 <a href="https://github.com/neomjs/neo/blob/dev/src/worker/Manager.mjs">worker.Manager</a> (Creates the 3 workers)<br>
