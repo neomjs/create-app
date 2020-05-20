@@ -44,6 +44,8 @@ Running the script will prompt 3 questions:
     <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/appname.png">
 3. Choose the themes you want to use (you can change this later on inside the index.html)<br>
     <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/themes.png">
+4. Choose the mainThreadAddons you want to use (you can change this later on inside the index.html)<br>
+    <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/mainThreadAddons.png">
 
 ## Script Options
 You can pass additional params to the script:<br>
@@ -134,7 +136,9 @@ your app as well as all neo.mjs examples
 "generate-docs-json"      : "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
 "dev-build-all-my-apps"   : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.myapps.js --env.build_all=true",
 "prod-build-all-my-apps"  : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.myapps.js --env.build_all=true",
+"dev-build-main"          : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.main.js",
 "dev-build-my-apps"       : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.myapps.js",
+"prod-build-main"         : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.main.js",
 "prod-build-my-apps"      : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.myapps.js",
 "dev-css-structure"       : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=neo.structure.json",
 "dev-theme-dark"          : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.dark.json",
@@ -185,7 +189,7 @@ To be fair, neo.mjs just got released to the public on November 23, 2019.
 At this point getting up to speed is not as easy as it could be. There are a couple of guides inside the Docs app,
 but on the long term we definitely need more (help on this one is greatly appreciated!).
 
-I recommend to take a look at the code base of the <a href="https://github.com/neomjs/neo/tree/dev/docs/app/view">Docs app source</a> (which is a neo.mjs App).
+I recommend taking a look at the code base of the <a href="https://github.com/neomjs/neo/tree/dev/docs/app/view">Docs app source</a> (which is a neo.mjs App).
 
 The <a href="https://github.com/neomjs/neo/tree/dev/apps/realworld">Real World App</a> is also worth a look.
 This one is not using a neo.mjs theme, since a given Bootstrap theme was a requirement, but it can help you to get
