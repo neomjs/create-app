@@ -151,16 +151,16 @@ inquirer.prompt(questions).then(answers => {
         cp.spawnSync(npmCmd, ['run', 'dev-build-main'],           cpOpts);
         cp.spawnSync(npmCmd, ['run', 'prod-build-main'],          cpOpts);
 
-        if (themes !== 'none') {
+        if (!themes.includes('none')) {
             cp.spawnSync(npmCmd, ['run', 'dev-css-structure'],    cpOpts);
             cp.spawnSync(npmCmd, ['run', 'prod-css-structure'],   cpOpts);
 
-            if (themes === 'both' || themes === 'neo-theme-dark') {
+            if (themes.includes('both') || themes.includes('neo-theme-dark')) {
                 cp.spawnSync(npmCmd, ['run', 'dev-theme-dark'],   cpOpts);
                 cp.spawnSync(npmCmd, ['run', 'prod-theme-dark'],  cpOpts);
             }
 
-            if (themes === 'both' || themes === 'neo-theme-light') {
+            if (themes.includes('both') || themes.includes('neo-theme-light')) {
                 cp.spawnSync(npmCmd, ['run', 'dev-theme-light'],  cpOpts);
                 cp.spawnSync(npmCmd, ['run', 'prod-theme-light'], cpOpts);
             }
