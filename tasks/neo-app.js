@@ -5,7 +5,6 @@
 const chalk       = require('chalk'),
       commander   = require('commander'),
       cp          = require('child_process'),
-      cpOpts      = {env: process.env, cwd: process.cwd(), stdio: 'inherit'},
       envinfo     = require('envinfo'),
       fs          = require('fs-extra'),
       inquirer    = require('inquirer'),
@@ -20,7 +19,7 @@ const program = new commander.Command(packageJson.name)
     .option('-n, --app-name <name>',         'name of your app in PascalCase')
     .option('-m, --mainThreadAddons <name>', '"AmCharts", "GoogleAnalytics", "HighlightJS", "LocalStorage", "MapboxGL", "Markdown", "Siesta", "Stylesheet"')
     .option('-s, --start <name>',            'start a web-server right after the build.', 'true')
-    .option('-t, --themes <name>',           '"neo-theme-dark", "neo-theme-light", "both", "none"')
+    .option('-t, --themes <name>',           '"neo-theme-dark", "neo-theme-light", "all", "none"')
     .option('-w, --workspace <name>',        'name of the project root folder')
     .allowUnknownOption()
     .on('--help', () => {
@@ -78,8 +77,8 @@ if (!program.themes) {
         type   : 'list',
         name   : 'themes',
         message: 'Please choose a theme for your neo app:',
-        choices: ['neo-theme-dark', 'neo-theme-light', 'both', 'none'],
-        default: 'both'
+        choices: ['neo-theme-dark', 'neo-theme-light', 'all', 'none'],
+        default: 'all'
     });
 }
 
@@ -138,12 +137,18 @@ inquirer.prompt(questions).then(answers => {
         require('./createMyAppsJson')   .init(appName, workspace, fs, mainThreadAddons, os, path, themes);
         require('./createPackageJson')  .init(appName, workspace, fs, os, path);
 
+        const cpOpts = { env: process.env, cwd: workspace, stdio: 'inherit' };
+
         // npm install
         cp.spawnSync(npmCmd, ['i'], cpOpts);
 
         require('./copyDocsApp').init(fs, os, path, workspace);
 
-        cp.spawnSync('node', ['./node_modules/neo.mjs/buildScripts/buildAll.js', '-n', '-l', 'no'], cpOpts);
+        cp.spawnSync('node', ['./node_modules/neo.mjs/buildScripts/buildAll.js', '-n', '-l', 'no'], {
+            cwd: path.join(process.cwd(), workspace),
+            env: process.env,
+            stdio: 'inherit'
+        });
 
         /*
         cp.spawnSync(npmCmd, ['run', 'generate-docs-json'],       cpOpts);

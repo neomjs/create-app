@@ -25,13 +25,13 @@ module.exports = {
             indexContent.push("            mainThreadAddons: [" + mainThreadAddons.map(e => "'" + e +"'").join(', ') + "],");
         }
 
-        if (themes !== 'both') {
+        if (!themes.includes('all')) {
             let themeContent;
 
-            if (themes === 'none') {
+            if (!themes.includes('none')) {
                 themeContent = "            themes          : [],";
             } else {
-                themeContent = "            themes          : ['" + themes + "'],";
+                themeContent = "            themes          : ['" + themes.join(', ') + "'],";
             }
 
             indexContent.push(themeContent);

@@ -48,8 +48,12 @@ module.exports = {
             appsJson.apps[appName].mainThreadAddons = mainThreadAddons.map(e => "'" + e + "'").join(', ');
         }
 
-        if (!(themes.includes('both') && themes.length === 1)) {
-            appsJson.apps[appName].themes = themes.map(e => "'" + e + "'").join(', ');
+        if (!themes.includes('all')) {
+            if (themes.includes('none')) {
+                appsJson.apps[appName].themes = [];
+            } else {
+                appsJson.apps[appName].themes = themes.map(e => "'" + e + "'").join(', ');
+            }
         }
 
         fs.writeFileSync(
