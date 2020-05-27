@@ -143,6 +143,9 @@ inquirer.prompt(questions).then(answers => {
 
         require('./copyDocsApp').init(fs, os, path, workspace);
 
+        cp.spawnSync('node', ['./node_modules/neo.mjs/buildScripts/buildAll.js', '-n', '-l', 'no'], cpOpts);
+
+        /*
         cp.spawnSync(npmCmd, ['run', 'generate-docs-json'],       cpOpts);
 
         cp.spawnSync(npmCmd, ['run', 'dev-build-all-my-apps'],    cpOpts);
@@ -165,6 +168,7 @@ inquirer.prompt(questions).then(answers => {
                 cp.spawnSync(npmCmd, ['run', 'prod-theme-light'], cpOpts);
             }
         }
+        */
 
         if (program.start === 'true') {
             logBuildTime();
