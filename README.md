@@ -189,8 +189,8 @@ The <a href="https://github.com/neomjs/neo/tree/dev/apps/realworld">Real World A
 This one is not using a neo.mjs theme, since a given Bootstrap theme was a requirement, but it can help you to get
 the idea of how to craft custom components and work with Controllers.
 
-The <a href="https://github.com/neomjs/neo/tree/dev/apps/realworld2">Real World App v2</a> is intended to fill this gap
-and will be my next major focus.
+The <a href="https://github.com/neomjs/neo/tree/dev/apps/void">Covid Dashboard</a> is the real deal,
+so studying the code will help you a lot (a blog on its creation is on the roadmap).
 
 In general, it does make a lot of sense to dive into the neo.mjs code base. Some starting points:<br>
 <a href="https://github.com/neomjs/neo/blob/dev/src/Neo.mjs">Neo.mjs</a> (class system enhancements)<br>
