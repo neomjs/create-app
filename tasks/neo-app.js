@@ -46,7 +46,7 @@ if (program.info) {
         .then(console.log);
 }
 
-console.log(chalk.bold('Create neo.mjs app'));
+console.log(chalk.bold('Welcome to the neo.mjs app generator!'));
 
 // npm binary based on OS
 const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';

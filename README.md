@@ -132,25 +132,15 @@ your app as well as all neo.mjs examples
 
 ## package.json Scripts
 ```
-"server-start"            : "webpack-dev-server --open",
-"generate-docs-json"      : "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
-"dev-build-all-my-apps"   : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.myapps.js --env.build_all=true",
-"prod-build-all-my-apps"  : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.myapps.js --env.build_all=true",
-"dev-build-main"          : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.main.js",
-"dev-build-my-apps"       : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.myapps.js",
-"prod-build-main"         : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.main.js",
-"prod-build-my-apps"      : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.myapps.js",
-"dev-css-structure"       : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=neo.structure.json",
-"dev-theme-dark"          : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.dark.json",
-"dev-theme-light"         : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.light.json",
-"prod-css-structure"      : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=neo.structure.json",
-"prod-theme-dark"         : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=theme.dark.json",
-"prod-theme-light"        : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=theme.light.json",
-"dev-theme-dark-no-css4"  : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.dark.noCss4.json",
-"dev-theme-light-no-css4" : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.light.noCss4.json",
-"prod-theme-dark-no-css4" : "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=theme.dark.noCss4.json",
-"prod-theme-light-no-css4": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=theme.light.noCss4.json",
-"test"                    : "echo \"Error: no test specified\" && exit 1"
+"server-start": "webpack-dev-server --open",
+"build-all": "node ./node_modules/neo.mjs/buildScripts/buildAll.js -n",
+"build-all-questions": "node ./buildScripts/buildAll.js",
+"build-my-apps": "node ./node_modules/neo.mjs/buildScripts/webpack/buildMyApps.js",
+"build-themes": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThemes.js",
+"build-threads": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThreads.js",
+"create-app": "node ./node_modules/neo.mjs/buildScripts/createApp.js",
+"generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
+"test": "echo \"Error: no test specified\" && exit 1"
 ```
 
 You need to enter the workspace folder inside your terminal / CMD.
@@ -161,13 +151,17 @@ You can run each script via
 
 Some IDEs like webstorm can show npm scripts as a toolbox, so you can just click on them instead.
 
-1.  server-start: As mentioned in <a href="#starting-a-local-web-server">Starting a local web-server</a>, this will throw
+1. server-start: As mentioned in <a href="#starting-a-local-web-server">Starting a local web-server</a>, this will throw
 2 errors which you can ignore.
-2.  generate-docs-json: When you change your app code (e.g. adding new files) and want to see those changes inside the
+2. build-all: npm install & builds literally everything.
+3. build-all-questions: same as build all, but you can choose what to build using the inquirer interface.
+4. build-my-apps: creates the dist versions for your app(s) as well as the Docs app
+5. build-themes: builds the themes for dev and / or prod and lets you choose if want to use CSS variables.
+6. build-threads: builds main, data & vdom (or any combinations) for dev and / or prod.
+7. create-app: add an additional app to your project. You can also trigger npx neo-app multiple times.
+8. generate-docs-json: When you change your app code (e.g. adding new files) and want to see those changes inside the
 Docs app, you need to run this script to update the content.
-3.  dev-build-all-my-apps: creates the dist/development versions for your app(s) as well as the Docs app
-4.  prod-build-all-my-apps: creates the dist/production versions for your app(s) as well as the Docs app
-5.  dev-build-my-apps: creates the dist/development versions for your app(s) as well as the Docs app.
+
 You can choose which apps you want to build. Might not work on Windows 10 (issues with the deasync npm package)
 6.  prod-build-my-apps: creates the dist/production versions for your app(s) as well as the Docs app.
 You can choose which apps you want to build. Might not work on Windows 10 (issues with the deasync npm package)

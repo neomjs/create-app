@@ -8,29 +8,18 @@ module.exports = {
             private: true,
             scripts: {
                 "server-start": "webpack-dev-server --open",
-                "build-all": "node ./node_modules/neo.mjs/buildScripts/buildAll.js",
+                "build-all": "node ./node_modules/neo.mjs/buildScripts/buildAll.js -n",
+                "build-all-questions": "node ./buildScripts/buildAll.js",
+                "build-my-apps": "node ./node_modules/neo.mjs/buildScripts/webpack/buildMyApps.js",
+                "build-themes": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThemes.js",
+                "build-threads": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThreads.js",
+                "create-app": "node ./node_modules/neo.mjs/buildScripts/createApp.js",
                 "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
-                "dev-build-all-my-apps": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.myapps.js --env.build_all=true",
-                "prod-build-all-my-apps": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.myapps.js --env.build_all=true",
-                "dev-build-main": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.main.js",
-                "dev-build-my-apps": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.config.myapps.js",
-                "prod-build-main": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.main.js",
-                "prod-build-my-apps": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.config.myapps.js",
-                "dev-css-structure": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=neo.structure.json",
-                "dev-theme-dark": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.dark.json",
-                "dev-theme-light": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.light.json",
-                "prod-css-structure": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=neo.structure.json",
-                "prod-theme-dark": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=theme.dark.json",
-                "prod-theme-light": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=theme.light.json",
-                "dev-theme-dark-no-css4": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.dark.noCss4.json",
-                "dev-theme-light-no-css4": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/development/webpack.scss.config.js --env.json_file=theme.light.noCss4.json",
-                "prod-theme-dark-no-css4": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=theme.dark.noCss4.json",
-                "prod-theme-light-no-css4": "webpack --config ./node_modules/neo.mjs/buildScripts/webpack/production/webpack.scss.config.js --env.json_file=theme.light.noCss4.json",
                 "test": "echo \"Error: no test specified\" && exit 1"
             },
             dependencies: {
                 //"fibers": "^4.0.2",
-                'neo.mjs': '^1.1.59',
+                'neo.mjs': '^1.1.75',
                 "sass": "^1.24.0"
             }
         };
