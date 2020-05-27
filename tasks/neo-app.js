@@ -47,6 +47,7 @@ if (program.info) {
 }
 
 console.log(chalk.bold('Welcome to the neo.mjs app generator!'));
+console.log(`current version of ${packageJson.name}: ${packageJson.version}`);
 
 // npm binary based on OS
 const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
