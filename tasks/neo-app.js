@@ -145,35 +145,10 @@ inquirer.prompt(questions).then(answers => {
         require('./copyDocsApp').init(fs, os, path, workspace);
 
         cp.spawnSync('node', ['./node_modules/neo.mjs/buildScripts/buildAll.js', '-n', '-l', 'no'], {
-            cwd: path.join(process.cwd(), workspace),
-            env: process.env,
+            cwd  : path.join(process.cwd(), workspace),
+            env  : process.env,
             stdio: 'inherit'
         });
-
-        /*
-        cp.spawnSync(npmCmd, ['run', 'generate-docs-json'],       cpOpts);
-
-        cp.spawnSync(npmCmd, ['run', 'dev-build-all-my-apps'],    cpOpts);
-        cp.spawnSync(npmCmd, ['run', 'prod-build-all-my-apps'],   cpOpts);
-
-        cp.spawnSync(npmCmd, ['run', 'dev-build-main'],           cpOpts);
-        cp.spawnSync(npmCmd, ['run', 'prod-build-main'],          cpOpts);
-
-        if (!themes.includes('none')) {
-            cp.spawnSync(npmCmd, ['run', 'dev-css-structure'],    cpOpts);
-            cp.spawnSync(npmCmd, ['run', 'prod-css-structure'],   cpOpts);
-
-            if (themes.includes('both') || themes.includes('neo-theme-dark')) {
-                cp.spawnSync(npmCmd, ['run', 'dev-theme-dark'],   cpOpts);
-                cp.spawnSync(npmCmd, ['run', 'prod-theme-dark'],  cpOpts);
-            }
-
-            if (themes.includes('both') || themes.includes('neo-theme-light')) {
-                cp.spawnSync(npmCmd, ['run', 'dev-theme-light'],  cpOpts);
-                cp.spawnSync(npmCmd, ['run', 'prod-theme-light'], cpOpts);
-            }
-        }
-        */
 
         if (program.start === 'true') {
             logBuildTime();
