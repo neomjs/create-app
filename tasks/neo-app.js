@@ -144,6 +144,9 @@ inquirer.prompt(questions).then(answers => {
 
         require('./copyDocsApp').init(fs, os, path, workspace);
 
+        console.log(workspace);
+        console.log(path.join(process.cwd(), workspace));
+
         cp.spawnSync('node', ['./node_modules/neo.mjs/buildScripts/buildAll.js', '-n', '-l', 'no'], {
             cwd: path.join(process.cwd(), workspace),
             env: process.env,
