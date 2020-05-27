@@ -5,6 +5,7 @@
 const chalk       = require('chalk'),
       commander   = require('commander'),
       cp          = require('child_process'),
+      cpOpts      = {env: process.env, cwd: process.cwd(), stdio: 'inherit'},
       envinfo     = require('envinfo'),
       fs          = require('fs-extra'),
       inquirer    = require('inquirer'),
@@ -136,8 +137,6 @@ inquirer.prompt(questions).then(answers => {
         require('./createGitignore')    .init(workspace, fs, os, path);
         require('./createMyAppsJson')   .init(appName, workspace, fs, mainThreadAddons, os, path, themes);
         require('./createPackageJson')  .init(appName, workspace, fs, os, path);
-
-        const cpOpts = { env: process.env, cwd: workspace, stdio: 'inherit' };
 
         // npm install
         cp.spawnSync(npmCmd, ['i'], cpOpts);
