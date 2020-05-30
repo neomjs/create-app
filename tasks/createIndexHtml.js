@@ -38,7 +38,7 @@ module.exports = {
         }
 
         indexContent.push(
-            "            workerBasePath: '../../node_modules/neo.mjs/src/worker/'",
+            "            workerBasePath  : '../../node_modules/neo.mjs/src/worker/'",
             "        });",
             "    </script>",
             "",
