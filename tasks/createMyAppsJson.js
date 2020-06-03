@@ -30,7 +30,7 @@ module.exports = {
                 "apps": {
                     "Docs": {
                         "input": "buildScripts/entrypoints/Docs.mjs",
-                        "mainThreadAddons": "'GoogleAnalytics', 'HighlightJS', 'Stylesheet'",
+                        "mainThreadAddons": "'HighlightJS', 'Stylesheet'",
                         "output": "/docs/",
                         "title" : "Neo Docs"
                     }

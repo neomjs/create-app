@@ -17,7 +17,7 @@ const program = new commander.Command(packageJson.name)
     .version(packageJson.version)
     .option('-i, --info',                    'print environment debug info')
     .option('-n, --app-name <name>',         'name of your app in PascalCase')
-    .option('-m, --mainThreadAddons <name>', '"AmCharts", "GoogleAnalytics", "HighlightJS", "LocalStorage", "MapboxGL", "Markdown", "Siesta", "Stylesheet"')
+    .option('-m, --mainThreadAddons <name>', '"AmCharts", "AnalyticsByGoogle", "HighlightJS", "LocalStorage", "MapboxGL", "Markdown", "Siesta", "Stylesheet"')
     .option('-s, --start <name>',            'start a web-server right after the build.', 'true')
     .option('-t, --themes <name>',           '"neo-theme-dark", "neo-theme-light", "all", "none"')
     .option('-w, --workspace <name>',        'name of the project root folder')
@@ -87,7 +87,7 @@ if (!program.mainThreadAddons) {
         type   : 'checkbox',
         name   : 'mainThreadAddons',
         message: 'Please choose your main thread addons:',
-        choices: ['AmCharts', 'GoogleAnalytics', 'HighlightJS', 'LocalStorage', 'MapboxGL', 'Markdown', 'Siesta', 'Stylesheet'],
+        choices: ['AmCharts', 'AnalyticsByGoogle', 'HighlightJS', 'LocalStorage', 'MapboxGL', 'Markdown', 'Siesta', 'Stylesheet'],
         default: ['Stylesheet']
     });
 }
