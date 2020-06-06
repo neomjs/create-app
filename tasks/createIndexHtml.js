@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    init: function (appName, folder, fs, mainThreadAddons, os, path, themes) {
+    init: function (appName, folder, fs, mainThreadAddons, os, path, themes, useSharedWorkers) {
         const indexContent = [
             "<!DOCTYPE HTML>",
             "<html>",
@@ -35,6 +35,10 @@ module.exports = {
             }
 
             indexContent.push(themeContent);
+        }
+
+        if (useSharedWorkers !== 'no') {
+            indexContent.push("            useSharedWorkers: true");
         }
 
         indexContent.push(

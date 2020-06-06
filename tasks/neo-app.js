@@ -20,6 +20,7 @@ const program = new commander.Command(packageJson.name)
     .option('-m, --mainThreadAddons <name>', '"AmCharts", "AnalyticsByGoogle", "HighlightJS", "LocalStorage", "MapboxGL", "Markdown", "Siesta", "Stylesheet"')
     .option('-s, --start <name>',            'start a web-server right after the build.', 'true')
     .option('-t, --themes <name>',           '"neo-theme-dark", "neo-theme-light", "all", "none"')
+    .option('-u, --useSharedWorkers <name>', '"yes", "no"')
     .option('-w, --workspace <name>',        'name of the project root folder')
     .allowUnknownOption()
     .on('--help', () => {
@@ -92,6 +93,16 @@ if (!program.mainThreadAddons) {
     });
 }
 
+if (!program.useSharedWorkers) {
+    questions.push({
+        type   : 'list',
+        name   : 'useSharedWorkers',
+        message: 'Do you want to use SharedWorkers? Pick yes for multiple main threads (Browser Windows):',
+        choices: ['yes', 'no'],
+        default: 'no'
+    });
+}
+
 const handleError = e => {
     console.error('ERROR! An error was encountered while executing');
     console.error(e);
@@ -114,10 +125,11 @@ process.on('SIGINT', handleExit);
 process.on('uncaughtException', handleError);
 
 inquirer.prompt(questions).then(answers => {
-    let workspace        = program.workspace || answers['workspace'],
-        appName          = program.appName   || answers['appName'],
-        mainThreadAddons = program.appName   || answers['mainThreadAddons'],
-        themes           = program.themes    || answers['themes'],
+    let appName          = program.appName          || answers['appName'],
+        mainThreadAddons = program.appName          || answers['mainThreadAddons'],
+        themes           = program.themes           || answers['themes'],
+        useSharedWorkers = program.useSharedWorkers || answers.useSharedWorkers,
+        workspace        = program.workspace        || answers['workspace'],
         appPath          = path.join(workspace, '/apps/', appName.toLowerCase(), '/');
 
     if (!Array.isArray(themes)) {
@@ -130,11 +142,11 @@ inquirer.prompt(questions).then(answers => {
         }
 
         require('./createApp')          .init(appName, appPath, fs, os, path);
-        require('./createIndexHtml')    .init(appName, appPath, fs, mainThreadAddons, os, path, themes);
+        require('./createIndexHtml')    .init(appName, appPath, fs, mainThreadAddons, os, path, themes, useSharedWorkers);
         require('./createMainContainer').init(appName, appPath, fs, os, path);
         require('./createEntrypoint')   .init(appName, fs, os, path, workspace);
         require('./createGitignore')    .init(workspace, fs, os, path);
-        require('./createMyAppsJson')   .init(appName, workspace, fs, mainThreadAddons, os, path, themes);
+        require('./createMyAppsJson')   .init(appName, workspace, fs, mainThreadAddons, os, path, themes, useSharedWorkers);
         require('./createPackageJson')  .init(appName, workspace, fs, os, path);
 
         const cpOpts = { env: process.env, cwd: workspace, stdio: 'inherit' };

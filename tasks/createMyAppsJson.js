@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    init: function (appName, folder, fs, mainThreadAddons, os, path, themes) {
+    init: function (appName, folder, fs, mainThreadAddons, os, path, themes, useSharedWorkers) {
         const filePath = path.join(folder, 'buildScripts/myApps.json');
         let appsJson;
 
@@ -54,6 +54,10 @@ module.exports = {
             } else {
                 appsJson.apps[appName].themes = themes.map(e => "'" + e + "'").join(', ');
             }
+        }
+
+        if (useSharedWorkers !== 'no') {
+            appJson.apps[appName].useSharedWorkers = true;
         }
 
         fs.writeFileSync(
