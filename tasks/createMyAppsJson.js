@@ -57,7 +57,7 @@ module.exports = {
         }
 
         if (useSharedWorkers !== 'no') {
-            appJson.apps[appName].useSharedWorkers = true;
+            appsJson.apps[appName].useSharedWorkers = true;
         }
 
         fs.writeFileSync(
