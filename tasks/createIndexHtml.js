@@ -38,7 +38,7 @@ module.exports = {
         }
 
         if (useSharedWorkers !== 'no') {
-            indexContent.push("            useSharedWorkers: true");
+            indexContent.push("            useSharedWorkers: true,");
         }
 
         indexContent.push(
