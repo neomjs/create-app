@@ -16,6 +16,8 @@ module.exports = {
                 console.log('Warning, an app with this name already exists. Overriding');
             }
         } else {
+            fs.mkdirSync(path.join(folder, 'buildScripts'));
+
             appsJson = {
                 "bodyTag": "<body>",
                 "mainInput": "./src/Main.mjs",
