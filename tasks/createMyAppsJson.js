@@ -2,7 +2,10 @@
 
 module.exports = {
     init: function (appName, folder, fs, mainThreadAddons, os, path, themes, useSharedWorkers) {
-        const filePath = path.join(folder, 'buildScripts/myApps.json');
+        const lAppName = appName.toLowerCase(),
+              appPath  = 'apps/' + lAppName + '/',
+              filePath = path.join(folder, 'buildScripts/myApps.json');
+
         let appsJson;
 
         if (fs.existsSync(filePath)) {
@@ -18,6 +21,10 @@ module.exports = {
                 "mainInput": "./src/Main.mjs",
                 "mainOutput": "main.js",
                 "workers": {
+                    "app": {
+                        "input": "./src/worker/App.mjs",
+                        "output": "appworker.js"
+                    },
                     "data": {
                         "input": "./src/worker/Data.mjs",
                         "output": "dataworker.js"
@@ -27,21 +34,14 @@ module.exports = {
                         "output": "vdomworker.js"
                     }
                 },
-                "apps": {
-                    "Docs": {
-                        "input": "buildScripts/entrypoints/Docs.mjs",
-                        "mainThreadAddons": "'HighlightJS', 'Stylesheet'",
-                        "output": "/docs/",
-                        "title" : "Neo Docs"
-                    }
-                }
+                "apps": {}
             };
         }
 
         appsJson.apps[appName] = {
-            "input": "buildScripts/entrypoints/"+appName+".mjs",
-            "output": "/apps/"+appName.toLowerCase()+"/",
-            "title": appName
+            input : `./${appPath}app.mjs`,
+            output: `/${appPath}`,
+            title : appName
         };
 
         if (!(mainThreadAddons.includes('Stylesheet') && mainThreadAddons.length === 1)) {
