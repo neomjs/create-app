@@ -9,6 +9,10 @@ module.exports = {
             "// Ticket: https://github.com/neomjs/neo/issues/1152"
         ].join(os.EOL);
 
-        fs.writeFileSync(path.join(folder, 'index.js'), content);
+        if (!fs.existsSync(path.join(folder, 'src'))) {
+            fs.mkdirSync(path.join(folder, 'src'));
+        }
+
+        fs.writeFileSync(path.join(folder, 'src/index.js'), content);
     }
 };
