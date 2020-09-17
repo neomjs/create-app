@@ -36,7 +36,14 @@ module.exports = {
                         "output": "vdomworker.js"
                     }
                 },
-                "apps": {}
+                "apps": {
+                    "Docs": {
+                        "input": "./docs/app.mjs",
+                        "mainThreadAddons": "'HighlightJS', 'Stylesheet'",
+                        "output": "/docs/",
+                        "title": "Neo Docs"
+                    }
+                }
             };
         }
 
