@@ -9,6 +9,7 @@ module.exports = {
             "",
             "# dependencies",
             "/dist",
+            "/docs/output",
             "/node_modules",
             "",
             "# IDEs and editors",
