@@ -8,6 +8,7 @@ module.exports = {
             "package-lock.json",
             "",
             "# dependencies",
+            "/dist",
             "/node_modules",
             "",
             "# IDEs and editors",
