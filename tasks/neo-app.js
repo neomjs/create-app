@@ -149,7 +149,7 @@ inquirer.prompt(questions).then(answers => {
         require('./createMyAppsJson')     .init(appName, workspace, fs, mainThreadAddons, os, path, themes, useSharedWorkers);
         require('./createPackageJson')    .init(appName, workspace, fs, os, path);
         require('./createScssEntryPoints').init(workspace, fs, os, path);
-        require('./createScssResources')  .init(workspace, fs, os, path);
+        require('./createScssResources')  .init(appName, workspace, fs, os, path);
 
         const cpOpts = { env: process.env, cwd: workspace, stdio: 'inherit' };
 
