@@ -13,9 +13,9 @@ module.exports = {
         }
 
         createMjsFile('scss_structure.scss');
-        createMjsFile('theme_dark.noCss4.scss');
+        createMjsFile('theme_dark.noCssVars.scss');
         createMjsFile('theme_dark.scss');
-        createMjsFile('theme_light.noCss4.scss');
+        createMjsFile('theme_light.noCssVars.scss');
         createMjsFile('theme_light.scss');
 
         // create the .scss files (combinations of theme & app based entrypoints)
@@ -25,7 +25,7 @@ module.exports = {
                 '@use "sass:map";',
                 '$neoMap: ();',
                 '',
-                '$useCss4Vars: ' + useCssVars + ';',
+                '$useCssVars: ' + useCssVars + ';',
                 '',
                 '@import "../../../../node_modules/neo.mjs/resources/scss/mixins/all";',
                 '@import "../../../../node_modules/neo.mjs/resources/scss/' + folder + '/all";',
@@ -47,10 +47,10 @@ module.exports = {
             fs.writeFileSync(path.join(scssPath, name), content.join(os.EOL));
         }
 
-        createScssFile('scss_structure.scss',     'src',         true);
-        createScssFile('theme_dark.noCss4.scss',  'theme-dark',  false);
-        createScssFile('theme_dark.scss',         'theme-dark',  true);
-        createScssFile('theme_light.noCss4.scss', 'theme-light', false);
-        createScssFile('theme_light.scss',        'theme-light', true);
+        createScssFile('scss_structure.scss',        'src',         true);
+        createScssFile('theme_dark.noCssVars.scss',  'theme-dark',  false);
+        createScssFile('theme_dark.scss',            'theme-dark',  true);
+        createScssFile('theme_light.noCssVars.scss', 'theme-light', false);
+        createScssFile('theme_light.scss',           'theme-light', true);
     }
 };
