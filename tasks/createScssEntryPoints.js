@@ -3,7 +3,6 @@
 module.exports = {
     init: function(workspace, fs, os, path) {
         const scssPath = path.join(workspace, 'buildScripts/webpack/entrypoints/scss');
-        let content;
 
         fs.mkdirpSync(scssPath);
 
@@ -21,78 +20,37 @@ module.exports = {
 
         // create the .scss files (combinations of theme & app based entrypoints)
 
-        content = [
-            '@use "sass:map";',
-            '$neoMap: ();',
-            '',
-            '$useCss4Vars: true;',
-            '',
-            '@import "../../../../node_modules/neo.mjs/resources/scss/mixins/all";',
-            '@import "../../../../node_modules/neo.mjs/resources/scss/src/all";',
-            '',
-            '@import "../../../../resources/scss/src/all";'
-        ].join(os.EOL);
+        function createScssFile(name, folder, useCssVars) {
+            let content = [
+                '@use "sass:map";',
+                '$neoMap: ();',
+                '',
+                '$useCss4Vars: ' + useCssVars + ';',
+                '',
+                '@import "../../../../node_modules/neo.mjs/resources/scss/mixins/all";',
+                '@import "../../../../node_modules/neo.mjs/resources/scss/' + folder + '/all";',
+            ];
 
-        fs.writeFileSync(path.join(scssPath, 'scss_structure.scss'), content);
+            if (!useCssVars) {
+                content.push('@import "../../../../node_modules/neo.mjs/resources/scss/src/all";');
+            }
 
-        content = [
-            '@use "sass:map";',
-            '$neoMap: ();',
-            '',
-            '$useCss4Vars: false;',
-            '',
-            '@import "../../../../node_modules/neo.mjs/resources/scss/mixins/all";',
-            '@import "../../../../node_modules/neo.mjs/resources/scss/theme-dark/all";',
-            '@import "../../../../node_modules/neo.mjs/resources/scss/src/all";',
-            '',
-            '@import "../../../../resources/scss/theme-dark/all";',
-            '@import "../../../../resources/scss/src/all";'
-        ].join(os.EOL);
+            content.push(
+                '',
+                '@import "../../../../resources/scss/' + folder + '/all";'
+            );
 
-        fs.writeFileSync(path.join(scssPath, 'theme_dark.noCss4.scss'), content);
+            if (!useCssVars) {
+                content.push('@import "../../../../resources/scss/src/all";');
+            }
 
-        content = [
-            '@use "sass:map";',
-            '$neoMap: ();',
-            '',
-            '$useCss4Vars: true;',
-            '',
-            '@import "../../../../node_modules/neo.mjs/resources/scss/mixins/all";',
-            '@import "../../../../node_modules/neo.mjs/resources/scss/theme-dark/all";',
-            '',
-            '@import "../../../../resources/scss/theme-dark/all";',
-        ].join(os.EOL);
+            fs.writeFileSync(path.join(scssPath, name), content.join(os.EOL));
+        }
 
-        fs.writeFileSync(path.join(scssPath, 'theme_dark.scss'), content);
-
-        content = [
-            '@use "sass:map";',
-            '$neoMap: ();',
-            '',
-            '$useCss4Vars: false;',
-            '',
-            '@import "../../../../node_modules/neo.mjs/resources/scss/mixins/all";',
-            '@import "../../../../node_modules/neo.mjs/resources/scss/theme-light/all";',
-            '@import "../../../../node_modules/neo.mjs/resources/scss/src/all";',
-            '',
-            '@import "../../../../resources/scss/theme-light/all";',
-            '@import "../../../../resources/scss/src/all";'
-        ].join(os.EOL);
-
-        fs.writeFileSync(path.join(scssPath, 'theme_light.noCss4.scss'), content);
-
-        content = [
-            '@use "sass:map";',
-            '$neoMap: ();',
-            '',
-            '$useCss4Vars: true;',
-            '',
-            '@import "../../../../node_modules/neo.mjs/resources/scss/mixins/all";',
-            '@import "../../../../node_modules/neo.mjs/resources/scss/theme-light/all";',
-            '',
-            '@import "../../../../resources/scss/theme-light/all";',
-        ].join(os.EOL);
-
-        fs.writeFileSync(path.join(scssPath, 'theme_light.scss'), content);
+        createScssFile('scss_structure.scss',     'src',         true);
+        createScssFile('theme_dark.noCss4.scss',  'theme-dark',  false);
+        createScssFile('theme_dark.scss',         'theme-dark',  true);
+        createScssFile('theme_light.noCss4.scss', 'theme-light', false);
+        createScssFile('theme_light.scss',        'theme-light', true);
     }
 };
