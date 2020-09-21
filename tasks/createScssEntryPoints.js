@@ -7,10 +7,53 @@ module.exports = {
 
         fs.mkdirpSync(scssPath);
 
+        // create the .mjs files (webpack theme build entry points)
+
+        content = ["import './scss_structure.scss';"].join(os.EOL);
+        fs.writeFileSync(path.join(scssPath, 'scss_structure.scss.mjs'), content);
+
+        content = ["import './theme_dark.noCss4.scss';"].join(os.EOL);
+        fs.writeFileSync(path.join(scssPath, 'theme_dark.noCss4.scss.mjs'), content);
+
+        content = ["import './theme_dark.scss';"].join(os.EOL);
+        fs.writeFileSync(path.join(scssPath, 'theme_dark.scss.mjs'), content);
+
+        content = ["import './theme_light.noCss4.scss';"].join(os.EOL);
+        fs.writeFileSync(path.join(scssPath, 'theme_light.noCss4.scss.mjs'), content);
+
+        content = ["import './theme_light.scss';"].join(os.EOL);
+        fs.writeFileSync(path.join(scssPath, 'theme_light.scss.mjs'), content);
+
+        // create the .scss files (combinations of theme & app based entrypoints)
+
         content = [
-            "import './scss_structure.scss';"
+            '@use "sass:map";',
+            '$neoMap: ();',
+            '',
+            '$useCss4Vars: true;',
+            '',
+            '@import "../../../../node_modules/neo.mjs/resources/scss/mixins/all";',
+            '@import "../../../../node_modules/neo.mjs/resources/scss/src/all";',
+            '',
+            '@import "../../../../resources/scss/src/all";'
         ].join(os.EOL);
 
-        fs.writeFileSync(path.join(scssPath, 'scss_structure.scss.mjs'), content);
+        fs.writeFileSync(path.join(scssPath, 'scss_structure.scss'), content);
+
+        content = [
+            '@use "sass:map";',
+            '$neoMap: ();',
+            '',
+            '$useCss4Vars: false;',
+            '',
+            '@import "../../../../node_modules/neo.mjs/resources/scss/mixins/all";',
+            '@import "../../../../node_modules/neo.mjs/resources/scss/theme-dark/all";',
+            '@import "../../../../node_modules/neo.mjs/resources/scss/src/all";',
+            '',
+            '@import "../../../../resources/scss/theme-dark/all";',
+            '@import "../../../../resources/scss/src/all";'
+        ].join(os.EOL);
+
+        fs.writeFileSync(path.join(scssPath, 'theme_dark.noCss4.scss'), content);
     }
 };
