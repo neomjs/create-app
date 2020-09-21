@@ -9,20 +9,15 @@ module.exports = {
 
         // create the .mjs files (webpack theme build entry points)
 
-        content = ["import './scss_structure.scss';"].join(os.EOL);
-        fs.writeFileSync(path.join(scssPath, 'scss_structure.scss.mjs'), content);
+        function createMjsFile(name) {
+            fs.writeFileSync(path.join(scssPath, name + '.mjs'), ["import './" + name + "';"].join(os.EOL));
+        }
 
-        content = ["import './theme_dark.noCss4.scss';"].join(os.EOL);
-        fs.writeFileSync(path.join(scssPath, 'theme_dark.noCss4.scss.mjs'), content);
-
-        content = ["import './theme_dark.scss';"].join(os.EOL);
-        fs.writeFileSync(path.join(scssPath, 'theme_dark.scss.mjs'), content);
-
-        content = ["import './theme_light.noCss4.scss';"].join(os.EOL);
-        fs.writeFileSync(path.join(scssPath, 'theme_light.noCss4.scss.mjs'), content);
-
-        content = ["import './theme_light.scss';"].join(os.EOL);
-        fs.writeFileSync(path.join(scssPath, 'theme_light.scss.mjs'), content);
+        createMjsFile('scss_structure.scss');
+        createMjsFile('theme_dark.noCss4.scss');
+        createMjsFile('theme_dark.scss');
+        createMjsFile('theme_light.noCss4.scss');
+        createMjsFile('theme_light.scss');
 
         // create the .scss files (combinations of theme & app based entrypoints)
 
