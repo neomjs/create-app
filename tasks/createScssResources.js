@@ -10,5 +10,9 @@ module.exports = {
         fs.mkdirpSync(srcPath);
         fs.mkdirpSync(themeDarkPath);
         fs.mkdirpSync(themeLightPath);
+
+        fs.writeFileSync(path.join(srcPath,        '_all.scss'), os.EOL);
+        fs.writeFileSync(path.join(themeDarkPath,  '_all.scss'), os.EOL);
+        fs.writeFileSync(path.join(themeLightPath, '_all.scss'), os.EOL);
     }
 };
