@@ -8,16 +8,20 @@ module.exports = {
               themeDarkPath  = path.join(resourcesPath, 'theme-dark'),
               themeLightPath = path.join(resourcesPath, 'theme-light');
 
-        fs.mkdirpSync(path.join(srcPath,        lAppName));
-        fs.mkdirpSync(path.join(themeDarkPath,  lAppName));
-        fs.mkdirpSync(path.join(themeLightPath, lAppName));
+        fs.mkdirpSync(path.join(srcPath,        'apps', lAppName));
+        fs.mkdirpSync(path.join(themeDarkPath,  'apps', lAppName));
+        fs.mkdirpSync(path.join(themeLightPath, 'apps', lAppName));
 
-        fs.writeFileSync(path.join(srcPath,        '_all.scss'), ['@import "' + lAppName + '/all";'].join(os.EOL));
-        fs.writeFileSync(path.join(themeDarkPath,  '_all.scss'), ['@import "' + lAppName + '/all";'].join(os.EOL));
-        fs.writeFileSync(path.join(themeLightPath, '_all.scss'), ['@import "' + lAppName + '/all";'].join(os.EOL));
+        fs.writeFileSync(path.join(srcPath,        '_all.scss'), ['@import "apps/all";'].join(os.EOL));
+        fs.writeFileSync(path.join(themeDarkPath,  '_all.scss'), ['@import "apps/all";'].join(os.EOL));
+        fs.writeFileSync(path.join(themeLightPath, '_all.scss'), ['@import "apps/all";'].join(os.EOL));
 
-        fs.writeFileSync(path.join(srcPath,        lAppName, '_all.scss'), os.EOL);
-        fs.writeFileSync(path.join(themeDarkPath,  lAppName, '_all.scss'), os.EOL);
-        fs.writeFileSync(path.join(themeLightPath, lAppName, '_all.scss'), os.EOL);
+        fs.writeFileSync(path.join(srcPath,        'apps', '_all.scss'), ['@import "' + lAppName + '/all";'].join(os.EOL));
+        fs.writeFileSync(path.join(themeDarkPath,  'apps', '_all.scss'), ['@import "' + lAppName + '/all";'].join(os.EOL));
+        fs.writeFileSync(path.join(themeLightPath, 'apps', '_all.scss'), ['@import "' + lAppName + '/all";'].join(os.EOL));
+
+        fs.writeFileSync(path.join(srcPath,        'apps', lAppName, '_all.scss'), os.EOL);
+        fs.writeFileSync(path.join(themeDarkPath,  'apps', lAppName, '_all.scss'), os.EOL);
+        fs.writeFileSync(path.join(themeLightPath, 'apps', lAppName, '_all.scss'), os.EOL);
     }
 };
