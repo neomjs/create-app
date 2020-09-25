@@ -158,8 +158,9 @@ You can choose which apps you want to build. Might not work on Windows 10 (issue
 inside the scss files.
 
 ## Working on your new neo.mjs App
-It is recommended to use the non dist version for development (Chrome with flag). This way you can just reload the App page whenever you
-change the code base. No need for source-maps and a very smooth debugging experience.
+It is recommended to use the development mode (non dist version) for developing your App(s).
+This way you can just reload the App page whenever you change the code base.
+No need for source-maps and a very smooth debugging experience.
 
 You ideally want to start with changing the view/MainContainer.mjs file.
 
