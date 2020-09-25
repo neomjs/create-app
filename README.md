@@ -78,7 +78,10 @@ You can use a different web-server of your choice (e.g. webstorm) or you can sta
 > npm run server-start
 
 ## Viewing your app in development mode
-Navigate to:
+At this point, the dev-mode only works in Google Chrome & Edge (Chromium),
+since Firefox & Safari do not support JS modules inside the worker scope yet.
+
+To view your new app, you can navigate to:
 > http://localhost:8096/apps/myapp/
 
 <img width="1100px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/serverMyApp.png">
@@ -91,14 +94,14 @@ The beauty inside this screen is:
     2.  No need for source-maps
 
 ## Viewing your app in dist modes
-For the dist versions you do ***not*** need a Chrome flag and they can run in Firefox & Safari.
+The dist versions run in Firefox & Safari as well.
 
-Dist development is using webpack based builds (source-maps, not minified)
+dist/development is using webpack based builds (source-maps, not minified)
 > http://localhost:8096/dist/development/apps/myapp/
 
 <img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/Safari.png">
 
-Dist development is using webpack based builds (no source-maps, minified)
+dist/production is using webpack based builds (no source-maps, minified)
 > http://localhost:8096/dist/production/apps/myapp/
 
 <img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/Firefox.png">
