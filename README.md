@@ -64,12 +64,7 @@ Of course you can combine the options, e.g.:
 > npx neo-app -w workspace -n MyApp -t both
 
 ## Starting a local web-server
-By default, npx neo-app will start a webpack dev-server right after the build.<br>
-***Important:*** The server-script will throw 2 errors.<br>
-<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/serverErrors.png">
-
-You can ***ignore*** those. The reason is that the webpack dev-server is supposed to serve the dist folders.
-Inside the neo.mjs context, we do want to use the non dist versions as well.
+By default, npx neo-app will start a webpack dev-server right after the build.
 
 A new browser tab should open right away:<br>
 <img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/serverStart.png">
