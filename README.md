@@ -7,11 +7,11 @@
 </p>
 
 # neo.mjs create-app
-Create a new <a href="https://github.com/neomjs/neo">neo.mjs</a> app using the 1-liner:
+Create a new <a href="https://github.com/neomjs/neo">neo.mjs</a> app (workspace) using the 1-liner:
 > npx neo-app
 
 npx neo-app works on macOS, Linux and Windows 10.<br>
-If something does not work, please <a href="https://github.com/neomjs/create-app/issues/new">file an issue</a>.<br>
+If errors occur for your local environment, please <a href="https://github.com/neomjs/create-app/issues/new">file an issue</a>.<br>
 
 Please ensure you have node & npm installed (npx is available for npm 5.2+).
 
