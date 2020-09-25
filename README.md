@@ -78,7 +78,7 @@ You can use a different web-server of your choice (e.g. webstorm) or you can sta
 > npm run server-start
 
 ## Viewing your app in development mode
-At this point, the dev-mode only works in Google Chrome & Edge (Chromium),
+At this point, the dev-mode only works in Google Chrome & Edge (Chromium),</br>
 since Firefox & Safari do not support JS modules inside the worker scope yet.
 
 To view your new app, you can navigate to:
