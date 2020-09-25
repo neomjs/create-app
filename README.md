@@ -141,8 +141,7 @@ You can run each script via
 
 Some IDEs like webstorm can show npm scripts as a toolbox, so you can just click on them instead.
 
-1. server-start: As mentioned in <a href="#starting-a-local-web-server">Starting a local web-server</a>, this will throw
-2 errors which you can ignore.
+1. server-start: Starts the webpack dev-server
 2. build-all: npm install & builds literally everything.
 3. build-all-questions: same as build all, but you can choose what to build using the inquirer interface.
 4. build-my-apps: creates the dist versions for your app(s) as well as the Docs app
