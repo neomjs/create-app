@@ -39,7 +39,7 @@ module.exports = {
                 "apps": {
                     "Docs": {
                         "input": "./docs/app.mjs",
-                        "mainThreadAddons": "'HighlightJS', 'Stylesheet'",
+                        "mainThreadAddons": "'DragDrop', 'HighlightJS', 'Stylesheet'",
                         "output": "/docs/",
                         "title": "Neo Docs"
                     }
