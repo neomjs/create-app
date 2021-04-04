@@ -7,7 +7,6 @@ module.exports = {
             version: '0.1.0',
             private: true,
             scripts: {
-                "server-start": "webpack-dev-server --open",
                 "build-all": "node ./node_modules/neo.mjs/buildScripts/buildAll.js -n",
                 "build-all-questions": "node ./buildScripts/buildAll.js",
                 "build-my-apps": "node ./node_modules/neo.mjs/buildScripts/webpack/buildMyApps.js",
@@ -15,10 +14,11 @@ module.exports = {
                 "build-threads": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThreads.js",
                 "create-app": "node ./node_modules/neo.mjs/buildScripts/createApp.js",
                 "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
+                "server-start": "webpack serve",
                 "test": "echo \"Error: no test specified\" && exit 1"
             },
             dependencies: {
-                'neo.mjs': '^1.4.50',
+                'neo.mjs': '^1.5.0',
                 "sass": "^1.24.0"
             }
         };

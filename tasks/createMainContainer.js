@@ -14,8 +14,6 @@ module.exports = {
             "class MainContainer extends Viewport {",
             "    static getConfig() {return {",
             "        className: '" + appName + ".view.MainContainer',",
-            "        ntype    : 'main-container',",
-            "",
             "        autoMount: true,",
             "        layout   : {ntype: 'fit'},",
             "",
