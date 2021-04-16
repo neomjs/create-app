@@ -18,7 +18,7 @@ module.exports = {
                 "test": "echo \"Error: no test specified\" && exit 1"
             },
             dependencies: {
-                "neo.mjs": "^1.5.14",
+                "neo.mjs": "^1.5.15",
                 "sass": "^1.32.8"
             }
         };
