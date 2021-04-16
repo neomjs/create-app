@@ -31,17 +31,25 @@ module.exports = {
               srcPath  = '../../../node_modules/neo.mjs/src/';
 
         function adjustPaths(cls) {
-            const clsPath = path.join(docsPath, 'app/view', cls);
+            const clsPath = path.join(docsPath, 'app', cls);
             fs.writeFileSync(clsPath, fs.readFileSync(clsPath, 'utf8').replace(srcRegex, srcPath), 'utf8');
         }
 
-        adjustPaths('ApiTreeList.mjs');
-        adjustPaths('ContentTabContainer.mjs');
-        adjustPaths('ExamplesTreeList.mjs');
-        adjustPaths('HeaderContainer.mjs');
-        adjustPaths('MainContainer.mjs');
-        adjustPaths('MainContainerController.mjs');
-        adjustPaths('TutorialsTreeList.mjs');
+        adjustPaths('model/Api.mjs');
+        adjustPaths('model/Example.mjs');
+        adjustPaths('model/Tutorial.mjs');
+
+        adjustPaths('store/Api.mjs');
+        adjustPaths('store/Example.mjs');
+        adjustPaths('store/Tutorial.mjs');
+
+        adjustPaths('view/ApiTreeList.mjs');
+        adjustPaths('view/ContentTabContainer.mjs');
+        adjustPaths('view/ExamplesTreeList.mjs');
+        adjustPaths('view/HeaderContainer.mjs');
+        adjustPaths('view/MainContainer.mjs');
+        adjustPaths('view/MainContainerController.mjs');
+        adjustPaths('view/TutorialsTreeList.mjs');
 
         const subSrcRegex = /..\/..\/..\/..\/src\//gi,
               subSrcPath  = '../../../../node_modules/neo.mjs/src/';
