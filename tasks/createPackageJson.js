@@ -14,12 +14,12 @@ module.exports = {
                 "build-threads": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThreads.js",
                 "create-app": "node ./node_modules/neo.mjs/buildScripts/createApp.js",
                 "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
-                "server-start": "webpack serve",
+                "server-start": "webpack serve -c ./node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.js --open",
                 "test": "echo \"Error: no test specified\" && exit 1"
             },
             dependencies: {
-                "neo.mjs": "^1.5.12",
-                "sass": "^1.24.0"
+                "neo.mjs": "^1.5.13",
+                "sass": "^1.32.8"
             }
         };
 
