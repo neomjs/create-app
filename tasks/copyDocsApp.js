@@ -22,8 +22,8 @@ module.exports = {
         let indexData = fs.readFileSync(indexPath, 'utf8');
 
         indexData = indexData.replace("appPath         : 'docs/app.mjs'", "appPath         : '../../docs/app.mjs'");
-        indexData = indexData.replace("});",           "resourcesPath   : '../node_modules/neo.mjs/resources/',\n            workerBasePath  : '../node_modules/neo.mjs/src/worker/'\n        });");
-        indexData = indexData.replace('../src/',                        '../node_modules/neo.mjs/src/');
+        indexData = indexData.replace("'Stylesheet']",                    "'Stylesheet'],\n            resourcesPath   : '../node_modules/neo.mjs/resources/',\n            workerBasePath  : '../node_modules/neo.mjs/src/worker/'");
+        indexData = indexData.replace("../src/",                          "../node_modules/neo.mjs/src/");
 
         fs.writeFileSync(indexPath, indexData, 'utf8');
 
