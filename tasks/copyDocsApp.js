@@ -40,8 +40,8 @@ module.exports = {
         adjustPaths('model/Tutorial.mjs');
 
         adjustPaths('store/Api.mjs');
-        adjustPaths('store/Example.mjs');
-        adjustPaths('store/Tutorial.mjs');
+        adjustPaths('store/Examples.mjs');
+        adjustPaths('store/Tutorials.mjs');
 
         adjustPaths('view/ApiTreeList.mjs');
         adjustPaths('view/ContentTabContainer.mjs');
