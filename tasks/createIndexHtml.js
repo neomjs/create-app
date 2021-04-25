@@ -28,7 +28,7 @@ module.exports = {
         if (!themes.includes('all')) {
             let themeContent;
 
-            if (!themes.includes('none')) {
+            if (themes.includes('none')) {
                 themeContent = "            themes          : [],";
             } else {
                 themeContent = "            themes          : ['" + themes.join(', ') + "'],";
