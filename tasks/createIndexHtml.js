@@ -18,7 +18,6 @@ module.exports = {
             "            appPath         : '../../apps/" + appName.toLowerCase() + "/app.mjs',",
             "            basePath        : '../../',",
             "            environment     : 'development',",
-            "            isExperimental  : true,",
         ];
 
         if (mainThreadAddons !== 'Stylesheet') {
