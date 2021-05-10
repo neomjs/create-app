@@ -10,7 +10,7 @@ module.exports = {
                 "build-all": "node ./node_modules/neo.mjs/buildScripts/buildAll.js -n",
                 "build-all-questions": "node ./buildScripts/buildAll.js",
                 "build-my-apps": "node ./node_modules/neo.mjs/buildScripts/webpack/buildMyApps.js",
-                "build-themes": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThemes.js",
+                "build-themes": "node ./node_modules/neo.mjs/buildScripts/buildThemes.js",
                 "build-threads": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThreads.js",
                 "create-app": "node ./node_modules/neo.mjs/buildScripts/createApp.js",
                 "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
