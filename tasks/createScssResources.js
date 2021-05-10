@@ -12,15 +12,12 @@ module.exports = {
         fs.mkdirpSync(path.join(themeDarkPath,  'apps', lAppName));
         fs.mkdirpSync(path.join(themeLightPath, 'apps', lAppName));
 
-        fs.writeFileSync(path.join(srcPath,        '_all.scss'), ['@import "apps/all";'].join(os.EOL));
         fs.writeFileSync(path.join(themeDarkPath,  '_all.scss'), ['@import "apps/all";'].join(os.EOL));
         fs.writeFileSync(path.join(themeLightPath, '_all.scss'), ['@import "apps/all";'].join(os.EOL));
 
-        fs.writeFileSync(path.join(srcPath,        'apps', '_all.scss'), ['@import "' + lAppName + '/all";'].join(os.EOL));
         fs.writeFileSync(path.join(themeDarkPath,  'apps', '_all.scss'), ['@import "' + lAppName + '/all";'].join(os.EOL));
         fs.writeFileSync(path.join(themeLightPath, 'apps', '_all.scss'), ['@import "' + lAppName + '/all";'].join(os.EOL));
 
-        fs.writeFileSync(path.join(srcPath,        'apps', lAppName, '_all.scss'), os.EOL);
         fs.writeFileSync(path.join(themeDarkPath,  'apps', lAppName, '_all.scss'), os.EOL);
         fs.writeFileSync(path.join(themeLightPath, 'apps', lAppName, '_all.scss'), os.EOL);
     }
