@@ -29,7 +29,9 @@ const program = new commander.Command(packageJson.name)
     })
     .parse(process.argv);
 
-if (program.info) {
+const programOpts = program.opts();
+
+if (programOpts.info) {
     console.log(chalk.bold('\nEnvironment Info:'));
     console.log(`\n  current version of ${packageJson.name}: ${packageJson.version}`);
     console.log(`  running from ${__dirname}`);
@@ -55,7 +57,7 @@ const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
 
 const questions = [];
 
-if (!program.workspace) {
+if (!programOpts.workspace) {
     questions.push({
         type   : 'input',
         name   : 'workspace',
@@ -64,7 +66,7 @@ if (!program.workspace) {
     });
 }
 
-if (!program.appName) {
+if (!programOpts.appName) {
     questions.push({
         type   : 'input',
         name   : 'appName',
@@ -73,7 +75,7 @@ if (!program.appName) {
     });
 }
 
-if (!program.themes) {
+if (!programOpts.themes) {
     questions.push({
         type   : 'list',
         name   : 'themes',
@@ -83,7 +85,7 @@ if (!program.themes) {
     });
 }
 
-if (!program.mainThreadAddons) {
+if (!programOpts.mainThreadAddons) {
     questions.push({
         type   : 'checkbox',
         name   : 'mainThreadAddons',
@@ -93,7 +95,7 @@ if (!program.mainThreadAddons) {
     });
 }
 
-if (!program.useSharedWorkers) {
+if (!programOpts.useSharedWorkers) {
     questions.push({
         type   : 'list',
         name   : 'useSharedWorkers',
@@ -125,11 +127,11 @@ process.on('SIGINT', handleExit);
 process.on('uncaughtException', handleError);
 
 inquirer.prompt(questions).then(answers => {
-    let appName          = program.appName          || answers['appName'],
-        mainThreadAddons = program.appName          || answers['mainThreadAddons'],
-        themes           = program.themes           || answers['themes'],
-        useSharedWorkers = program.useSharedWorkers || answers.useSharedWorkers,
-        workspace        = program.workspace        || answers['workspace'],
+    let appName          = programOpts.appName          || answers['appName'],
+        mainThreadAddons = programOpts.appName          || answers['mainThreadAddons'],
+        themes           = programOpts.themes           || answers['themes'],
+        useSharedWorkers = programOpts.useSharedWorkers || answers.useSharedWorkers,
+        workspace        = programOpts.workspace        || answers['workspace'],
         appPath          = path.join(workspace, '/apps/', appName.toLowerCase(), '/');
 
     if (!Array.isArray(themes)) {
@@ -163,7 +165,7 @@ inquirer.prompt(questions).then(answers => {
             stdio: 'inherit'
         });
 
-        if (program.start === 'true') {
+        if (programOpts.start === 'true') {
             logBuildTime();
             cp.spawnSync(npmCmd, ['run', 'server-start'], cpOpts);
         } else {
