@@ -27,44 +27,37 @@ module.exports = {
 
         fs.writeFileSync(indexPath, indexData, 'utf8');
 
-        const srcRegex = /..\/..\/..\/src\//gi,
-              srcPath  = '../../../node_modules/neo.mjs/src/';
+        const srcPath  = [
+                  '../../node_modules/neo.mjs/src/',
+                  '../../../node_modules/neo.mjs/src/',
+                  '../../../../node_modules/neo.mjs/src/'
+              ],
+              srcRegex = [
+                  /..\/..\/src\//gi,
+                  /..\/..\/..\/src\//gi,
+                  /..\/..\/..\/..\/src\//gi
+              ];
 
-        function adjustPaths(cls) {
-            const clsPath = path.join(docsPath, 'app', cls);
-            fs.writeFileSync(clsPath, fs.readFileSync(clsPath, 'utf8').replace(srcRegex, srcPath), 'utf8');
-        }
+        const isFile = fileName => {
+            return fs.lstatSync(fileName).isFile()
+        };
 
-        adjustPaths('model/Api.mjs');
-        adjustPaths('model/Example.mjs');
-        adjustPaths('model/Tutorial.mjs');
+        const parseFolder = (folderPath, index) => {
+            let itemPath;
 
-        adjustPaths('store/Api.mjs');
-        adjustPaths('store/Examples.mjs');
-        adjustPaths('store/Tutorials.mjs');
+            fs.readdirSync(folderPath).forEach(itemName => {
+                itemPath = path.join(folderPath, itemName);
 
-        adjustPaths('view/ApiTreeList.mjs');
-        adjustPaths('view/ContentTabContainer.mjs');
-        adjustPaths('view/ExamplesTreeList.mjs');
-        adjustPaths('view/HeaderContainer.mjs');
-        adjustPaths('view/MainContainer.mjs');
-        adjustPaths('view/MainContainerController.mjs');
-        adjustPaths('view/TutorialsTreeList.mjs');
+                if (isFile(itemPath)) {
+                    if (itemName.endsWith('.mjs')) {
+                        fs.writeFileSync(itemPath, fs.readFileSync(itemPath, 'utf8').replace(srcRegex[index], srcPath[index]), 'utf8');
+                    }
+                } else {
+                    parseFolder(itemPath, index + 1);
+                }
+            });
+        };
 
-        const subSrcRegex = /..\/..\/..\/..\/src\//gi,
-              subSrcPath  = '../../../../node_modules/neo.mjs/src/';
-
-        function adjustSubPaths(cls) {
-            const clsPath = path.join(docsPath, 'app/view', cls);
-            fs.writeFileSync(clsPath, fs.readFileSync(clsPath, 'utf8').replace(subSrcRegex, subSrcPath), 'utf8');
-        }
-
-        adjustSubPaths('classdetails/HeaderComponent.mjs');
-        adjustSubPaths('classdetails/HierarchyTreeList.mjs');
-        adjustSubPaths('classdetails/MainContainer.mjs');
-        adjustSubPaths('classdetails/MainContainerController.mjs');
-        adjustSubPaths('classdetails/MembersList.mjs');
-        adjustSubPaths('classdetails/SourceViewComponent.mjs');
-        adjustSubPaths('classdetails/TutorialComponent.mjs');
+        parseFolder(path.join(docsPath, 'app'), 0);
     }
 };
