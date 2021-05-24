@@ -5,6 +5,7 @@
 const chalk       = require('chalk'),
       commander   = require('commander'),
       cp          = require('child_process'),
+      cwd         = process.cwd(),
       envinfo     = require('envinfo'),
       fs          = require('fs-extra'),
       inquirer    = require('inquirer'),
@@ -144,13 +145,15 @@ inquirer.prompt(questions).then(answers => {
         }
 
         require('./createApp')          .init(appName, appPath, fs, os, path);
-        require('./createIndexJs')      .init(path.join(process.cwd(), workspace), fs, os, path);
+        require('./createIndexJs')      .init(path.join(cwd, workspace), fs, os, path);
         require('./createIndexHtml')    .init(appName, appPath, fs, mainThreadAddons, os, path, themes, useSharedWorkers);
         require('./createGitignore')    .init(workspace, fs, os, path);
         require('./createMainContainer').init(appName, appPath, fs, os, path);
         require('./createMyAppsJson')   .init(appName, workspace, fs, mainThreadAddons, os, path, themes, useSharedWorkers);
         require('./createPackageJson')  .init(appName, workspace, fs, os, path);
         require('./createScssResources').init(appName, workspace, fs, os, path);
+
+        fs.copySync(path.join(workspace, 'buildScripts/copyExamples.js'), path.join(cwd, '..workspaceScripts/copyExamples.js'));
 
         const cpOpts = { env: process.env, cwd: workspace, stdio: 'inherit' };
 
@@ -160,7 +163,7 @@ inquirer.prompt(questions).then(answers => {
         require('./copyDocsApp').init(fs, os, path, workspace);
 
         cp.spawnSync('node', ['./node_modules/neo.mjs/buildScripts/buildAll.js', '-n', '-l', 'no'], {
-            cwd  : path.join(process.cwd(), workspace),
+            cwd  : path.join(cwd, workspace),
             env  : process.env,
             stdio: 'inherit'
         });
