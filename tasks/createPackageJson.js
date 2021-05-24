@@ -18,6 +18,7 @@ module.exports = {
                 "test": "echo \"Error: no test specified\" && exit 1"
             },
             dependencies: {
+                "fs-extra": "^10.0.0",
                 "neo.mjs": "^2.1.5"
             }
         };
