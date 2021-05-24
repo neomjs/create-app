@@ -153,9 +153,7 @@ inquirer.prompt(questions).then(answers => {
         require('./createPackageJson')  .init(appName, workspace, fs, os, path);
         require('./createScssResources').init(appName, workspace, fs, os, path);
 
-        console.log(import('../workspaceScripts/copyExamples.js'));
-
-        fs.copySync(path.join(workspace, 'buildScripts/copyExamples.js'), import('../workspaceScripts/copyExamples.js'));
+        fs.copySync(path.join(__dirname, '../workspaceScripts/copyExamples.js'), path.join(workspace, 'buildScripts/copyExamples.js'));
 
         const cpOpts = { env: process.env, cwd: workspace, stdio: 'inherit' };
 
@@ -169,6 +167,8 @@ inquirer.prompt(questions).then(answers => {
             env  : process.env,
             stdio: 'inherit'
         });
+
+        cp.spawnSync(npmCmd, ['run', 'copy-examples'], cpOpts);
 
         if (programOpts.start === 'true') {
             logBuildTime();
