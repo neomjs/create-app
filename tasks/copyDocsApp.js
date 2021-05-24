@@ -66,11 +66,5 @@ module.exports = {
         adjustSubPaths('classdetails/MembersList.mjs');
         adjustSubPaths('classdetails/SourceViewComponent.mjs');
         adjustSubPaths('classdetails/TutorialComponent.mjs');
-
-        const examplesSrc   = path.join(docsPath, 'examples.json'),
-              examplesRegex = /..\/..\/..\/examples\//gi,
-              examplesPath  = '../../../node_modules/neo.mjs/examples/';
-
-        fs.writeFileSync(examplesSrc, fs.readFileSync(examplesSrc, 'utf8').replace(examplesRegex, examplesPath), 'utf8');
     }
 };
