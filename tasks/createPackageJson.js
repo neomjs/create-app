@@ -12,7 +12,7 @@ module.exports = {
                 "build-my-apps": "node ./node_modules/neo.mjs/buildScripts/webpack/buildMyApps.js",
                 "build-themes": "node ./node_modules/neo.mjs/buildScripts/buildThemes.js",
                 "build-threads": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThreads.js",
-                "copy-examples": "node ./buildScripts/copyExamples.js",
+                //"copy-examples": "node ./buildScripts/copyExamples.js",
                 "create-app": "node ./node_modules/neo.mjs/buildScripts/createApp.js",
                 "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
                 "server-start": "webpack serve -c ./node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.js --open",
@@ -20,7 +20,7 @@ module.exports = {
             },
             dependencies: {
                 "fs-extra": "^10.0.0",
-                "neo.mjs": "^2.1.13"
+                "neo.mjs": "^2.1.14"
             }
         };
 
