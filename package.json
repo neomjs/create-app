@@ -1,6 +1,6 @@
 {
     "name": "neo-app",
-    "version": "2.1.15",
+    "version": "2.1.16",
     "description": "neo.mjs: Create app via npx",
     "repository": {
         "type": "git",
