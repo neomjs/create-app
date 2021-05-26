@@ -10,6 +10,7 @@ module.exports = {
             "# dependencies",
             "/dist",
             "/docs/output",
+            "/examples",
             "/node_modules",
             "",
             "# IDEs and editors",
