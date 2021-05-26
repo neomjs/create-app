@@ -19,7 +19,7 @@ module.exports = {
         fs.copySync(path.join(workspace, 'node_modules/neo.mjs/docs/resources'), docsProdPath);
 
         const configPath = path.join(docsPath, 'neo-config.json'),
-              configData  = fs.readFileSync(configPath, 'utf8');
+              configData  = fs.readFileSync(configPath);
 
         Object.assign(configData, {
             appPath       : '../../docs/app.mjs',
@@ -27,7 +27,7 @@ module.exports = {
             workerBasePath: '../node_modules/neo.mjs/src/worker/'
         });
 
-        fs.writeFileSync(configPath, JSON.stringify(configData, null, 4), 'utf8');
+        fs.writeFileSync(configPath, JSON.stringify(configData, null, 4));
 
         const srcPath  = [
                   '../../node_modules/neo.mjs/src/',

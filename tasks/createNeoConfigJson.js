@@ -6,7 +6,7 @@ module.exports = {
             appPath       : `'../../../../apps/${appName.toLowerCase()}/app.mjs`,
             basePath      : '../../',
             environment   : 'development',
-            mainPath      : '../../node_modules/neo.mjs/src/Main.mjs',
+            mainPath      : '../node_modules/neo.mjs/src/Main.mjs',
             workerBasePath: '../../node_modules/neo.mjs/src/worker/'
         };
 
