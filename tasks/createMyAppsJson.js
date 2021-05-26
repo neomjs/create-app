@@ -17,7 +17,6 @@ module.exports = {
             fs.mkdirSync(path.join(folder, 'buildScripts'));
 
             appsJson = {
-                "bodyTag": "<body>",
                 "mainInput": "./src/Main.mjs",
                 "mainOutput": "main.js",
                 "workers": {
