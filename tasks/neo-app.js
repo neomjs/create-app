@@ -146,7 +146,7 @@ inquirer.prompt(questions).then(answers => {
 
         require('./createApp')          .init(appName, appPath, fs, os, path);
         require('./createIndexJs')      .init(path.join(cwd, workspace), fs, os, path);
-        require('./createIndexHtml')    .init(appName, appPath, fs, mainThreadAddons, os, path, themes, useSharedWorkers);
+        require('./createIndexHtml')    .init(appName, appPath, fs, os, path);
         require('./createGitignore')    .init(workspace, fs, os, path);
         require('./createMainContainer').init(appName, appPath, fs, os, path);
         require('./createMyAppsJson')   .init(appName, workspace, fs, mainThreadAddons, os, path, themes, useSharedWorkers);

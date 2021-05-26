@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    init: function (appName, folder, fs, mainThreadAddons, os, path, themes, useSharedWorkers) {
+    init: function (appName, folder, fs, os, path) {
         const indexContent = [
             "<!DOCTYPE HTML>",
             "<html>",
@@ -11,44 +11,10 @@ module.exports = {
             "    <title>" + appName + "</title>",
             "</head>",
             "<body>",
-            "    <script>",
-            "        Neo = self.Neo || {}; Neo.config = Neo.config || {};",
-            "",
-            "        Object.assign(Neo.config, {",
-            "            appPath         : '../../apps/" + appName.toLowerCase() + "/app.mjs',",
-            "            basePath        : '../../',",
-            "            environment     : 'development',",
-        ];
-
-        if (mainThreadAddons !== 'Stylesheet') {
-            indexContent.push("            mainThreadAddons: [" + mainThreadAddons.map(e => "'" + e +"'").join(', ') + "],");
-        }
-
-        if (!themes.includes('all')) {
-            let themeContent;
-
-            if (themes.includes('none')) {
-                themeContent = "            themes          : [],";
-            } else {
-                themeContent = "            themes          : ['" + themes.join(', ') + "'],";
-            }
-
-            indexContent.push(themeContent);
-        }
-
-        if (useSharedWorkers !== 'no') {
-            indexContent.push("            useSharedWorkers: true,");
-        }
-
-        indexContent.push(
-            "            workerBasePath  : '../../node_modules/neo.mjs/src/worker/'",
-            "        });",
-            "    </script>",
-            "",
-            '    <script src="../../node_modules/neo.mjs/src/Main.mjs" type="module"></script>',
+            '    <script src="../../src/MicroLoader.mjs" type="module"></script>',
             "</body>",
-            "</html>"
-        )
+            "</html>",
+        ];
 
         fs.writeFileSync(path.join(folder, 'index.html'), indexContent.join(os.EOL));
     }
