@@ -21,7 +21,7 @@ module.exports = {
         let configPath = path.join(docsPath, 'neo-config.json'),
             configData  = fs.readFileSync(configPath);
 
-        JSON.parse(configData);
+        configData = JSON.parse(configData);
 
         Object.assign(configData, {
             appPath       : '../../docs/app.mjs',
