@@ -8,13 +8,15 @@ const cwd          = process.cwd(),
           '../node_modules/neo.mjs/src/',
           '../../node_modules/neo.mjs/src/',
           '../../../node_modules/neo.mjs/src/',
-          '../../../../node_modules/neo.mjs/src/'
+          '../../../../node_modules/neo.mjs/src/',
+          '../../../../../node_modules/neo.mjs/src/'
       ],
       srcRegex = [
           /..\/src\//gi,
           /..\/..\/src\//gi,
           /..\/..\/..\/src\//gi,
-          /..\/..\/..\/..\/src\//gi
+          /..\/..\/..\/..\/src\//gi,
+          /..\/..\/..\/..\/..\/src\//gi
       ];
 
 // copy the examples folder
