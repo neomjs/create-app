@@ -18,14 +18,16 @@ module.exports = {
         fs.mkdirpSync(docsProdPath);
         fs.copySync(path.join(workspace, 'node_modules/neo.mjs/docs/resources'), docsProdPath);
 
-        const indexPath = path.join(docsPath, 'index.html');
-        let indexData = fs.readFileSync(indexPath, 'utf8');
+        const configPath = path.join(docsPath, 'neo-config.json'),
+              configData  = fs.readFileSync(configPath, 'utf8');
 
-        indexData = indexData.replace("appPath         : 'docs/app.mjs'", "appPath         : '../../docs/app.mjs'");
-        indexData = indexData.replace("'Stylesheet']",                    "'Stylesheet'],\n            resourcesPath   : '../node_modules/neo.mjs/resources/',\n            workerBasePath  : '../node_modules/neo.mjs/src/worker/'");
-        indexData = indexData.replace("../src/",                          "../node_modules/neo.mjs/src/");
+        Object.assign(configData, {
+            appPath       : '../../docs/app.mjs',
+            mainPath      : '../node_modules/neo.mjs/src/Main.mjs',
+            workerBasePath: '../node_modules/neo.mjs/src/worker/'
+        });
 
-        fs.writeFileSync(indexPath, indexData, 'utf8');
+        fs.writeFileSync(configPath, JSON.stringify(configData, null, 4), 'utf8');
 
         const srcPath  = [
                   '../../node_modules/neo.mjs/src/',
