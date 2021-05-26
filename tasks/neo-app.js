@@ -169,7 +169,7 @@ inquirer.prompt(questions).then(answers => {
             stdio: 'inherit'
         });
 
-        cp.spawnSync(npmCmd, ['run', 'copy-examples'], cpOpts);
+        // cp.spawnSync(npmCmd, ['run', 'copy-examples'], cpOpts);
 
         if (programOpts.start === 'true') {
             logBuildTime();

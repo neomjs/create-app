@@ -20,7 +20,7 @@ module.exports = {
             },
             dependencies: {
                 "fs-extra": "^10.0.0",
-                "neo.mjs": "^2.1.14"
+                "neo.mjs": "^2.1.15"
             }
         };
 
