@@ -18,8 +18,10 @@ module.exports = {
         fs.mkdirpSync(docsProdPath);
         fs.copySync(path.join(workspace, 'node_modules/neo.mjs/docs/resources'), docsProdPath);
 
-        const configPath = path.join(docsPath, 'neo-config.json'),
-              configData  = require(configPath);
+        let configPath = path.join(docsPath, 'neo-config.json'),
+            configData  = fs.readFileSync(configPath);
+
+        JSON.parse(configData);
 
         Object.assign(configData, {
             appPath       : '../../docs/app.mjs',
