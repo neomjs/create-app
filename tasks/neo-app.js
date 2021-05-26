@@ -145,7 +145,6 @@ inquirer.prompt(questions).then(answers => {
         }
 
         require('./createApp')          .init(appName, appPath, fs, os, path);
-        require('./createIndexJs')      .init(path.join(cwd, workspace), fs, os, path);
         require('./createIndexHtml')    .init(appName, appPath, fs, os, path);
         require('./createGitignore')    .init(workspace, fs, os, path);
         require('./createMainContainer').init(appName, appPath, fs, os, path);
@@ -153,8 +152,9 @@ inquirer.prompt(questions).then(answers => {
         require('./createNeoConfigJson').init(appName, appPath, fs, mainThreadAddons, os, path, themes, useSharedWorkers);
         require('./createPackageJson')  .init(appName, workspace, fs, os, path);
         require('./createScssResources').init(appName, workspace, fs, os, path);
+        require('./createSrcFolder')    .init(path.join(cwd, workspace), fs, os, path);
 
-        fs.copySync(path.join(__dirname, '../workspaceScripts/copyExamples.js'), path.join(workspace, 'buildScripts/copyExamples.js'));
+        fs.copySync(path.join(__dirname, '../resources/copyExamples.js'), path.join(workspace, 'buildScripts/copyExamples.js'));
 
         const cpOpts = { env: process.env, cwd: workspace, stdio: 'inherit' };
 

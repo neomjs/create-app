@@ -14,5 +14,7 @@ module.exports = {
         }
 
         fs.writeFileSync(path.join(folder, 'src/index.js'), content);
+
+        fs.copySync(path.join(__dirname, '../resources/MicroLoader.mjs'), path.join(folder, 'src/MicroLoader.mjs'));
     }
 };
