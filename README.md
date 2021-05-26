@@ -3,7 +3,7 @@
   <a href="https://www.npmjs.com/package/neo-app"><img src="https://img.shields.io/npm/v/neo-app.svg" alt="Version"></a>
   <a href="https://www.npmjs.com/package/neo-app"><img src="https://img.shields.io/npm/l/neo-app.svg" alt="License"></a>
   <a href="https://discord.gg/6p8paPq"><img src="https://img.shields.io/discord/656620537514164249?label=discord%20chat" alt="Chat"></a>
-  <a href="https://david-dm.org/neomjs/create-app"><img src="https://david-dm.org/neomjs/create-app.svg" alt="Dependencies"></a>
+  <a href="https://david-dm.org/neomjs/create-app"><img src="https://img.shields.io/david/neomjs/create-app" alt="Dependencies"></a>
   <a href="./CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-green.svg" alt="PRs Welcome"></a>
 </p>
 
