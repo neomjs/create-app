@@ -34,13 +34,12 @@ const parseFolder = (folderPath, index) => {
         itemPath = path.join(folderPath, itemName);
 
         if (isFile(itemPath)) {
-            content = fs.readFileSync(itemPath, 'utf8').replace(srcRegex[index], srcPath[index]);
-
-            if (itemName.endsWith('.html')) {
-                content = content.replace('});', `   ,workerBasePath: '${srcPath[index]}worker/'\n});`);
+            if (itemName === 'neo-config.json') {
+                // todo: config files
+            } else {
+                content = fs.readFileSync(itemPath, 'utf8').replace(srcRegex[index], srcPath[index]);
+                fs.writeFileSync(itemPath, content, 'utf8');
             }
-
-            fs.writeFileSync(itemPath, content, 'utf8');
         } else {
             parseFolder(itemPath, index + 1);
         }
