@@ -154,7 +154,7 @@ inquirer.prompt(questions).then(answers => {
         require('./createScssResources').init(appName, workspace, fs, os, path);
         require('./createSrcFolder')    .init(path.join(cwd, workspace), fs, os, path);
 
-        //fs.copySync(path.join(__dirname, '../resources/copyExamples.js'), path.join(workspace, 'buildScripts/copyExamples.js'));
+        fs.copySync(path.join(__dirname, '../resources/copyExamples.js'), path.join(workspace, 'buildScripts/copyExamples.js'));
 
         const cpOpts = { env: process.env, cwd: workspace, stdio: 'inherit' };
 
