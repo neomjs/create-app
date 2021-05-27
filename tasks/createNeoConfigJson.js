@@ -3,7 +3,7 @@
 module.exports = {
     init: function (appName, folder, fs, mainThreadAddons, os, path, themes, useSharedWorkers) {
         let neoConfig = {
-            appPath       : `../../../../apps/${appName.toLowerCase()}/app.mjs`,
+            appPath       : `../../apps/${appName.toLowerCase()}/app.mjs`,
             basePath      : '../../',
             environment   : 'development',
             mainPath      : '../node_modules/neo.mjs/src/Main.mjs',

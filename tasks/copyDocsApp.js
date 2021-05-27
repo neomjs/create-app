@@ -63,5 +63,11 @@ module.exports = {
         };
 
         parseFolder(path.join(docsPath, 'app'), 0);
+
+        const examplesSrc   = path.join(docsPath, 'examples.json'),
+              examplesRegex = /..\/..\/..\/examples\//gi,
+              examplesPath  = '../../../node_modules/neo.mjs/examples/';
+
+        fs.writeFileSync(examplesSrc, fs.readFileSync(examplesSrc, 'utf8').replace(examplesRegex, examplesPath), 'utf8');
     }
 };
