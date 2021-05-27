@@ -4,6 +4,7 @@ const cwd          = process.cwd(),
       fs           = require('fs-extra'),
       path         = require('path'),
       examplesPath = path.join(cwd, 'examples'),
+      startDate    = new Date(),
       srcPath      = [
           '../node_modules/neo.mjs/src/',
           '../../node_modules/neo.mjs/src/',
@@ -60,5 +61,8 @@ const parseFolder = (folderPath, index) => {
 };
 
 parseFolder(examplesPath, 0);
+
+const processTime = (Math.round((new Date - startDate) * 100) / 100000).toFixed(2);
+console.log(`Total time: ${processTime}s`);
 
 process.exit();
