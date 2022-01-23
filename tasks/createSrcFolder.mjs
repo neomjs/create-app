@@ -13,6 +13,9 @@ export default {
 
         fs.writeFileSync(path.join(folder, 'src/index.js'), content);
 
-        fs.copySync(path.join(path.resolve(), '../resources/MicroLoader.mjs'), path.join(folder, 'src/MicroLoader.mjs'));
+        fs.copySync(
+            path.resolve(process.argv[1], '../../neo-app/resources/MicroLoader.mjs'),
+            path.join(folder, 'src/MicroLoader.mjs')
+        );
     }
 };
