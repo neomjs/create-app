@@ -1,5 +1,3 @@
-'use strict';
-
 export default {
     init: function (appName, folder, fs, os, path) {
         const packageJson = {
