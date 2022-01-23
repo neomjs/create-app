@@ -20,7 +20,7 @@ import os                  from 'os';
 import path                from 'path';
 
 console.log(path.resolve());
-console.log(process.cwd());
+console.log(process);
 
 const __dirname   = path.resolve(),
       cwd         = process.cwd(),
