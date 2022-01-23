@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import chalk               from 'chalk';
 import { spawnSync }       from 'child_process';
 import { Command }         from 'commander/esm.mjs';
