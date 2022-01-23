@@ -1,7 +1,5 @@
-'use strict';
-
-module.exports = {
-    init: function(fs, os, path, workspace) {
+export default {
+    init(fs, os, path, workspace) {
         const docsPath = path.join(workspace, 'docs');
 
         // copy the full app
@@ -42,9 +40,7 @@ module.exports = {
                   /..\/..\/..\/..\/src\//gi
               ];
 
-        const isFile = fileName => {
-            return fs.lstatSync(fileName).isFile()
-        };
+        const isFile = fileName => fs.lstatSync(fileName).isFile();
 
         const parseFolder = (folderPath, index) => {
             let itemPath;

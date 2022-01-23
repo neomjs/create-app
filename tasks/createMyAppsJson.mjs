@@ -1,7 +1,5 @@
-'use strict';
-
-module.exports = {
-    init: function (appName, folder, fs, os, path) {
+export default {
+    init(appName, folder, fs, os, path) {
         const filePath = path.join(folder, 'buildScripts/myApps.json');
 
         let appsJson;

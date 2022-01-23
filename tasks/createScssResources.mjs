@@ -1,7 +1,5 @@
-'use strict';
-
-module.exports = {
-    init: function(appName, workspace, fs, os, path) {
+export default {
+    init(appName, workspace, fs, os, path) {
         const lAppName       = appName.toLowerCase(),
               resourcesPath  = path.join(workspace, 'resources/scss'),
               srcPath        = path.join(resourcesPath, 'src'),

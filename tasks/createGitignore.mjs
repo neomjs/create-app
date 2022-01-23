@@ -1,7 +1,5 @@
-'use strict';
-
-module.exports = {
-    init: function (folder, fs, os, path) {
+export default {
+    init(folder, fs, os, path) {
         const gitignoreContent = [
             "# See http://help.github.com/ignore-files/ for more about ignoring files.",
             "",

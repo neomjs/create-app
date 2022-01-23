@@ -1,7 +1,5 @@
-'use strict';
-
-module.exports = {
-    init: function (appName, folder, fs, mainThreadAddons, os, path, themes, useSharedWorkers) {
+export default {
+    init(appName, folder, fs, mainThreadAddons, os, path, themes, useSharedWorkers) {
         let neoConfig = {
             appPath       : `../../apps/${appName.toLowerCase()}/app.mjs`,
             basePath      : '../../',
