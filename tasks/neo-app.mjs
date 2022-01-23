@@ -1,6 +1,6 @@
 import chalk               from 'chalk';
 import { spawnSync }       from 'child_process';
-import { Command }         from 'commander/esm.mjs';copyDocsApp
+import { Command }         from 'commander/esm.mjs';
 import copyDocsApp         from './copyDocsApp.mjs';
 import createApp           from './createApp.mjs';
 import createGitignore     from './createGitignore.mjs';

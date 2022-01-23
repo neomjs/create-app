@@ -1,6 +1,6 @@
 {
     "name": "neo-app",
-    "version": "3.1.0",
+    "version": "3.1.1",
     "description": "neo.mjs: Create app via npx",
     "type": "module",
     "repository": {
@@ -8,11 +8,11 @@
         "url": "https://github.com/neomjs/create-app"
     },
     "scripts": {
-        "neo-app": "node ./tasks/neo-app.js",
+        "neo-app": "node ./tasks/neo-app.mjs",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "bin": {
-        "neo-app": "./tasks/neo-app.js"
+        "neo-app": "./tasks/neo-app.mjs"
     },
     "keywords": [
         "neomjs",
