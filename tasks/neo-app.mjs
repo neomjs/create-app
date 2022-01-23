@@ -19,14 +19,10 @@ import inquirer            from 'inquirer';
 import os                  from 'os';
 import path                from 'path';
 
-console.log(path.resolve(process.argv[1], 'package.json'));
-console.log(path.resolve(process.argv[1], '../package.json'));
-console.log(path.resolve(process.argv[1], '../../package.json'));
-
 const __dirname   = path.resolve(),
       cwd         = process.cwd(),
       requireJson = path => JSON.parse(fs.readFileSync((path))),
-      packageJson = requireJson(path.resolve(process.argv[1], '../package.json')),
+      packageJson = requireJson(path.resolve(process.argv[1], '../../neo-app/package.json')),
       program     = new Command(),
       startDate   = new Date();
 
