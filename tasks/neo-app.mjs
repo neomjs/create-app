@@ -179,7 +179,7 @@ if (programOpts.info) {
 
             copyDocsApp.init(fs, os, path, workspace);
 
-            spawnSync('node', ['./node_modules/neo.mjs/buildScripts/buildAll.js', '-n', '-l', 'no'], {
+            spawnSync('node', ['./node_modules/neo.mjs/buildScripts/buildAll.mjs', '-n', '-l', 'no'], {
                 cwd  : path.join(cwd, workspace),
                 env  : process.env,
                 stdio: 'inherit'
