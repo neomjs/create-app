@@ -22,7 +22,7 @@ import path                from 'path';
 const __dirname   = path.resolve(),
       cwd         = process.cwd(),
       requireJson = path => JSON.parse(fs.readFileSync((path))),
-      packageJson = requireJson('../package.json'),
+      packageJson = requireJson(path.join(__dirname, 'package.json')),
       program     = new Command(),
       startDate   = new Date();
 
