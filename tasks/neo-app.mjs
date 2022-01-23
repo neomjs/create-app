@@ -167,7 +167,10 @@ if (programOpts.info) {
             createScssResources.init(appName, workspace, fs, os, path);
             createSrcFolder    .init(path.join(cwd, workspace), fs, os, path);
 
-            fs.copySync(path.join(__dirname, '../resources/copyExamples.mjs'), path.join(workspace, 'buildScripts/copyExamples.mjs'));
+            fs.copySync(
+                path.resolve(process.argv[1], '../../neo-app/resources/copyExamples.mjs'),
+                path.join(workspace, 'buildScripts/copyExamples.mjs')
+            );
 
             const cpOpts = { env: process.env, cwd: workspace, stdio: 'inherit' };
 
