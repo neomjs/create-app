@@ -1,21 +1,22 @@
 'use strict';
 
-module.exports = {
+export default {
     init: function (appName, folder, fs, os, path) {
         const packageJson = {
             name: appName.toLowerCase(),
             version: '0.1.0',
             private: true,
+            type: 'module',
             scripts: {
-                "build-all": "node ./node_modules/neo.mjs/buildScripts/buildAll.js -n",
-                "build-all-questions": "node ./buildScripts/buildAll.js",
-                "build-my-apps": "node ./node_modules/neo.mjs/buildScripts/webpack/buildMyApps.js",
-                "build-themes": "node ./node_modules/neo.mjs/buildScripts/buildThemes.js",
-                "build-threads": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThreads.js",
-                "copy-examples": "node ./buildScripts/copyExamples.js",
-                "create-app": "node ./node_modules/neo.mjs/buildScripts/createApp.js",
-                "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
-                "server-start": "webpack serve -c ./node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.js --open",
+                "build-all": "node ./node_modules/neo.mjs/buildScripts/buildAll.mjs -n",
+                "build-all-questions": "node ./buildScripts/buildAll.mjs",
+                "build-my-apps": "node ./node_modules/neo.mjs/buildScripts/webpack/buildMyApps.mjs",
+                "build-themes": "node ./node_modules/neo.mjs/buildScripts/buildThemes.mjs",
+                "build-threads": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThreads.mjs",
+                "copy-examples": "node ./buildScripts/copyExamples.mjs",
+                "create-app": "node ./node_modules/neo.mjs/buildScripts/createApp.mjs",
+                "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.mjs",
+                "server-start": "webpack serve -c ./node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.mjs --open",
                 "test": "echo \"Error: no test specified\" && exit 1"
             },
             dependencies: {
