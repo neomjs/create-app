@@ -18,11 +18,13 @@ import fs                  from 'fs-extra';
 import inquirer            from 'inquirer';
 import os                  from 'os';
 import path                from 'path';
+import { fileURLToPath }   from 'url';
 
-const __dirname   = path.resolve(),
+
+const __dirname   = fileURLToPath(path.dirname(import.meta.url)),
       cwd         = process.cwd(),
       requireJson = path => JSON.parse(fs.readFileSync((path))),
-      packageJson = requireJson(path.resolve(process.argv[1], '../../neo-app/package.json')),
+      packageJson = requireJson(path.join(__dirname, '../package.json')),
       program     = new Command(),
       startDate   = new Date();
 
@@ -165,10 +167,10 @@ if (programOpts.info) {
             createNeoConfigJson.init(appName, appPath, fs, mainThreadAddons, os, path, themes, useSharedWorkers);
             createPackageJson  .init(appName, workspace, fs, os, path);
             createScssResources.init(appName, workspace, fs, os, path);
-            createSrcFolder    .init(path.join(cwd, workspace), fs, os, path);
+            createSrcFolder    .init(path.join(cwd, workspace), fs, os, path, __dirname);
 
             fs.copySync(
-                path.resolve(process.argv[1], '../../neo-app/resources/copyExamples.mjs'),
+                path.join(__dirname, '../resources/copyExamples.mjs'),
                 path.join(workspace, 'buildScripts/copyExamples.mjs')
             );
 

@@ -19,7 +19,7 @@ export default {
             },
             dependencies: {
                 "fs-extra": "^10.0.0",
-                "neo.mjs": "^3.1.0"
+                "neo.mjs": "^3.1.1"
             }
         };
 

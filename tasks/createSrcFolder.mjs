@@ -1,5 +1,5 @@
 export default {
-    init(folder, fs, os, path) {
+    init(folder, fs, os, path, __dirname) {
         const content = [
             "// We ONLY need this empty file for the webpack dev server.",
             "// Without it, starting the server causes 2 errors.",
@@ -14,7 +14,7 @@ export default {
         fs.writeFileSync(path.join(folder, 'src/index.js'), content);
 
         fs.copySync(
-            path.resolve(process.argv[1], '../../neo-app/resources/MicroLoader.mjs'),
+            path.join(__dirname, '../resources/MicroLoader.mjs'),
             path.join(folder, 'src/MicroLoader.mjs')
         );
     }
