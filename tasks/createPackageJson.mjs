@@ -18,8 +18,7 @@ export default {
                 "test": "echo \"Error: no test specified\" && exit 1"
             },
             dependencies: {
-                "fs-extra": "^10.0.0",
-                "neo.mjs": "^3.1.4"
+                "neo.mjs": "^3.2.3"
             }
         };
 
