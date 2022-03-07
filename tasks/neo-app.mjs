@@ -13,6 +13,7 @@ import createNeoConfigJson from './createNeoConfigJson.mjs';
 import createPackageJson   from './createPackageJson.mjs';
 import createScssResources from './createScssResources.mjs';
 import createSrcFolder     from './createSrcFolder.mjs';
+import createServiceWorker from './createServiceWorker.mjs';
 import envinfo             from 'envinfo';
 import fs                  from 'fs-extra';
 import inquirer            from 'inquirer';
@@ -167,6 +168,7 @@ if (programOpts.info) {
             createNeoConfigJson.init(appName, appPath, fs, mainThreadAddons, os, path, themes, useSharedWorkers);
             createPackageJson  .init(appName, workspace, fs, os, path);
             createScssResources.init(appName, workspace, fs, os, path);
+            createServiceWorker.init(appName, appPath, fs, os, path);
             createSrcFolder    .init(path.join(cwd, workspace), fs, os, path, __dirname);
 
             fs.copySync(
