@@ -46,7 +46,7 @@ export default {
             "",
             "Neo.applyClassConfig(MainContainer);",
             "",
-            "export {MainContainer as default};"
+            "export default MainContainer;"
         ].join(os.EOL);
 
         if (!fs.existsSync(path.join(folder, 'view'))) {
