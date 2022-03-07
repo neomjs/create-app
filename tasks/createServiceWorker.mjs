@@ -1,9 +1,9 @@
 export default {
     init(appName, folder, fs, os, path) {
         const serviceWorkerContent = [
-            "import Neo         from '../../../node_modules/neo.mjs/src/Neo.mjs';",
-            "import * as core   from '../../../node_modules/neo.mjs/src/core/_export.mjs';",
-            "import ServiceBase from '../../../node_modules/neo.mjs/src/worker/ServiceBase.mjs';",
+            "import Neo         from '../node_modules/neo.mjs/src/Neo.mjs';",
+            "import * as core   from '../node_modules/neo.mjs/src/core/_export.mjs';",
+            "import ServiceBase from '../node_modules/neo.mjs/src/worker/ServiceBase.mjs';",
             "",
             "/**",
             " * @class Neo.ServiceWorker",
