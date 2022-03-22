@@ -32,13 +32,14 @@ const __dirname   = fileURLToPath(path.dirname(import.meta.url)),
 program
     .name(packageJson.name)
     .version(packageJson.version)
-    .option('-i, --info',                    'print environment debug info')
-    .option('-n, --app-name <name>',         'name of your app in PascalCase')
-    .option('-m, --mainThreadAddons <name>', '"AmCharts", "AnalyticsByGoogle", "DragDrop", "HighlightJS", "LocalStorage", "MapboxGL", "Markdown", "Siesta", "Stylesheet"')
-    .option('-s, --start <name>',            'start a web-server right after the build.', 'true')
-    .option('-t, --themes <name>',           '"neo-theme-dark", "neo-theme-light", "all", "none"')
-    .option('-u, --useSharedWorkers <name>', '"yes", "no"')
-    .option('-w, --workspace <name>',        'name of the project root folder')
+    .option('-i, --info',                     'print environment debug info')
+    .option('-n, --app-name <name>',          'name of your app in PascalCase')
+    .option('-m, --mainThreadAddons <name>',  '"AmCharts", "AnalyticsByGoogle", "DragDrop", "HighlightJS", "LocalStorage", "MapboxGL", "Markdown", "ServiceWorker", "Siesta", "Stylesheet"')
+    .option('-s, --start <name>',             'start a web-server right after the build.', 'true')
+    .option('-t, --themes <name>',            '"neo-theme-dark", "neo-theme-light", "all", "none"')
+    .option('-u, --useSharedWorkers <name>',  '"yes", "no"')
+    .option('-v, --useServiceWorker <value>', '"yes", "no"')
+    .option('-w, --workspace <name>',         'name of the project root folder')
     .allowUnknownOption()
     .on('--help', () => {
         console.log('\nIn case you have any issues, please create a ticket here:');
@@ -122,6 +123,16 @@ if (programOpts.info) {
         });
     }
 
+    if (!programOpts.useServiceWorker) {
+        questions.push({
+            type   : 'list',
+            name   : 'useServiceWorker',
+            message: 'Do you want to use a ServiceWorker for caching assets?',
+            choices: ['yes', 'no'],
+            default: 'no'
+        });
+    }
+
     const handleError = e => {
         console.error('ERROR! An error was encountered while executing');
         console.error(e);
@@ -148,6 +159,7 @@ if (programOpts.info) {
             mainThreadAddons = programOpts.appName          || answers['mainThreadAddons'],
             themes           = programOpts.themes           || answers['themes'],
             useSharedWorkers = programOpts.useSharedWorkers || answers.useSharedWorkers,
+            useServiceWorker = programOpts.useServiceWorker || answers.useServiceWorker,
             workspace        = programOpts.workspace        || answers['workspace'],
             appPath          = path.join(workspace, '/apps/', appName.toLowerCase(), '/');
 
@@ -165,7 +177,7 @@ if (programOpts.info) {
             createIndexHtml    .init(appName, appPath, fs, os, path);
             createMainContainer.init(appName, appPath, fs, os, path);
             createMyAppsJson   .init(appName, workspace, fs, os, path);
-            createNeoConfigJson.init(appName, appPath, fs, mainThreadAddons, os, path, themes, useSharedWorkers);
+            createNeoConfigJson.init(appName, appPath, fs, mainThreadAddons, os, path, themes, useSharedWorkers, useServiceWorker);
             createPackageJson  .init(appName, workspace, fs, os, path);
             createScssResources.init(appName, workspace, fs, os, path);
             createServiceWorker.init(appName, appPath, fs, os, path);

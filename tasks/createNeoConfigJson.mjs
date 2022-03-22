@@ -1,5 +1,5 @@
 export default {
-    init(appName, folder, fs, mainThreadAddons, os, path, themes, useSharedWorkers) {
+    init(appName, folder, fs, mainThreadAddons, os, path, themes, useSharedWorkers, useServiceWorker) {
         let neoConfig = {
             appPath       : `../../apps/${appName.toLowerCase()}/app.mjs`,
             basePath      : '../../',
@@ -22,6 +22,10 @@ export default {
 
         if (useSharedWorkers !== 'no') {
             neoConfig.useSharedWorkers = true;
+        }
+
+        if (useServiceWorker !== 'no') {
+            neoConfig.useServiceWorker = true;
         }
 
         let configs = Object.entries(neoConfig).sort((a, b) => a[0].localeCompare(b[0]));
