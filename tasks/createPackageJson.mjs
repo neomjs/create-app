@@ -18,7 +18,7 @@ export default {
                 "test": "echo \"Error: no test specified\" && exit 1"
             },
             dependencies: {
-                "neo.mjs": "^4.0.6"
+                "neo.mjs": "^4.0.21"
             }
         };
 
