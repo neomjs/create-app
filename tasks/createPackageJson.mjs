@@ -15,10 +15,11 @@ export default {
                 "create-app": "node ./node_modules/neo.mjs/buildScripts/createApp.mjs",
                 "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.mjs",
                 "server-start": "webpack serve -c ./node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.mjs --open",
-                "test": "echo \"Error: no test specified\" && exit 1"
+                "test": "echo \"Error: no test specified\" && exit 1",
+                "watch-themes": "node ./buildScripts/watchThemes.mjs"
             },
             dependencies: {
-                "neo.mjs": "^4.0.28"
+                "neo.mjs": "^4.0.41"
             }
         };
 
