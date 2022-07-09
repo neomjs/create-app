@@ -24,7 +24,7 @@ export default {
             "Then you can drop it into the `neo-config.json` files inside the root level of your apps",
             "using a 'WS/' prefix.",
             "",
-            '"mainThreadAddons":["DragDrop", "Stylesheet", "WS/MyAddon"]'
+            '"mainThreadAddons": ["DragDrop", "Stylesheet", "WS/MyAddon"]'
         ].join(os.EOL);
 
         fs.writeFileSync(path.join(folder, 'src/main/addon/README.md'), readmeContent);
