@@ -7,7 +7,7 @@ export default {
             type: 'module',
             scripts: {
                 "build-all": "node ./node_modules/neo.mjs/buildScripts/buildAll.mjs -n",
-                "build-all-questions": "node ./buildScripts/buildAll.mjs",
+                "build-all-questions": "node ./node_modules/neo.mjs/buildScripts/buildAll.mjs",
                 "build-my-apps": "node ./node_modules/neo.mjs/buildScripts/webpack/buildMyApps.mjs",
                 "build-themes": "node ./node_modules/neo.mjs/buildScripts/buildThemes.mjs",
                 "build-threads": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThreads.mjs",
@@ -20,7 +20,7 @@ export default {
                 "watch-themes": "node ./node_modules/neo.mjs/buildScripts/watchThemes.mjs"
             },
             dependencies: {
-                "neo.mjs": "^4.0.66"
+                "neo.mjs": "^4.0.71"
             }
         };
 
