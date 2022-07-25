@@ -4,7 +4,6 @@ export default {
             "import MainContainer from './view/MainContainer.mjs';",
             "",
             "export const onStart = () => Neo.app({",
-            "    appPath : 'apps/" + appName.toLowerCase() + "/',",
             "    mainView: MainContainer,",
             "    name    : '" + appName + "'",
             "});"
