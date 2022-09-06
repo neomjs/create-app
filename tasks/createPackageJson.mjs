@@ -6,6 +6,7 @@ export default {
             private: true,
             type: 'module',
             scripts: {
+                "add-config": "node ./node_modules/neo.mjs/buildScripts/addConfig.mjs",
                 "build-all": "node ./node_modules/neo.mjs/buildScripts/buildAll.mjs -n",
                 "build-all-questions": "node ./node_modules/neo.mjs/buildScripts/buildAll.mjs",
                 "build-my-apps": "node ./node_modules/neo.mjs/buildScripts/webpack/buildMyApps.mjs",
