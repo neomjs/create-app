@@ -10,7 +10,7 @@ export default {
             " * @extends Neo.container.Viewport",
             " */",
             "class MainContainer extends Viewport {",
-            "    static Config = {",
+            "    static config = {",
             "        /**",
             "         * @member {String} className='" + appName + ".view.MainContainer'",
             "         * @protected",
