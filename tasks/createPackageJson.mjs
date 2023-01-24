@@ -16,12 +16,13 @@ export default {
                 "create-app": "node ./node_modules/neo.mjs/buildScripts/createApp.mjs",
                 "create-class": "node ./node_modules/neo.mjs/buildScripts/createClass.mjs",
                 "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.mjs",
+                "inject-package-version": "node ./buildScripts/injectPackageVersion.mjs",
                 "server-start": "webpack serve -c ./node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.mjs --open",
                 "test": "echo \"Error: no test specified\" && exit 1",
                 "watch-themes": "node ./node_modules/neo.mjs/buildScripts/watchThemes.mjs"
             },
             dependencies: {
-                "neo.mjs": "^4.8.3"
+                "neo.mjs": "^5.0.0"
             }
         };
 
