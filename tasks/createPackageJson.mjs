@@ -22,7 +22,7 @@ export default {
                 "watch-themes": "node ./node_modules/neo.mjs/buildScripts/watchThemes.mjs"
             },
             dependencies: {
-                "neo.mjs": "^5.0.0"
+                "neo.mjs": "^5.5.12"
             }
         };
 
