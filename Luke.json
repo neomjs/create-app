@@ -1,22 +1,22 @@
 {
-    "name": "neo-app",
+    "name": "luke-app",
     "version": "5.10.13",
-    "description": "neo.mjs: Create app via npx",
+    "description": "luke.mjs: Create app via npx",
     "type": "module",
     "repository": {
         "type": "git",
-        "url": "https://github.com/neomjs/create-app"
+        "url": "https://github.com/lukemjs/create-app"
     },
     "scripts": {
-        "neo-app": "node ./tasks/neo-app.mjs",
+        "luke-app": "node ./tasks/luke-app.mjs",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "bin": {
-        "neo-app": "./tasks/neo-app.mjs"
+        "luke-app": "./tasks/luke-app.mjs"
     },
     "keywords": [
-        "neomjs",
-        "neo.mjs",
+        "lukemjs",
+        "luke.mjs",
         "javascript",
         "frontend",
         "framework",
@@ -28,9 +28,9 @@
     "author": "Tobias Uhlig",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/neomjs/create-app/issues"
+        "url": "https://github.com/lukemjs/create-app/issues"
     },
-    "homepage": "https://neomjs.github.io/pages/",
+    "homepage": "https://lukemjs.github.io/pages/",
     "dependencies": {
         "chalk": "^5.0.0",
         "commander": "^8.3.0",
