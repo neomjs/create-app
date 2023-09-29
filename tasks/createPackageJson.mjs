@@ -15,6 +15,7 @@ export default {
                 "copy-examples": "node ./buildScripts/copyExamples.mjs",
                 "create-app": "node ./node_modules/neo.mjs/buildScripts/createApp.mjs",
                 "create-class": "node ./node_modules/neo.mjs/buildScripts/createClass.mjs",
+                "create-component": "node ./node_modules/neo.mjs/buildScripts/createComponent.mjs",
                 "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.mjs",
                 "inject-package-version": "node ./buildScripts/injectPackageVersion.mjs",
                 "server-start": "webpack serve -c ./node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.mjs --open",
@@ -22,7 +23,7 @@ export default {
                 "watch-themes": "node ./node_modules/neo.mjs/buildScripts/watchThemes.mjs"
             },
             dependencies: {
-                "neo.mjs": "^5.10.13"
+                "neo.mjs": "^6.7.4"
             }
         };
 
