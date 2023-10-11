@@ -9,7 +9,6 @@ export default {
                 "add-config": "node ./node_modules/neo.mjs/buildScripts/addConfig.mjs",
                 "build-all": "node ./node_modules/neo.mjs/buildScripts/buildAll.mjs -n",
                 "build-all-questions": "node ./node_modules/neo.mjs/buildScripts/buildAll.mjs",
-                "build-my-apps": "node ./node_modules/neo.mjs/buildScripts/webpack/buildMyApps.mjs",
                 "build-themes": "node ./node_modules/neo.mjs/buildScripts/buildThemes.mjs",
                 "build-threads": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThreads.mjs",
                 "copy-examples": "node ./buildScripts/copyExamples.mjs",
@@ -23,7 +22,7 @@ export default {
                 "watch-themes": "node ./node_modules/neo.mjs/buildScripts/watchThemes.mjs"
             },
             dependencies: {
-                "neo.mjs": "^6.7.4"
+                "neo.mjs": "^6.8.2"
             }
         };
 
