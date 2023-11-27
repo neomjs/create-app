@@ -22,7 +22,7 @@ export default {
                 "watch-themes": "node ./node_modules/neo.mjs/buildScripts/watchThemes.mjs"
             },
             dependencies: {
-                "neo.mjs": "^6.10.0"
+                "neo.mjs": "^6.10.1"
             },
             devDependencies: {
                 "@fortawesome/fontawesome-free": "^6.4.2",
