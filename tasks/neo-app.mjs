@@ -108,8 +108,8 @@ if (programOpts.info) {
             type   : 'checkbox',
             name   : 'mainThreadAddons',
             message: 'Please choose your main thread addons:',
-            choices: ['AmCharts', 'AnalyticsByGoogle', 'DragDrop', 'HighlightJS', 'LocalStorage', 'MapboxGL', 'Markdown', 'Siesta', 'Stylesheet'],
-            default: ['DragDrop', 'Stylesheet']
+            choices: ['AmCharts', 'AnalyticsByGoogle', 'DragDrop', 'HighlightJS', 'LocalStorage', 'Navigator', 'MapboxGL', 'Markdown', 'Siesta', 'Stylesheet'],
+            default: ['DragDrop', 'Navigator', 'Stylesheet']
         });
     }
 
