@@ -13,7 +13,7 @@ export default {
                 "build-threads": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThreads.mjs",
                 "copy-examples": "node ./buildScripts/copyExamples.mjs",
                 "create-app": "node ./node_modules/neo.mjs/buildScripts/createApp.mjs",
-                "create-app-minimal": "node ./node_modules/neo.mjs/createAppMinimal.mjs",
+                "create-app-minimal": "node ./node_modules/neo.mjs/buildScripts/createAppMinimal.mjs",
                 "create-class": "node ./node_modules/neo.mjs/buildScripts/createClass.mjs",
                 "create-component": "node ./node_modules/neo.mjs/buildScripts/createComponent.mjs",
                 "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.mjs",
