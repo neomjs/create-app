@@ -98,7 +98,7 @@ if (programOpts.info) {
             type   : 'list',
             name   : 'themes',
             message: 'Please choose a theme for your neo app:',
-            choices: ['neo-theme-dark', 'neo-theme-light', 'all', 'none'],
+            choices: ['neo-theme-dark', 'neo-theme-light', 'neo-theme-neo-light', 'all', 'none'],
             default: 'all'
         });
     }

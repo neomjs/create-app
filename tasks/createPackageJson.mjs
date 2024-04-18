@@ -23,30 +23,30 @@ export default {
                 "watch-themes": "node ./node_modules/neo.mjs/buildScripts/watchThemes.mjs"
             },
             dependencies: {
-                "neo.mjs": "^6.15.7"
+                "neo.mjs": "^6.15.11"
             },
             devDependencies: {
-                "@fortawesome/fontawesome-free": "^6.5.1",
-                "autoprefixer": "^10.4.18",
+                "@fortawesome/fontawesome-free": "^6.5.2",
+                "autoprefixer": "^10.4.19",
                 "chalk": "^5.3.0",
                 "clean-webpack-plugin": "^4.0.0",
                 "commander": "^12.0.0",
-                "cssnano": "^6.1.0",
-                "envinfo": "^7.11.1",
+                "cssnano": "^6.1.2",
+                "envinfo": "^7.12.0",
                 "fs-extra": "^11.2.0",
                 "highlightjs-line-numbers.js": "^2.8.0",
-                "inquirer": "^9.2.16",
+                "inquirer": "^9.2.18",
                 "marked": "^12.0.1",
                 "monaco-editor": "^0.47.0",
                 "neo-jsdoc": "1.0.1",
                 "neo-jsdoc-x": "1.0.5",
-                "postcss": "^8.4.37",
-                "sass": "^1.72.0",
+                "postcss": "^8.4.38",
+                "sass": "^1.75.0",
                 "siesta-lite": "5.5.2",
                 "url": "^0.11.3",
-                "webpack": "^5.90.3",
+                "webpack": "^5.91.0",
                 "webpack-cli": "^5.1.4",
-                "webpack-dev-server": "^4.15.1",
+                "webpack-dev-server": "^4.15.2",
                 "webpack-hook-plugin": "^1.0.7",
                 "webpack-node-externals": "^3.0.0"
             }
