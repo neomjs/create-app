@@ -9,6 +9,7 @@ export default {
 
         fs.mkdirpSync(path.join(srcPath,           'apps', lAppName));
         fs.mkdirpSync(path.join(themeDarkPath,     'apps', lAppName));
+        fs.mkdirpSync(path.join(themeLightPath,    'apps', lAppName));
         fs.mkdirpSync(path.join(themeNeoLightPath, 'apps', lAppName));
 
         fs.writeFileSync(path.join(themeDarkPath,     '_all.scss'), ['@import "apps/all";'].join(os.EOL));
