@@ -195,6 +195,15 @@ if (programOpts.info) {
 
             copyDocsApp.init(fs, os, path, workspace);
 
+            const webpackScriptFolder = path.join(workspace, 'buildScripts/webpack');
+
+            fs.mkdirpSync(webpackScriptFolder);
+
+            fs.copySync(
+                path.join(workspace, 'node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.mjs'),
+                path.join(webpackScriptFolder, 'webpack.server.config.mjs')
+            );
+
             spawnSync('node', ['./node_modules/neo.mjs/buildScripts/buildAll.mjs', '-n', '-l', 'no'], {
                 cwd  : path.join(cwd, workspace),
                 env  : process.env,

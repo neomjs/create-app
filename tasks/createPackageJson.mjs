@@ -18,7 +18,7 @@ export default {
                 "create-component": "node ./node_modules/neo.mjs/buildScripts/createComponent.mjs",
                 "generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.mjs",
                 "inject-package-version": "node ./buildScripts/injectPackageVersion.mjs",
-                "server-start": "webpack serve -c ./node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.mjs --open",
+                "server-start": "webpack serve -c ./buildScripts/webpack/webpack.server.config.mjs --open",
                 "test": "echo \"Error: no test specified\" && exit 1",
                 "watch-themes": "node ./node_modules/neo.mjs/buildScripts/watchThemes.mjs"
             },
