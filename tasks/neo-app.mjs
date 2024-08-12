@@ -71,7 +71,7 @@ if (programOpts.info) {
     console.log(`current version of ${packageJson.name}: ${packageJson.version}`);
 
     // npm binary based on OS
-    const npmCmd = os.platform().startsWith('win') ? 'npm.cmd' : 'npm';
+    const npmCmd = os.platform() === 'win32' ? 'npm.cmd' : 'npm';
 
     const questions = [];
 
