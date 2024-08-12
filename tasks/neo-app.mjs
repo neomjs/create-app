@@ -188,7 +188,7 @@ if (programOpts.info) {
                 path.join(workspace, 'buildScripts/copyExamples.mjs')
             );
 
-            const cpOpts = { env: process.env, cwd: workspace, stdio: 'inherit' };
+            const cpOpts = { encoding: 'utf-8', env: process.env, cwd: workspace, shell: true, stdio: 'inherit' };
 
             // npm install
             spawnSync(npmCmd, ['i'], cpOpts);
