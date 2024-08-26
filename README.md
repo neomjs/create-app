@@ -40,17 +40,17 @@ Please take a couple of minutes to read this <a href="https://github.com/neomjs/
 Running the script will prompt 3 questions:
 1. Choose a workspace folder name. This folder will get created inside the terminal / CMD folder you are in.<br>
     You can rename it later on if needed.<br>
-    <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/workspace.png">
+    <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/workspace.png">
 2. Choose an app name (Pascal Case)<br>
-    <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/appname.png">
+    <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/appname.png">
 3. Choose the themes you want to use (you can change this later on inside the index.html)<br>
-    <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/themes.png">
+    <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/themes.png">
 4. Choose the mainThreadAddons you want to use (you can change this later on inside the index.html)<br>
-    <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/mainThreadAddons.png">
+    <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/mainThreadAddons.png">
 
 ## Script Options
 You can pass additional params to the script:<br>
-<img src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/scriptOptions.png">
+<img src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/scriptOptions.png">
 
 Choose a workspace folder name:
 > npx neo-app -w workspace
@@ -68,7 +68,7 @@ Of course you can combine the options, e.g.:
 By default, npx neo-app will start a webpack dev-server right after the build.
 
 A new browser tab should open right away:<br>
-<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/serverStart.png">
+<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/serverStart.png">
 
 In case you do not want to start the dev-server automatically, you can use the -s option:
 > npx neo-app -s false
@@ -85,7 +85,7 @@ since Firefox & Safari do not support JS modules inside the worker scope yet.
 To view your new app, you can navigate to:
 > http://localhost:8096/apps/myapp/
 
-<img width="1100px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/serverMyApp.png">
+<img width="1100px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/serverMyApp.png">
 
 The beauty inside this screen is:
 1.  You can see 4 threads inside the bottom left edge of the console
@@ -100,16 +100,16 @@ The dist versions run in Firefox & Safari as well.
 dist/development is using webpack based builds (source-maps, not minified)
 > http://localhost:8096/dist/development/apps/myapp/
 
-<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/Safari.png">
+<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/Safari.png">
 
 dist/production is using webpack based builds (no source-maps, minified)
 > http://localhost:8096/dist/production/apps/myapp/
 
-<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/Firefox.png">
+<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/Firefox.png">
 
 ## Workspace Content
 Using the script will create the following content:<br>
-<img width="800px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources/images/createApp/workspaceContent.png">
+<img width="800px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/workspaceContent.png">
 
 1.  .gitignore has a basic setup excluding IDE related files, the dist folder & the package-lock.json
 2.  apps contains the source files of your new app. You can create multiple apps as needed.
