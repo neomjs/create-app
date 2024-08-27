@@ -56,8 +56,6 @@ export default {
             "    }",
             "}",
             "",
-            "Neo.applyClassConfig(MainContainer);",
-            "",
             "export default Neo.setupClass(MainContainer);"
         ].join(os.EOL);
 
