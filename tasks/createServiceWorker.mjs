@@ -31,13 +31,7 @@ export default {
             "    }}",
             "}",
             "",
-            "Neo.applyClassConfig(ServiceWorker);",
-            "",
-            "let instance = Neo.create(ServiceWorker);",
-            "",
-            "Neo.applyToGlobalNs(instance);",
-            "",
-            "export default instance;"
+            "export default Neo.setupClass(ServiceWorker);"
         ].join(os.EOL);
 
         fs.writeFileSync(path.join(folder, '../ServiceWorker.mjs'), serviceWorkerContent);
