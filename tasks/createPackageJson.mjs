@@ -23,7 +23,7 @@ export default {
                 "watch-themes": "node ./node_modules/neo.mjs/buildScripts/watchThemes.mjs"
             },
             dependencies: {
-                "neo.mjs": "^7.0.2"
+                "neo.mjs": "^7.0.3"
             },
             devDependencies: {
                 "@fortawesome/fontawesome-free": "^6.6.0",
@@ -37,7 +37,7 @@ export default {
                 "highlightjs-line-numbers.js": "^2.8.0",
                 "inquirer": "^10.1.8",
                 "marked": "^14.0.0",
-                "monaco-editor": "^0.50.0",
+                "monaco-editor": "0.50.0",
                 "neo-jsdoc": "1.0.1",
                 "neo-jsdoc-x": "1.0.5",
                 "postcss": "^8.4.41",
