@@ -1,6 +1,6 @@
 {
     "name": "neo-app",
-    "version": "7.8.0",
+    "version": "7.9.1",
     "description": "neo.mjs: Create app via npx",
     "type": "module",
     "repository": {
