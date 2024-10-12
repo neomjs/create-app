@@ -22,12 +22,13 @@ import path                from 'path';
 import { fileURLToPath }   from 'url';
 
 
-const __dirname   = fileURLToPath(path.dirname(import.meta.url)),
-      cwd         = process.cwd(),
-      requireJson = path => JSON.parse(fs.readFileSync((path))),
-      packageJson = requireJson(path.join(__dirname, '../package.json')),
-      program     = new Command(),
-      startDate   = new Date();
+const
+    __dirname   = fileURLToPath(path.dirname(import.meta.url)),
+    cwd         = process.cwd(),
+    requireJson = path => JSON.parse(fs.readFileSync((path))),
+    packageJson = requireJson(path.join(__dirname, '../package.json')),
+    program     = new Command(),
+    startDate   = new Date();
 
 program
     .name(packageJson.name)
@@ -103,31 +104,11 @@ if (programOpts.info) {
         });
     }
 
-    if (!programOpts.mainThreadAddons) {
-        questions.push({
-            type   : 'checkbox',
-            name   : 'mainThreadAddons',
-            message: 'Please choose your main thread addons:',
-            choices: ['AmCharts', 'AnalyticsByGoogle', 'DragDrop', 'HighlightJS', 'LocalStorage', 'Navigator', 'MapboxGL', 'Markdown', 'Siesta', 'Stylesheet'],
-            default: ['DragDrop', 'Navigator', 'Stylesheet']
-        });
-    }
-
     if (!programOpts.useSharedWorkers) {
         questions.push({
             type   : 'list',
             name   : 'useSharedWorkers',
             message: 'Do you want to use SharedWorkers? Pick yes for multiple main threads (Browser Windows):',
-            choices: ['yes', 'no'],
-            default: 'no'
-        });
-    }
-
-    if (!programOpts.useServiceWorker) {
-        questions.push({
-            type   : 'list',
-            name   : 'useServiceWorker',
-            message: 'Do you want to use a ServiceWorker for caching assets?',
             choices: ['yes', 'no'],
             default: 'no'
         });
@@ -156,10 +137,10 @@ if (programOpts.info) {
 
     inquirer.prompt(questions).then(answers => {
         let appName          = programOpts.appName          || answers['appName'],
-            mainThreadAddons = programOpts.appName          || answers['mainThreadAddons'],
+            mainThreadAddons = programOpts.mainThreadAddons || ['DragDrop', 'Navigator', 'Stylesheet'],
             themes           = programOpts.themes           || answers['themes'],
             useSharedWorkers = programOpts.useSharedWorkers || answers.useSharedWorkers,
-            useServiceWorker = programOpts.useServiceWorker || answers.useServiceWorker,
+            useServiceWorker = programOpts.useServiceWorker || 'no',
             workspace        = programOpts.workspace        || answers['workspace'],
             appPath          = path.join(workspace, '/apps/', appName.toLowerCase(), '/');
 

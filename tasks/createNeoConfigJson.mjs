@@ -8,7 +8,12 @@ export default {
             workerBasePath: '../../node_modules/neo.mjs/src/worker/'
         };
 
-        if (!(mainThreadAddons.includes('DragDrop') && mainThreadAddons.includes('Stylesheet') && mainThreadAddons.length === 2)) {
+        if (!(
+            mainThreadAddons.includes('DragDrop')   &&
+            mainThreadAddons.includes('Navigator')  &&
+            mainThreadAddons.includes('Stylesheet') &&
+            mainThreadAddons.length === 3)
+        ) {
             neoConfig.mainThreadAddons = mainThreadAddons;
         }
 
