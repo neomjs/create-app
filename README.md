@@ -43,9 +43,9 @@ Running the script will prompt 3 questions:
     <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/workspace.png">
 2. Choose an app name (Pascal Case)<br>
     <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/appname.png">
-3. Choose the themes you want to use (you can change this later on inside the index.html)<br>
+3. Choose the themes you want to use (you can change this later on inside the neo-config.json)<br>
     <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/themes.png">
-4. Choose the mainThreadAddons you want to use (you can change this later on inside the index.html)<br>
+4. Choose the mainThreadAddons you want to use (you can change this later on inside the neo-config.json)<br>
     <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/mainThreadAddons.png">
 
 ## Script Options
@@ -61,7 +61,7 @@ Choose an app name:
 Choose the themes:
 > npx neo-app -t both
 
-Of course you can combine the options, e.g.:
+Of course, you can combine the options, e.g.:
 > npx neo-app -w workspace -n MyApp -t both
 
 ## Starting a local web-server
