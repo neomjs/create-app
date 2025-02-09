@@ -3,7 +3,6 @@
   <a href="https://www.npmjs.com/package/neo-app"><img src="https://img.shields.io/npm/v/neo-app.svg" alt="Version"></a>
   <a href="https://www.npmjs.com/package/neo-app"><img src="https://img.shields.io/npm/l/neo-app.svg" alt="License"></a>
   <a href="https://discord.gg/6p8paPq"><img src="https://img.shields.io/discord/656620537514164249?label=discord%20chat" alt="Chat"></a>
-  <a href="https://david-dm.org/neomjs/create-app"><img src="https://img.shields.io/david/neomjs/create-app" alt="Dependencies"></a>
   <a href="./CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-green.svg" alt="PRs Welcome"></a>
 </p>
 
@@ -45,8 +44,6 @@ Running the script will prompt 3 questions:
     <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/appname.png">
 3. Choose the themes you want to use (you can change this later on inside the neo-config.json)<br>
     <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/themes.png">
-4. Choose the mainThreadAddons you want to use (you can change this later on inside the neo-config.json)<br>
-    <img width="500px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/mainThreadAddons.png">
 
 ## Script Options
 You can pass additional params to the script:<br>
@@ -79,8 +76,7 @@ You can use a different web-server of your choice (e.g. webstorm) or you can sta
 > npm run server-start
 
 ## Viewing your app in development mode
-At this point, the dev-mode only works in Google Chrome & Edge (Chromium),</br>
-since Firefox & Safari do not support JS modules inside the worker scope yet.
+The dev mode works in all major browsers (Chromium, Firefox & Safari).
 
 To view your new app, you can navigate to:
 > http://localhost:8096/apps/myapp/
@@ -95,8 +91,6 @@ The beauty inside this screen is:
     2.  No need for source-maps
 
 ## Viewing your app in dist modes
-The dist versions run in Firefox & Safari as well.
-
 dist/development is using webpack based builds (source-maps, not minified)
 > http://localhost:8096/dist/development/apps/myapp/
 
@@ -145,18 +139,11 @@ Some IDEs like webstorm can show npm scripts as a toolbox, so you can just click
 1. server-start: Starts the webpack dev-server
 2. build-all: npm install & builds literally everything.
 3. build-all-questions: same as build all, but you can choose what to build using the inquirer interface.
-4. build-my-apps: creates the dist versions for your app(s) as well as the Docs app
-5. build-themes: builds the themes for dev and / or prod and lets you choose if want to use CSS variables.
-6. build-threads: builds main, data & vdom (or any combinations) for dev and / or prod.
-7. create-app: add an additional app to your project. You can also trigger npx neo-app multiple times.
-8. generate-docs-json: When you change your app code (e.g. adding new files) and want to see those changes inside the
+4. build-themes: builds the themes for dev and / or prod and lets you choose if want to use CSS variables.
+5. build-threads: builds main, data & vdom (or any combinations) for dev and / or prod.
+6. create-app: add an additional app to your project. You can also trigger npx neo-app multiple times.
+7. generate-docs-json: When you change your app code (e.g. adding new files) and want to see those changes inside the
 Docs app, you need to run this script to update the content.
-
-You can choose which apps you want to build. Might not work on Windows 10 (issues with the deasync npm package)
-6.  prod-build-my-apps: creates the dist/production versions for your app(s) as well as the Docs app.
-You can choose which apps you want to build. Might not work on Windows 10 (issues with the deasync npm package)
-7.  theme related builds. You should run those when upgrading to a newer neo.mjs version, in case there were changes
-inside the scss files.
 
 ## Working on your new neo.mjs App
 It is recommended to use the development mode (non dist version) for developing your App(s).
@@ -169,25 +156,7 @@ Once you get to a point where you want to test your changes inside the dist vers
 <a href="#packagejson-scripts">package.json Scripts</a>.
 
 ## Learning neo.mjs
-To be fair, neo.mjs just got released to the public on November 23, 2019.
-
-At this point getting up to speed is not as easy as it could be. There are a couple of guides inside the Docs app,
-but on the long term we definitely need more (help on this one is greatly appreciated!).
-
-I recommend taking a look at the code base of the <a href="https://github.com/neomjs/neo/tree/dev/docs/app/view">Docs app source</a> (which is a neo.mjs App).
-
-The <a href="https://github.com/neomjs/neo/tree/dev/apps/realworld">Real World App</a> is also worth a look.
-This one is not using a neo.mjs theme, since a given Bootstrap theme was a requirement, but it can help you to get
-the idea of how to craft custom components and work with Controllers.
-
-The <a href="https://github.com/neomjs/neo/tree/dev/apps/covid">Covid Dashboard</a> is the real deal,
-so studying the code will help you a lot (a blog on its creation is on the roadmap).
-
-In general, it does make a lot of sense to dive into the neo.mjs code base. Some starting points:<br>
-<a href="https://github.com/neomjs/neo/blob/dev/src/Neo.mjs">Neo.mjs</a> (class system enhancements)<br>
-<a href="https://github.com/neomjs/neo/blob/dev/src/Main.mjs">Main.mjs</a> (main thread starting point)<br>
-<a href="https://github.com/neomjs/neo/blob/dev/src/worker/Manager.mjs">worker.Manager</a> (Creates the 3 workers)<br>
-<a href="https://github.com/neomjs/neo/blob/dev/src/core/Base.mjs">core.Base</a> (Base class for almost everything)<br>
+Take a look into the new <a href="https://neomjs.com/dist/production/apps/portal/#/learn">Learning Section</a>
 
 ## Feedback and Questions
 Feel free to use one of these options (or both):<br>
