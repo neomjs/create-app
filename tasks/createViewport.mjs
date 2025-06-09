@@ -1,25 +1,26 @@
 export default {
     init(appName, folder, fs, os, path) {
-        const mainContainerContent = [
+        const viewportContent = [
+            "import BaseViewport from '../../../node_modules/neo.mjs/src/container/Viewport.mjs';",
             "import Component    from '../../../node_modules/neo.mjs/src/component/Base.mjs';",
             "import TabContainer from '../../../node_modules/neo.mjs/src/tab/Container.mjs';",
-            "import Viewport     from '../../../node_modules/neo.mjs/src/container/Viewport.mjs';",
             "",
             "/**",
-            " * @class " + appName + ".view.MainContainer",
+            " * @class " + appName + ".view.Viewport",
             " * @extends Neo.container.Viewport",
             " */",
-            "class MainContainer extends Viewport {",
+            "class Viewport extends BaseViewport {",
             "    static config = {",
             "        /**",
-            "         * @member {String} className='" + appName + ".view.MainContainer'",
+            "         * @member {String} className='" + appName + ".view.Viewport'",
             "         * @protected",
             "         */",
-            "        className: '" + appName + ".view.MainContainer',",
-            "        /**",
-            "         * @member {Boolean} autoMount=true",
+            "        className: '" + appName + ".view.Viewport',",
+            "        /*",
+            "         * @member {Object} layout={ntype:'fit'}",
             "         */",
-            "        autoMount: true,",
+            "        layout: {ntype: 'fit'},",
+            "",
             "        /**",
             "         * @member {Object[]} items",
             "         */",
@@ -48,21 +49,17 @@ export default {
             "                },",
             "                vdom: {innerHTML: 'Have fun creating something awesome!'}",
             "            }]",
-            "        }],",
-            "        /*",
-            "         * @member {Object} layout={ntype:'fit'}",
-            "         */",
-            "        layout: {ntype: 'fit'}",
+            "        }]",
             "    }",
             "}",
             "",
-            "export default Neo.setupClass(MainContainer);"
+            "export default Neo.setupClass(Viewport);"
         ].join(os.EOL);
 
         if (!fs.existsSync(path.join(folder, 'view'))) {
             fs.mkdirSync(path.join(folder, 'view'));
         }
 
-        fs.writeFileSync(path.join(folder, 'view/MainContainer.mjs'), mainContainerContent);
+        fs.writeFileSync(path.join(folder, 'view/MainContainer.mjs'), viewportContent);
     }
 };

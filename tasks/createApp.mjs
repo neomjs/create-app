@@ -1,10 +1,10 @@
 export default {
     init(appName, folder, fs, os, path) {
         const appContent = [
-            "import MainContainer from './view/MainContainer.mjs';",
+            "import Viewport from './view/Viewport.mjs';",
             "",
             "export const onStart = () => Neo.app({",
-            "    mainView: MainContainer,",
+            "    mainView: Viewport,",
             "    name    : '" + appName + "'",
             "});"
         ].join(os.EOL);
