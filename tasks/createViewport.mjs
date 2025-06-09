@@ -60,6 +60,6 @@ export default {
             fs.mkdirSync(path.join(folder, 'view'));
         }
 
-        fs.writeFileSync(path.join(folder, 'view/MainContainer.mjs'), viewportContent);
+        fs.writeFileSync(path.join(folder, 'view/Viewport.mjs'), viewportContent);
     }
 };
