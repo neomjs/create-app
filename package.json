@@ -1,20 +1,20 @@
 {
-    "name": "neo-app",
-    "version": "8.42.0",
-    "description": "neo.mjs: Create app via npx",
-    "type": "module",
-    "repository": {
+    "name"        : "neo-app",
+    "version"     : "8.42.0",
+    "description" : "neo.mjs: Create app via npx",
+    "type"        : "module",
+    "repository"  : {
         "type": "git",
-        "url": "https://github.com/neomjs/create-app"
+        "url" : "https://github.com/neomjs/create-app"
     },
-    "scripts": {
+    "scripts"     : {
         "neo-app": "node ./tasks/neo-app.mjs",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test"   : "echo \"Error: no test specified\" && exit 1"
     },
-    "bin": {
+    "bin"         : {
         "neo-app": "./tasks/neo-app.mjs"
     },
-    "keywords": [
+    "keywords"    : [
         "neomjs",
         "neo.mjs",
         "javascript",
@@ -25,22 +25,22 @@
         "css",
         "json"
     ],
-    "author": "Tobias Uhlig",
-    "license": "MIT",
-    "bugs": {
+    "author"      : "Tobias Uhlig",
+    "license"     : "MIT",
+    "bugs"        : {
         "url": "https://github.com/neomjs/create-app/issues"
     },
-    "homepage": "https://neomjs.github.io/pages/",
+    "homepage"    : "https://neomjs.github.io/pages/",
     "dependencies": {
-        "call-bind": "1.0.2",
-        "chalk": "^5.3.0",
-        "commander": "^11.0.0",
-        "envinfo": "^7.10.0",
-        "fs-extra": "^11.1.1",
-        "inquirer": "^9.2.11"
+        "call-bind": "1.0.8",
+        "chalk"    : "^5.4.1",
+        "commander": "^14.0.0",
+        "envinfo"  : "^7.14.0",
+        "fs-extra" : "^11.3.0",
+        "inquirer" : "^12.6.3"
     },
-    "funding": {
+    "funding"     : {
         "type": "GitHub Sponsors",
-        "url": "https://github.com/sponsors/tobiu"
+        "url" : "https://github.com/sponsors/tobiu"
     }
 }
