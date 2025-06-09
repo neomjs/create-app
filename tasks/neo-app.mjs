@@ -161,7 +161,7 @@ if (programOpts.info) {
             createNeoConfigJson.init(appName, appPath, fs, mainThreadAddons, os, path, themes, useSharedWorkers, useServiceWorker);
             createPackageJson  .init(appName, workspace, fs, os, path);
             createScssResources.init(appName, workspace, fs, os, path);
-            createServiceWorker.init(appName, appPath, fs, os, path);
+            createServiceWorker.init(appName, workspace, fs, os, path);
             createSrcFolder    .init(path.join(cwd, workspace), fs, os, path, __dirname);
 
             fs.copySync(
