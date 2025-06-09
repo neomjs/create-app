@@ -15,28 +15,37 @@ export default {
             fs.mkdirSync(path.join(folder, 'buildScripts'));
 
             appsJson = {
-                "mainInput": "./src/Main.mjs",
-                "mainOutput": "main.js",
-                "workers": {
-                    "app": {
-                        "input": "./src/worker/App.mjs",
-                        "output": "appworker.js"
+                mainInput : './src/Main.mjs',
+                mainOutput: 'main.js',
+
+                workers: {
+                    app: {
+                        input : './src/worker/App.mjs',
+                        output: 'appworker.js'
                     },
-                    "canvas": {
-                        "input": "./src/worker/Canvas.mjs",
-                        "output": "canvasworker.js"
+                    canvas: {
+                        input : './src/worker/Canvas.mjs',
+                        output: 'canvasworker.js'
                     },
-                    "data": {
-                        "input": "./src/worker/Data.mjs",
-                        "output": "dataworker.js"
+                    data: {
+                        input : './src/worker/Data.mjs',
+                        output: 'dataworker.js'
                     },
-                    "vdom": {
-                        "input": "./src/worker/VDom.mjs",
-                        "output": "vdomworker.js"
+                    service: {
+                        input : './ServiceWorker.mjs',
+                        output: 'serviceworker.js'
+                    },
+                    task: {
+                        input : './src/worker/Task.mjs',
+                        output: 'taskworker.js'
+                    },
+                    vdom: {
+                        input : './src/worker/VDom.mjs',
+                        output: 'vdomworker.js'
                     }
                 },
-                "apps": [
-                    "Docs"
+                apps: [
+                    'Docs'
                 ]
             };
         }
