@@ -21,7 +21,7 @@ export default {
             "         * @member {Boolean} singleton=true",
             "         * @protected",
             "         */",
-            "        singleton: true",
+            "        singleton: true,",
             "        /**",
             "         * @member {String} version='1.0.0'",
             "         */",
