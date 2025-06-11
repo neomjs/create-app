@@ -185,7 +185,7 @@ if (programOpts.info) {
                 path.join(webpackScriptFolder, 'webpack.server.config.mjs')
             );
 
-            spawnSync('node', ['./node_modules/neo.mjs/buildScripts/buildAll.mjs', '-n', '-l', 'no'], {
+            spawnSync('node', ['./node_modules/neo.mjs/buildScripts/buildAll.mjs', '-n', '-l', 'no', '-p', 'no'], {
                 cwd  : path.join(cwd, workspace),
                 env  : process.env,
                 stdio: 'inherit'
