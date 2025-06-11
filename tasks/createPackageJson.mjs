@@ -24,7 +24,7 @@ export default {
                 "watch-themes"          : "node ./node_modules/neo.mjs/buildScripts/watchThemes.mjs"
             },
             dependencies: {
-                "neo.mjs": "^9.11.1"
+                "neo.mjs": "^9.12.0"
             },
             devDependencies: {
                 "@fortawesome/fontawesome-free": "^6.7.2",
@@ -43,9 +43,9 @@ export default {
                 "neo-jsdoc"                    : "1.0.1",
                 "neo-jsdoc-x"                  : "1.0.5",
                 "postcss"                      : "^8.5.4",
-                "sass"                         : "^1.89.1",
+                "sass"                         : "^1.89.2",
                 "siesta-lite"                  : "5.5.2",
-                "terser"                       : "^5.41.0",
+                "terser"                       : "^5.42.0",
                 "url"                          : "^0.11.4",
                 "webpack"                      : "^5.99.9",
                 "webpack-cli"                  : "^6.0.1",
