@@ -30,7 +30,7 @@ export default {
                 "watch-themes"          : "node ./node_modules/neo.mjs/buildScripts/watchThemes.mjs"
             },
             dependencies: {
-                "neo.mjs": "^10.8.0"
+                "neo.mjs": "^10.9.0"
             },
             devDependencies: {
                 "@chroma-core/default-embed"   : "^0.1.8",
@@ -57,7 +57,7 @@ export default {
                 "neo-jsdoc-x"                  : "1.0.5",
                 "parse5"                       : "^8.0.0",
                 "postcss"                      : "^8.5.6",
-                "sass"                         : "^1.93.1",
+                "sass"                         : "^1.93.2",
                 "siesta-lite"                  : "5.5.2",
                 "terser"                       : "^5.44.0",
                 "url"                          : "^0.11.4",
