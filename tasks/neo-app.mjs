@@ -170,7 +170,7 @@ if (programOpts.info) {
             );
 
             fs.copySync(
-                path.join(__dirname, '../../neo/AGENTS.md'), // Source AGENTS.md from the neo repo
+                path.join(__dirname, '../neo/AGENTS.md'), // Source AGENTS.md from the neo repo
                 path.join(workspace, 'AGENTS.md')
             );
 
@@ -178,7 +178,7 @@ if (programOpts.info) {
 
             fs.mkdirpSync(path.join(workspace, '.github')); // Create .github directory
             fs.copySync(
-                path.join(__dirname, '../../neo/.github/AI_QUICK_START.md'), // Source AI_QUICK_START.md
+                path.join(__dirname, '../neo/.github/AI_QUICK_START.md'), // Source AI_QUICK_START.md
                 path.join(workspace, '.github/AI_QUICK_START.md')
             );
 
