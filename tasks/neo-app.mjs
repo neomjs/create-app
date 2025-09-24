@@ -169,6 +169,19 @@ if (programOpts.info) {
                 path.join(workspace, 'buildScripts/copyExamples.mjs')
             );
 
+            fs.copySync(
+                path.join(__dirname, '../../neo/AGENTS.md'), // Source AGENTS.md from the neo repo
+                path.join(workspace, 'AGENTS.md')
+            );
+
+            fs.mkdirpSync(path.join(workspace, 'chroma'));
+
+            fs.mkdirpSync(path.join(workspace, '.github')); // Create .github directory
+            fs.copySync(
+                path.join(__dirname, '../../neo/.github/AI_QUICK_START.md'), // Source AI_QUICK_START.md
+                path.join(workspace, '.github/AI_QUICK_START.md')
+            );
+
             const cpOpts = { encoding: 'utf-8', env: process.env, cwd: workspace, shell: true, stdio: 'inherit' };
 
             // npm install

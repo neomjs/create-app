@@ -23,6 +23,10 @@ export default {
             ".settings",
             ".vscode/",
             "",
+            "# Local AI Knowledge Base",
+            ".env",
+            "chroma/",
+            "",
             "#System Files",
             ".DS_Store",
             "Thumbs.db"
