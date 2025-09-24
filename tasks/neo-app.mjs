@@ -169,23 +169,24 @@ if (programOpts.info) {
                 path.join(workspace, 'buildScripts/copyExamples.mjs')
             );
 
-            fs.copySync(
-                path.join(__dirname, '../neo/AGENTS.md'), // Source AGENTS.md from the neo repo
-                path.join(workspace, 'AGENTS.md')
-            );
-
-            fs.mkdirpSync(path.join(workspace, 'chroma'));
-
-            fs.mkdirpSync(path.join(workspace, '.github')); // Create .github directory
-            fs.copySync(
-                path.join(__dirname, '../neo/.github/AI_QUICK_START.md'), // Source AI_QUICK_START.md
-                path.join(workspace, '.github/AI_QUICK_START.md')
-            );
-
             const cpOpts = { encoding: 'utf-8', env: process.env, cwd: workspace, shell: true, stdio: 'inherit' };
 
             // npm install
             spawnSync(npmCmd, ['i'], cpOpts);
+
+            // Copy AI-related files after npm install
+            fs.copySync(
+                path.join(workspace, 'node_modules/neo.mjs/AGENTS.md'), // Source AGENTS.md from neo.mjs package
+                path.join(workspace, 'AGENTS.md')
+            );
+
+            fs.mkdirpSync(path.join(workspace, 'chroma')); // Create chroma directory
+            fs.mkdirpSync(path.join(workspace, '.github')); // Create .github directory
+
+            fs.copySync(
+                path.join(workspace, 'node_modules/neo.mjs/.github/AI_QUICK_START.md'), // Source AI_QUICK_START.md from neo.mjs package
+                path.join(workspace, '.github/AI_QUICK_START.md')
+            );
 
             copyDocsApp.init(fs, os, path, workspace);
 
