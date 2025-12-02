@@ -8,8 +8,9 @@
         "url" : "https://github.com/neomjs/create-app"
     },
     "scripts"     : {
-        "neo-app": "node ./tasks/neo-app.mjs",
-        "test"   : "echo \"Error: no test specified\" && exit 1"
+        "ai:mcp-server-github-workflow": "node ./node_modules/neo.mjs/ai/mcp/server/github-workflow/mcp-stdio.mjs -c ./ai/mcp/server/github-workflow/config.json",
+        "neo-app"                      : "node ./tasks/neo-app.mjs",
+        "test"                         : "echo \"Error: no test specified\" && exit 1"
     },
     "bin"         : {
         "neo-app": "./tasks/neo-app.mjs"
@@ -30,14 +31,15 @@
     "bugs"        : {
         "url": "https://github.com/neomjs/create-app/issues"
     },
-    "homepage"    : "https://neomjs.github.io/pages/",
+    "homepage"    : "https://neomjs.com/",
     "dependencies": {
         "call-bind": "1.0.8",
         "chalk"    : "^5.4.1",
         "commander": "^14.0.0",
         "envinfo"  : "^7.14.0",
         "fs-extra" : "^11.3.0",
-        "inquirer" : "^12.6.3"
+        "inquirer" : "^12.6.3",
+        "neo.mjs"  : "^11.14.0"
     },
     "funding"     : {
         "type": "GitHub Sponsors",

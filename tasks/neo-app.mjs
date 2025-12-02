@@ -113,7 +113,7 @@ if (programOpts.info) {
         questions.push({
             type   : 'list',
             name   : 'useSharedWorkers',
-            message: 'Do you want to use SharedWorkers? Pick yes for multiple main threads (Browser Windows):',
+            message: 'Do you want to use SharedWorkers? Only pick yes for multiple main threads (Browser Windows):',
             choices: ['yes', 'no'],
             default: 'no'
         });

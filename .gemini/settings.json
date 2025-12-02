@@ -1,0 +1,8 @@
+{
+    "mcpServers": {
+        "neo.mjs-github-workflow": {
+            "command": "npm",
+            "args"   : ["run", "ai:mcp-server-github-workflow"]
+        }
+    }
+}
