@@ -6,6 +6,7 @@ import {Command, Option}    from 'commander/esm.mjs';
 import copyDocsApp          from './copyDocsApp.mjs';
 import createApp            from './createApp.mjs';
 import createGeminiSettings from './createGeminiSettings.mjs';
+import createMcpConfigs     from './createMcpConfigs.mjs';
 import createGitignore      from './createGitignore.mjs';
 import createIndexHtml      from './createIndexHtml.mjs';
 import createMyAppsJson     from './createMyAppsJson.mjs';
@@ -161,6 +162,7 @@ if (programOpts.info) {
 
             createApp           .init(appName, appPath, fs, os, path);
             createGeminiSettings.init(path.join(cwd, workspace), fs, os, path);
+            createMcpConfigs    .init(path.join(cwd, workspace), fs, os, path);
             createGitignore     .init(workspace, fs, os, path);
             createIndexHtml     .init(appName, appPath, fs, os, path);
             createViewport      .init(appName, appPath, fs, os, path);
