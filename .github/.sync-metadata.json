@@ -1,0 +1,85 @@
+{
+  "lastSync": "2025-12-02T12:47:08.872Z",
+  "releasesLastFetched": "2025-12-02T12:47:08.883Z",
+  "pushFailures": [],
+  "issues": {
+    "10": {
+      "state": "CLOSED",
+      "path": "/Users/Shared/github/neomjs/create-app/.github/ISSUE/issue-10.md",
+      "closedAt": "2025-06-09T08:51:07Z",
+      "updatedAt": "2025-06-09T08:51:07Z",
+      "contentHash": "d81ef99e091d3f68085af914d22ef26fc4108b6ab57feb165a9f649e77b52af5"
+    },
+    "16": {
+      "state": "CLOSED",
+      "path": "/Users/Shared/github/neomjs/create-app/.github/ISSUE/issue-16.md",
+      "closedAt": "2025-02-09T12:33:11Z",
+      "updatedAt": "2025-02-10T01:06:33Z",
+      "contentHash": "55618df189198f9bd2439bf7ca934efd80429a4dd52952d83c9c6fa88554bed5"
+    },
+    "17": {
+      "state": "CLOSED",
+      "path": "/Users/Shared/github/neomjs/create-app/.github/ISSUE/issue-17.md",
+      "closedAt": "2025-02-09T12:47:46Z",
+      "updatedAt": "2025-02-09T12:47:47Z",
+      "contentHash": "7434de2994b7d8adcd38bc0bad40acde4e356812c1e09af619ee2286c9fd3d9a"
+    },
+    "18": {
+      "state": "CLOSED",
+      "path": "/Users/Shared/github/neomjs/create-app/.github/ISSUE/issue-18.md",
+      "closedAt": "2025-06-09T08:53:09Z",
+      "updatedAt": "2025-06-09T08:53:09Z",
+      "contentHash": "8bf45a3c506a93aab4f198db667cdd7c580907c7952e236f3096ba2d39c2ac98"
+    },
+    "19": {
+      "state": "CLOSED",
+      "path": "/Users/Shared/github/neomjs/create-app/.github/ISSUE/issue-19.md",
+      "closedAt": "2025-06-09T09:17:54Z",
+      "updatedAt": "2025-06-09T09:17:54Z",
+      "contentHash": "ffb0c44febc24a9a361ac51bcacb421e12b99550e2516889972c466f47829fd4"
+    },
+    "20": {
+      "state": "CLOSED",
+      "path": "/Users/Shared/github/neomjs/create-app/.github/ISSUE/issue-20.md",
+      "closedAt": "2025-06-11T12:57:09Z",
+      "updatedAt": "2025-06-11T12:57:09Z",
+      "contentHash": "d271723701fe294c3fb3b65d1341a33e9cc6928891faa9e0f7f70ddb1f9a7f4c"
+    },
+    "21": {
+      "state": "CLOSED",
+      "path": "/Users/Shared/github/neomjs/create-app/.github/ISSUE/issue-21.md",
+      "closedAt": "2025-12-02T10:07:47Z",
+      "updatedAt": "2025-12-02T10:07:47Z",
+      "contentHash": "7cbadbd1a5d5cc1c012304bf486881e501a11d9c64e1e5f7b15dea651a8ceefc"
+    },
+    "22": {
+      "state": "CLOSED",
+      "path": "/Users/Shared/github/neomjs/create-app/.github/ISSUE/issue-22.md",
+      "closedAt": "2025-12-02T10:33:28Z",
+      "updatedAt": "2025-12-02T10:33:28Z",
+      "contentHash": "b59cbd70cbffc8fed66b8d0b1d68dc5d9a71949ccb0ef1bc7cba124f12695ff4"
+    },
+    "23": {
+      "state": "CLOSED",
+      "path": "/Users/Shared/github/neomjs/create-app/.github/ISSUE/issue-23.md",
+      "closedAt": "2025-12-02T12:21:14Z",
+      "updatedAt": "2025-12-02T12:21:14Z",
+      "contentHash": "b6eeac261703f3faaf8f5ad0d70eb07d50ed8819648ece30ee84fd5508c4771a"
+    },
+    "24": {
+      "state": "CLOSED",
+      "path": "/Users/Shared/github/neomjs/create-app/.github/ISSUE/issue-24.md",
+      "closedAt": "2025-12-02T12:30:00Z",
+      "updatedAt": "2025-12-02T12:30:00Z",
+      "contentHash": "1c988ae24c29f39d81d411c5f65f17b68a75addaf2b20f92064edbb36211df63"
+    },
+    "25": {
+      "state": "CLOSED",
+      "path": "/Users/Shared/github/neomjs/create-app/.github/ISSUE/issue-25.md",
+      "closedAt": "2025-12-02T12:46:25Z",
+      "updatedAt": "2025-12-02T12:46:25Z",
+      "contentHash": "0247220527b9417a473641af05519b27b41937a89dc2ee7b257fdef210686380"
+    }
+  },
+  "releases": {}
+}
