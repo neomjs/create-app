@@ -10,10 +10,10 @@
 Create a new <a href="https://github.com/neomjs/neo">neo.mjs</a> app (workspace) using the 1-liner:
 > npx neo-app
 
-npx neo-app works on macOS, Linux and Windows 10.<br>
+npx neo-app works on macOS, Linux and Windows 10+.<br>
 If errors occur for your local environment, please <a href="https://github.com/neomjs/create-app/issues/new">file an issue</a>.<br>
 
-Please ensure you have node & npm installed (npx is available for npm 5.2+).
+Please ensure you have node & npm installed.
 
 You ***do not*** need to clone this repository or globally install the neo-app npm package.
 
@@ -22,16 +22,17 @@ Please take a couple of minutes to read this <a href="https://github.com/neomjs/
 ## Content
 1.  <a href="#quick-overview">Quick Overview</a>
 2.  <a href="#script-options">Script Options</a>
-3.  <a href="#starting-a-local-web-server">Starting a local web-server</a>
-4.  <a href="#viewing-your-app-in-development-mode">Viewing your app in development mode</a>
-5.  <a href="#viewing-your-app-in-dist-modes">Viewing your app in dist modes</a>
-6.  <a href="#workspace-content">Workspace Content</a>
-7.  <a href="#packagejson-scripts">package.json Scripts</a>
-8.  <a href="#working-on-your-new-neomjs-app">Working on your new neo.mjs App</a>
-9.  <a href="#learning-neomjs">Learning neo.mjs</a>
-10.  <a href="#feedback-and-questions">Feedback and Questions</a>
-11.  <a href="#alternative-options-to-create-an-app">Alternative options to create an App</a>
-12.  <a href="#kudos">Kudos</a>
+3.  <a href="#ai-tooling">AI Tooling & MCP Servers</a>
+4.  <a href="#starting-a-local-web-server">Starting a local web-server</a>
+5.  <a href="#viewing-your-app-in-development-mode">Viewing your app in development mode</a>
+6.  <a href="#viewing-your-app-in-dist-modes">Viewing your app in dist modes</a>
+7.  <a href="#workspace-content">Workspace Content</a>
+8.  <a href="#packagejson-scripts">package.json Scripts</a>
+9.  <a href="#working-on-your-new-neomjs-app">Working on your new neo.mjs App</a>
+10. <a href="#learning-neomjs">Learning neo.mjs</a>
+11. <a href="#feedback-and-questions">Feedback and Questions</a>
+12. <a href="#alternative-options-to-create-an-app">Alternative options to create an App</a>
+13. <a href="#kudos">Kudos</a>
 
 ## Quick Overview
 > npx neo-app
@@ -56,10 +57,20 @@ Choose an app name:
 > npx neo-app -n MyApp
 
 Choose the themes:
-> npx neo-app -t both
+> npx neo-app -t all
 
 Of course, you can combine the options, e.g.:
-> npx neo-app -w workspace -n MyApp -t both
+> npx neo-app -w workspace -n MyApp -t all
+
+## AI Tooling & MCP Servers
+The created workspace comes pre-configured with Model Context Protocol (MCP) servers for advanced AI integration (e.g., with Gemini or Claude).
+
+**Important:** These servers rely on the `neo.mjs` framework being fully installed.
+A `postinstall` script is included in your workspace `package.json` to automatically ensure the `neo.mjs` node module is correctly set up:
+
+> "postinstall": "cd node_modules/neo.mjs && npm i"
+
+If you run into issues with the AI scripts, try running `npm install` in your workspace root to trigger this hook.
 
 ## Starting a local web-server
 By default, npx neo-app will start a webpack dev-server right after the build.
@@ -113,20 +124,10 @@ framework version update would require to re-create it)
 5.  docs contains a copy of the neo.mjs non dist version of the docs app. This version does show documentation views of
 your app as well as all neo.mjs examples
 6.  node_modules => all related dependencies which are required for the build scripts & the dev-server
-7.  package.json => a dummy version; feel free to change it
+7.  package.json => defines scripts and dependencies.
+8.  .gemini => contains configuration for the Gemini CLI and MCP servers.
 
 ## package.json Scripts
-```
-"server-start": "webpack-dev-server --open",
-"build-all": "node ./node_modules/neo.mjs/buildScripts/buildAll.js -n",
-"build-all-questions": "node ./buildScripts/buildAll.js",
-"build-my-apps": "node ./node_modules/neo.mjs/buildScripts/webpack/buildMyApps.js",
-"build-themes": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThemes.js",
-"build-threads": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThreads.js",
-"create-app": "node ./node_modules/neo.mjs/buildScripts/createApp.js",
-"generate-docs-json": "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.js",
-"test": "echo \"Error: no test specified\" && exit 1"
-```
 
 You need to enter the workspace folder inside your terminal / CMD.
 > cd workspace
@@ -134,16 +135,22 @@ You need to enter the workspace folder inside your terminal / CMD.
 You can run each script via
 > npm run \<script-name\>
 
-Some IDEs like webstorm can show npm scripts as a toolbox, so you can just click on them instead.
+### Main Scripts
+*   `server-start`: Starts the webpack dev-server
+*   `build-all`: npm install & builds literally everything.
+*   `build-all-questions`: same as build all, but you can choose what to build using the inquirer interface.
+*   `build-themes`: builds the themes for dev and / or prod and lets you choose if want to use CSS variables.
+*   `build-threads`: builds main, data & vdom (or any combinations) for dev and / or prod.
+*   `create-app`: add an additional app to your project. You can also trigger npx neo-app multiple times.
+*   `generate-docs-json`: When you change your app code (e.g. adding new files) and want to see those changes inside the Docs app, you need to run this script to update the content.
 
-1. server-start: Starts the webpack dev-server
-2. build-all: npm install & builds literally everything.
-3. build-all-questions: same as build all, but you can choose what to build using the inquirer interface.
-4. build-themes: builds the themes for dev and / or prod and lets you choose if want to use CSS variables.
-5. build-threads: builds main, data & vdom (or any combinations) for dev and / or prod.
-6. create-app: add an additional app to your project. You can also trigger npx neo-app multiple times.
-7. generate-docs-json: When you change your app code (e.g. adding new files) and want to see those changes inside the
-Docs app, you need to run this script to update the content.
+### AI & MCP Scripts
+*   `ai:mcp-client`: Starts the MCP CLI client.
+*   `ai:mcp-server-github-workflow`: Starts the MCP server for GitHub interactions (requires config).
+*   `ai:mcp-server-knowledge-base`: Starts the MCP server for Knowledge Base access (requires config).
+*   `ai:mcp-server-memory-core`: Starts the MCP server for persistent memory (requires config).
+*   `ai:server`: Starts the ChromaDB server for the knowledge base (default port).
+*   `ai:server-memory`: Starts the ChromaDB server for memory core (port 8001).
 
 ## Working on your new neo.mjs App
 It is recommended to use the development mode (non dist version) for developing your App(s).
