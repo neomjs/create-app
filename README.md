@@ -72,6 +72,17 @@ A `postinstall` script is included in your workspace `package.json` to automatic
 
 If you run into issues with the AI scripts, try running `npm install` in your workspace root to trigger this hook.
 
+### Configuration (.env)
+To use the AI features, you must create a `.env` file in your workspace root. This file is git-ignored by default to keep your credentials safe.
+
+Add the following keys:
+```env
+GEMINI_API_KEY=your_api_key_here
+GH_TOKEN=your_github_token_here
+```
+*   `GEMINI_API_KEY`: Required for the generative AI agents.
+*   `GH_TOKEN`: Required for the GitHub Workflow MCP server to interact with your repository.
+
 ## Starting a local web-server
 By default, npx neo-app will start a webpack dev-server right after the build.
 
