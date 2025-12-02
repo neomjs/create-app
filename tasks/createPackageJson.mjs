@@ -29,6 +29,7 @@ export default {
                 "create-class"                 : "node ./node_modules/neo.mjs/buildScripts/createClass.mjs",
                 "create-component"             : "node ./node_modules/neo.mjs/buildScripts/createComponent.mjs",
                 "generate-docs-json"           : "node ./node_modules/neo.mjs/buildScripts/docs/jsdocx.mjs",
+                "postinstall"                  : "cd node_modules/neo.mjs && npm i",
                 "prepare-release"              : "node ./node_modules/neo.mjs/buildScripts/prepareRelease.mjs",
                 "server-start"                 : "webpack serve -c ./buildScripts/webpack/webpack.server.config.mjs --open",
                 "test"                         : "playwright test -c node_modules/neo.mjs/test/playwright/playwright.config.mjs",
