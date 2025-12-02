@@ -38,13 +38,13 @@ export default {
                 "watch-themes"                 : "node ./node_modules/neo.mjs/buildScripts/watchThemes.mjs"
             },
             dependencies: {
-                "neo.mjs": "^11.14.0"
+                "neo.mjs": "^11.15.0"
             },
             devDependencies: {
                 "@chroma-core/default-embed"   : "^0.1.9",
                 "@fortawesome/fontawesome-free": "^7.1.0",
                 "@google/generative-ai"        : "^0.24.1",
-                "@modelcontextprotocol/sdk"    : "^1.23.0",
+                "@modelcontextprotocol/sdk"    : "^1.24.0",
                 "@playwright/test"             : "^1.57.0",
                 "acorn"                        : "^8.15.0",
                 "astring"                      : "^1.9.0",
