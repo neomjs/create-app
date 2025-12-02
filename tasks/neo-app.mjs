@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import chalk               from 'chalk';
-import { spawnSync }       from 'child_process';
-import { Command }         from 'commander/esm.mjs';
+import {spawnSync}         from 'child_process';
+import {Command, Option}   from 'commander/esm.mjs';
 import copyDocsApp         from './copyDocsApp.mjs';
 import createApp           from './createApp.mjs';
 import createGitignore     from './createGitignore.mjs';
@@ -19,28 +19,33 @@ import fs                  from 'fs-extra';
 import inquirer            from 'inquirer';
 import os                  from 'os';
 import path                from 'path';
-import { fileURLToPath }   from 'url';
-
+import {fileURLToPath}     from 'url';
 
 const
-    __dirname   = fileURLToPath(path.dirname(import.meta.url)),
-    cwd         = process.cwd(),
-    requireJson = path => JSON.parse(fs.readFileSync((path))),
-    packageJson = requireJson(path.join(__dirname, '../package.json')),
-    program     = new Command(),
-    startDate   = new Date();
+    __dirname     = fileURLToPath(path.dirname(import.meta.url)),
+    cwd           = process.cwd(),
+    requireJson   = path => JSON.parse(fs.readFileSync((path))),
+    packageJson   = requireJson(path.join(__dirname, '../package.json')),
+    program       = new Command(),
+    startDate     = new Date(),
+    sanitizeInput = value => {
+        if (typeof value === 'string') {
+            return value.replace(/^["']|["']$/g, '').trim();
+        }
+        return value;
+    };
 
 program
     .name(packageJson.name)
     .version(packageJson.version)
-    .option('-i, --info',                     'print environment debug info')
-    .option('-n, --app-name <name>',          'name of your app in PascalCase')
-    .option('-m, --mainThreadAddons <name>',  '"AmCharts", "AnalyticsByGoogle", "DragDrop", "HighlightJS", "LocalStorage", "MapboxGL", "Markdown", "ServiceWorker", "Siesta", "Stylesheet"')
-    .option('-s, --start <name>',             'start a web-server right after the build.', 'true')
-    .option('-t, --themes <name>',            '"neo-theme-dark", "neo-theme-light", "all", "none"')
-    .option('-u, --useSharedWorkers <name>',  '"yes", "no"')
-    .option('-v, --useServiceWorker <value>', '"yes", "no"')
-    .option('-w, --workspace <name>',         'name of the project root folder')
+    .option('-i, --info',                                   'print environment debug info')
+    .option('-n, --app-name <name>',                        'name of your app in PascalCase', sanitizeInput)
+    .option('-m, --mainThreadAddons <name>',                '"AmCharts", "AnalyticsByGoogle", "DragDrop", "HighlightJS", "LocalStorage", "MapboxGL", "Markdown", "ServiceWorker", "Siesta", "Stylesheet"', sanitizeInput)
+    .option('-s, --start <name>',                           'start a web-server right after the build.', sanitizeInput, 'true')
+    .addOption(new Option('-t, --themes <name>',            'theme for your neo app').choices(['neo-theme-dark', 'neo-theme-light', 'neo-theme-neo-light', 'all', 'none']).argParser(sanitizeInput))
+    .addOption(new Option('-u, --useSharedWorkers <name>',  'use SharedWorkers').choices(['yes', 'no']).argParser(sanitizeInput))
+    .addOption(new Option('-v, --useServiceWorker <value>', 'use ServiceWorker').choices(['yes', 'no']).argParser(sanitizeInput))
+    .option('-w, --workspace <name>',                       'name of the project root folder', sanitizeInput)
     .allowUnknownOption()
     .on('--help', () => {
         console.log('\nIn case you have any issues, please create a ticket here:');
