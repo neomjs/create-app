@@ -27,7 +27,7 @@ export default {
         fs.mkdirpSync(path.join(folder, '.gemini'));
 
         fs.writeFileSync(
-            path.join(folder, 'settings.json'),
+            path.join(folder, '.gemini/settings.json'),
             JSON.stringify(settingsJson, null, 4) + os.EOL
         );
     }
