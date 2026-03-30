@@ -5,7 +5,7 @@
     "type"        : "module",
     "repository"  : {
         "type": "git",
-        "url" : "https://github.com/neomjs/create-app"
+        "url" : "https://github.com/neomjs/create-app.git"
     },
     "scripts"     : {
         "ai:mcp-server-github-workflow": "node ./node_modules/neo.mjs/ai/mcp/server/github-workflow/mcp-stdio.mjs -c ./ai/mcp/server/github-workflow/config.json",
