@@ -41,7 +41,7 @@ export default {
             "                    iconCls: 'fa fa-home',",
             "                    text   : 'Tab 1'",
             "                },",
-            "                text: 'Welcome to your new Neo App.'",
+            "                text: 'Welcome to your new Neo.mjs App.'",
             "            }, {",
             "                header: {",
             "                    iconCls: 'fa fa-play-circle',",
