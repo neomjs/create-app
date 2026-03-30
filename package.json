@@ -35,11 +35,11 @@
     "dependencies": {
         "call-bind": "1.0.8",
         "chalk"    : "^5.6.2",
-        "commander": "^14.0.2",
+        "commander": "^14.0.3",
         "envinfo"  : "^7.21.0",
-        "fs-extra" : "^11.3.2",
-        "inquirer" : "^13.0.1",
-        "neo.mjs"  : "^11.14.0"
+        "fs-extra" : "^11.3.4",
+        "inquirer" : "^13.3.0",
+        "neo.mjs"  : "^12.1.0"
     },
     "funding"     : {
         "type": "GitHub Sponsors",
