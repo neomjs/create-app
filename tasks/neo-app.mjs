@@ -75,7 +75,7 @@ if (programOpts.info) {
         })
         .then(console.log);
 } else {
-    console.log(chalk.bold('Welcome to the neo.mjs app generator!'));
+    console.log(chalk.bold('Welcome to the Neo.mjs App Generator!'));
     console.log(`current version of ${packageJson.name}: ${packageJson.version}`);
 
     // npm binary based on OS
@@ -87,7 +87,7 @@ if (programOpts.info) {
         questions.push({
             type   : 'input',
             name   : 'workspace',
-            message: 'Please choose a name for your neo workspace:',
+            message: 'Please choose a name for your Neo.mjs Workspace:',
             default: 'workspace'
         });
     }
@@ -96,7 +96,7 @@ if (programOpts.info) {
         questions.push({
             type   : 'input',
             name   : 'appName',
-            message: 'Please choose a name for your neo app:',
+            message: 'Please choose a name for your Neo.mjs App:',
             default: 'MyApp'
         });
     }
@@ -105,7 +105,7 @@ if (programOpts.info) {
         questions.push({
             type   : 'list',
             name   : 'themes',
-            message: 'Please choose a theme for your neo app:',
+            message: 'Please choose a Design-Theme for your Neo.mjs App:',
             choices: ['neo-theme-dark', 'neo-theme-light', 'neo-theme-neo-light', 'all', 'none'],
             default: 'all'
         });
