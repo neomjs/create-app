@@ -3,11 +3,10 @@ export default {
         const gitignoreContent = [
             "# See http://help.github.com/ignore-files/ for more about ignoring files.",
             "",
-            "package-lock.json",
-            "",
             "/dist",
             "/docs/output",
             "/examples",
+            "/tmp",
             "",
             "# dependencies",
             "/node_modules",
@@ -23,14 +22,19 @@ export default {
             ".settings",
             ".vscode/",
             "",
+            "#System Files",
+            ".DS_Store",
+            "Thumbs.db",
+            "",
             "# Local AI Knowledge Base",
             ".env",
             "chroma-neo-knowledge-base/",
             "chroma-neo-memory-core/",
             "",
-            "#System Files",
-            ".DS_Store",
-            "Thumbs.db"
+            "# Playwright test results",
+            "test/playwright/test-results/",
+            "# Single-file Playwright runs via npx",
+            "test-results/",
         ].join(os.EOL);
 
         fs.writeFileSync(path.join(folder, '.gitignore'), gitignoreContent);
