@@ -5,10 +5,6 @@ export default {
                 "fileName": ["AGENTS.md", "GEMINI.md"]
             },
             "mcpServers": {
-                "chrome-devtools": {
-                    "command": "npx",
-                    "args"   : ["-y", "chrome-devtools-mcp@latest"]
-                },
                 "neo.mjs-github-workflow": {
                     "command": "npm",
                     "args"   : ["run", "ai:mcp-server-github-workflow"]
@@ -20,6 +16,10 @@ export default {
                 "neo.mjs-memory-core": {
                     "command": "npm",
                     "args"   : ["run", "ai:mcp-server-memory-core"]
+                },
+                "neo.mjs-neural-link": {
+                    "command": "npm",
+                    "args"   : ["run", "ai:mcp-server-neural-link"]
                 }
             }
         };
