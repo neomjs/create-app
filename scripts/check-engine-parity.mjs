@@ -3,9 +3,10 @@
  * @summary Fails when a devDependency the scaffold generates differs from the engine release its `neo.mjs` pin resolves
  * to.
  *
- * `tasks/createPackageJson.mjs` writes every scaffolded app's devDependencies, and they are only right while they match
- * the engine's: a scaffolded app builds the engine's browser bundles (parse5, marked, mermaid, monaco, highlight.js)
- * from them, into the engine's own package. They once fell a whole major behind with nothing noticing.
+ * `tasks/createPackageJson.mjs` writes every scaffolded app's devDependencies, which advertise the engine's own ranges.
+ * They once fell a whole major behind with nothing noticing. Whether a scaffolded app's bundle scripts build from these
+ * hoisted copies, or from the engine's nested ones after its `postinstall`, is not settled here (#34's release-gate
+ * run reports it): the declared ranges should agree either way.
  *
  * Scope: every devDependency BOTH sides declare, compared exactly. The engine is read from npm, never from a checkout,
  * because a scaffolded app installs the published package and a checkout can be ahead of it. The pin decides which
