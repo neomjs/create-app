@@ -3,6 +3,7 @@
 .github/ISSUE_ARCHIVE
 .github/RELEASE_NOTES
 .github/.sync-metadata.json
+scripts
 
 # Original content of the .gitignore file
 # See http://help.github.com/ignore-files/ for more about ignoring files.

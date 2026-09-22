@@ -10,7 +10,7 @@
     "scripts"     : {
         "ai:mcp-server-github-workflow": "node ./node_modules/neo.mjs/ai/mcp/server/github-workflow/mcp-stdio.mjs -c ./ai/mcp/server/github-workflow/config.json",
         "neo-app"                      : "node ./tasks/neo-app.mjs",
-        "test"                         : "echo \"Error: no test specified\" && exit 1"
+        "test"                         : "node scripts/test-check-engine-parity.mjs && node scripts/check-engine-parity.mjs"
     },
     "bin"         : {
         "neo-app": "./tasks/neo-app.mjs"
