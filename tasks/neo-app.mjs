@@ -1,27 +1,25 @@
 #!/usr/bin/env node
 
-import chalk                from 'chalk';
-import {spawnSync}          from 'child_process';
-import {Command, Option}    from 'commander/esm.mjs';
-import copyDocsApp          from './copyDocsApp.mjs';
-import createApp            from './createApp.mjs';
-import createGeminiSettings from './createGeminiSettings.mjs';
-import createMcpConfigs     from './createMcpConfigs.mjs';
-import createGitignore      from './createGitignore.mjs';
-import createIndexHtml      from './createIndexHtml.mjs';
-import createMyAppsJson     from './createMyAppsJson.mjs';
-import createNeoConfigJson  from './createNeoConfigJson.mjs';
-import createPackageJson    from './createPackageJson.mjs';
-import createScssResources  from './createScssResources.mjs';
-import createSrcFolder      from './createSrcFolder.mjs';
-import createServiceWorker  from './createServiceWorker.mjs';
-import createViewport       from './createViewport.mjs';
-import envinfo              from 'envinfo';
-import fs                   from 'fs-extra';
-import inquirer             from 'inquirer';
-import os                   from 'os';
-import path                 from 'path';
-import {fileURLToPath}      from 'url';
+import chalk               from 'chalk';
+import {spawnSync}         from 'child_process';
+import {Command, Option}   from 'commander/esm.mjs';
+import copyDocsApp         from './copyDocsApp.mjs';
+import createApp           from './createApp.mjs';
+import createGitignore     from './createGitignore.mjs';
+import createIndexHtml     from './createIndexHtml.mjs';
+import createMyAppsJson    from './createMyAppsJson.mjs';
+import createNeoConfigJson from './createNeoConfigJson.mjs';
+import createPackageJson   from './createPackageJson.mjs';
+import createScssResources from './createScssResources.mjs';
+import createSrcFolder     from './createSrcFolder.mjs';
+import createServiceWorker from './createServiceWorker.mjs';
+import createViewport      from './createViewport.mjs';
+import envinfo             from 'envinfo';
+import fs                  from 'fs-extra';
+import inquirer            from 'inquirer';
+import os                  from 'os';
+import path                from 'path';
+import {fileURLToPath}     from 'url';
 
 const
     __dirname     = fileURLToPath(path.dirname(import.meta.url)),
@@ -160,18 +158,16 @@ if (programOpts.info) {
                 throw err;
             }
 
-            createApp           .init(appName, appPath, fs, os, path);
-            createGeminiSettings.init(path.join(cwd, workspace), fs, os, path);
-            createMcpConfigs    .init(path.join(cwd, workspace), fs, os, path);
-            createGitignore     .init(workspace, fs, os, path);
-            createIndexHtml     .init(appName, appPath, fs, os, path);
-            createViewport      .init(appName, appPath, fs, os, path);
-            createMyAppsJson    .init(appName, workspace, fs, os, path);
-            createNeoConfigJson .init(appName, appPath, fs, mainThreadAddons, os, path, themes, useSharedWorkers, useServiceWorker);
-            createPackageJson   .init(appName, workspace, fs, os, path);
-            createScssResources .init(appName, workspace, fs, os, path);
-            createServiceWorker .init(appName, workspace, fs, os, path);
-            createSrcFolder     .init(path.join(cwd, workspace), fs, os, path, __dirname);
+            createApp          .init(appName, appPath, fs, os, path);
+            createGitignore    .init(workspace, fs, os, path);
+            createIndexHtml    .init(appName, appPath, fs, os, path);
+            createViewport     .init(appName, appPath, fs, os, path);
+            createMyAppsJson   .init(appName, workspace, fs, os, path);
+            createNeoConfigJson.init(appName, appPath, fs, mainThreadAddons, os, path, themes, useSharedWorkers, useServiceWorker);
+            createPackageJson  .init(appName, workspace, fs, os, path);
+            createScssResources.init(appName, workspace, fs, os, path);
+            createServiceWorker.init(appName, workspace, fs, os, path);
+            createSrcFolder    .init(path.join(cwd, workspace), fs, os, path, __dirname);
 
             fs.copySync(
                 path.join(__dirname, '../resources/copyExamples.mjs'),
@@ -183,37 +179,7 @@ if (programOpts.info) {
             // npm install
             spawnSync(npmCmd, ['i'], cpOpts);
 
-            // Copy AI-related files after npm install
-            fs.copySync(
-                path.join(workspace, 'node_modules/neo.mjs/AGENTS.md'),
-                path.join(workspace, 'AGENTS.md')
-            );
-            fs.copySync(
-                path.join(workspace, 'node_modules/neo.mjs/AGENTS_STARTUP.md'),
-                path.join(workspace, 'AGENTS_STARTUP.md')
-            );
-
-            fs.mkdirpSync(path.join(workspace, '.github')); // Create .github directory
-
-            fs.copySync(
-                path.join(workspace, 'node_modules/neo.mjs/.github/AI_QUICK_START.md'),
-                path.join(workspace, '.github/AI_QUICK_START.md')
-            );
-            fs.copySync(
-                path.join(workspace, 'node_modules/neo.mjs/.github/WORKING_WITH_AGENTS.md'),
-                path.join(workspace, '.github/WORKING_WITH_AGENTS.md')
-            );
-
             copyDocsApp.init(fs, os, path, workspace);
-
-            const webpackScriptFolder = path.join(workspace, 'buildScripts/webpack');
-
-            fs.mkdirpSync(webpackScriptFolder);
-
-            fs.copySync(
-                path.join(workspace, 'node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.mjs'),
-                path.join(webpackScriptFolder, 'webpack.server.config.mjs')
-            );
 
             spawnSync('node', ['./node_modules/neo.mjs/buildScripts/build/all.mjs', '-n', '-l', 'no', '-p', 'no'], {
                 cwd  : path.join(cwd, workspace),
