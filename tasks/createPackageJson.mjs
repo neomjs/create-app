@@ -72,6 +72,12 @@ export default {
                 "webpack-dev-server"           : "^6.0.0",
                 "webpack-hook-plugin"          : "^1.0.7",
                 "ws"                           : "^8.22.0"
+            },
+            // npm reads overrides only in the root project, so the engine's floors reach the app's own install
+            // through this copy alone. check-engine-parity.mjs keeps it equal to the pinned release's.
+            overrides: {
+                "gray-matter": {"js-yaml": "^3.15.2"},
+                "lodash-es"  : "^4.18.0"
             }
         };
 

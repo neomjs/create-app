@@ -1,6 +1,7 @@
 name: Engine parity
 
-# The scaffold's generated devDependencies must match the engine release its `neo.mjs` pin resolves to, read from npm.
+# The scaffold's generated devDependencies and overrides must match the engine release its `neo.mjs` pin resolves to,
+# read from npm.
 # See scripts/check-engine-parity.mjs for the scope and why the engine is never read from a checkout.
 on:
   push:
@@ -23,5 +24,5 @@ jobs:
       - name: Parity check contract
         run: node scripts/test-check-engine-parity.mjs
 
-      - name: Generated devDependencies match the pinned engine release
+      - name: Generated devDependencies and overrides match the pinned engine release
         run: node scripts/check-engine-parity.mjs
