@@ -76,7 +76,9 @@ export default {
             // npm reads overrides only in the root project, so the engine's floors reach the app's own install
             // through this copy alone. check-engine-parity.mjs keeps it equal to the pinned release's.
             overrides: {
+                "dompurify"  : "^3.4.16",
                 "gray-matter": {"js-yaml": "^3.15.2"},
+                "katex"      : "^0.18.2",
                 "lodash-es"  : "^4.18.0"
             }
         };
