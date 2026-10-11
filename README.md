@@ -22,17 +22,16 @@ Please take a couple of minutes to read this <a href="https://github.com/neomjs/
 ## Content
 1.  <a href="#quick-overview">Quick Overview</a>
 2.  <a href="#script-options">Script Options</a>
-3.  <a href="#ai-tooling">AI Tooling & MCP Servers</a>
-4.  <a href="#starting-a-local-web-server">Starting a local web-server</a>
-5.  <a href="#viewing-your-app-in-development-mode">Viewing your app in development mode</a>
-6.  <a href="#viewing-your-app-in-dist-modes">Viewing your app in dist modes</a>
-7.  <a href="#workspace-content">Workspace Content</a>
-8.  <a href="#packagejson-scripts">package.json Scripts</a>
-9.  <a href="#working-on-your-new-neomjs-app">Working on your new neo.mjs App</a>
-10. <a href="#learning-neomjs">Learning neo.mjs</a>
-11. <a href="#feedback-and-questions">Feedback and Questions</a>
-12. <a href="#alternative-options-to-create-an-app">Alternative options to create an App</a>
-13. <a href="#kudos">Kudos</a>
+3.  <a href="#starting-a-local-web-server">Starting a local web-server</a>
+4.  <a href="#viewing-your-app-in-development-mode">Viewing your app in development mode</a>
+5.  <a href="#viewing-your-app-in-dist-modes">Viewing your app in dist modes</a>
+6.  <a href="#workspace-content">Workspace Content</a>
+7.  <a href="#packagejson-scripts">package.json Scripts</a>
+8.  <a href="#working-on-your-new-neomjs-app">Working on your new neo.mjs App</a>
+9.  <a href="#learning-neomjs">Learning neo.mjs</a>
+10. <a href="#feedback-and-questions">Feedback and Questions</a>
+11. <a href="#alternative-options-to-create-an-app">Alternative options to create an App</a>
+12. <a href="#kudos">Kudos</a>
 
 ## Quick Overview
 > npx neo-app
@@ -61,27 +60,6 @@ Choose the themes:
 
 Of course, you can combine the options, e.g.:
 > npx neo-app -w workspace -n MyApp -t all
-
-## AI Tooling & MCP Servers
-The created workspace comes pre-configured with Model Context Protocol (MCP) servers for advanced AI integration (e.g., with Gemini or Claude).
-
-**Important:** These servers rely on the `neo.mjs` framework being fully installed.
-A `postinstall` script is included in your workspace `package.json` to automatically ensure the `neo.mjs` node module is correctly set up:
-
-> "postinstall": "cd node_modules/neo.mjs && npm i"
-
-If you run into issues with the AI scripts, try running `npm install` in your workspace root to trigger this hook.
-
-### Configuration (.env)
-To use the AI features, you must create a `.env` file in your workspace root. This file is git-ignored by default to keep your credentials safe.
-
-Add the following keys:
-```env
-GEMINI_API_KEY=your_api_key_here
-GH_TOKEN=your_github_token_here
-```
-*   `GEMINI_API_KEY`: Required for the generative AI agents.
-*   `GH_TOKEN`: Required for the GitHub Workflow MCP server to interact with your repository.
 
 ## Starting a local web-server
 By default, npx neo-app will start a webpack dev-server right after the build.
@@ -136,7 +114,6 @@ framework version update would require to re-create it)
 your app as well as all neo.mjs examples
 6.  node_modules => all related dependencies which are required for the build scripts & the dev-server
 7.  package.json => defines scripts and dependencies.
-8.  .gemini => contains configuration for the Gemini CLI and MCP servers.
 
 ## package.json Scripts
 
@@ -154,14 +131,7 @@ You can run each script via
 *   `build-threads`: builds main, data & vdom (or any combinations) for dev and / or prod.
 *   `create-app`: add an additional app to your project. You can also trigger npx neo-app multiple times.
 *   `generate-docs-json`: When you change your app code (e.g. adding new files) and want to see those changes inside the Docs app, you need to run this script to update the content.
-
-### AI & MCP Scripts
-*   `ai:mcp-client`: Starts the MCP CLI client.
-*   `ai:mcp-server-github-workflow`: Starts the MCP server for GitHub interactions (requires config).
-*   `ai:mcp-server-knowledge-base`: Starts the MCP server for Knowledge Base access (requires config).
-*   `ai:mcp-server-memory-core`: Starts the MCP server for persistent memory (requires config).
-*   `ai:server`: Starts the ChromaDB server for the knowledge base (default port).
-*   `ai:server-memory`: Starts the ChromaDB server for memory core (port 8001).
+*   `bundle-browser-deps`: builds the browser bundles the engine loads from `node_modules/neo.mjs/dist/`. The npm package ships none of them. `npm install` builds the two the engine imports at startup (`parse5`, `marked`); run this script for the ones loaded on demand (Mermaid, Monaco, highlight.js).
 
 ## Working on your new neo.mjs App
 It is recommended to use the development mode (non dist version) for developing your App(s).

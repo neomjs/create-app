@@ -4,8 +4,8 @@
  * divergence, stays quiet on a match, and lists what it does not compare.
  */
 
-import assert                              from 'node:assert/strict';
-import {findDrift, generatedPackageJson} from './check-engine-parity.mjs';
+import assert                                                from 'node:assert/strict';
+import {findDrift, findOverrideDrift, generatedPackageJson} from './check-engine-parity.mjs';
 
 // ── It reads the package.json the scaffold writes ──────────────────────────────────────────────────
 {
@@ -13,6 +13,7 @@ import {findDrift, generatedPackageJson} from './check-engine-parity.mjs';
 
     assert.match(packageJson.dependencies['neo.mjs'], /^\^\d+\.\d+\.\d+$/, 'the engine pin is read from the generator');
     assert.ok(Object.keys(packageJson.devDependencies).length > 10, 'and so are the devDependencies');
+    assert.ok(Object.keys(packageJson.overrides).length > 0, 'and the overrides');
 }
 
 // ── A planted divergence is reported, a match is not ───────────────────────────────────────────────
@@ -34,6 +35,25 @@ import {findDrift, generatedPackageJson} from './check-engine-parity.mjs';
 
     assert.deepEqual(drift, []);
     assert.deepEqual(scaffoldOnly, ['chromadb'])
+}
+
+// ── Overrides compare in full, both ways: npm reads them only in the root project ──────────────────
+{
+    const engine = {'gray-matter': {'js-yaml': '^3.15.2'}, 'lodash-es': '^4.18.0'};
+
+    assert.deepEqual(findOverrideDrift({'gray-matter': {'kind-of': '^6.0.3', 'js-yaml': '^3.15.2'}},
+        {'gray-matter': {'js-yaml': '^3.15.2', 'kind-of': '^6.0.3'}}), [], 'equal overrides pass in any key order');
+
+    assert.deepEqual(findOverrideDrift({'lodash-es': '^4.18.0'}, engine),
+        [{name: 'gray-matter', scaffold: undefined, engine: {'js-yaml': '^3.15.2'}}], 'an engine floor the scaffold lacks is drift');
+
+    assert.deepEqual(findOverrideDrift({...engine, 'gray-matter': {'js-yaml': '^3.14.0'}}, engine),
+        [{name: 'gray-matter', scaffold: {'js-yaml': '^3.14.0'}, engine: {'js-yaml': '^3.15.2'}}], 'a nested range that differs is drift');
+
+    assert.deepEqual(findOverrideDrift(engine, undefined).map(({name}) => name), ['gray-matter', 'lodash-es'],
+        'overrides the release does not declare are drift, which also catches an answer without the field');
+
+    assert.deepEqual(findOverrideDrift(undefined, undefined), [], 'neither side declaring overrides is a match')
 }
 
 console.log('check-engine-parity: contract arms green.');
