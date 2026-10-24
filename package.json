@@ -1,6 +1,6 @@
 {
     "name"        : "neo-app",
-    "version"     : "13.3.0",
+    "version"     : "13.3.1",
     "description" : "Neo.mjs: Create app via npx",
     "type"        : "module",
     "repository"  : {
@@ -38,7 +38,7 @@
         "envinfo"  : "^7.21.0",
         "fs-extra" : "^11.3.4",
         "inquirer" : "^13.3.0",
-        "neo.mjs"  : "^13.3.0"
+        "neo.mjs"  : "^13.3.1"
     },
     "funding"     : {
         "type": "GitHub Sponsors",
