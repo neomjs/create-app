@@ -194,7 +194,10 @@ if (programOpts.info) {
             createServiceWorker.init(appName, workspace, fs, os, path);
             createSrcFolder    .init(path.join(cwd, workspace), fs, os, path, __dirname);
 
-            programOpts.agent && createAgentLayer.writeClaudeMd(workspace, fs, path);
+            if (programOpts.agent) {
+                createAgentLayer.writeClaudeMd(workspace, fs, path);
+                createAgentLayer.writeMcpConfigs(workspace, fs, path);
+            }
 
             fs.copySync(
                 path.join(__dirname, '../resources/copyExamples.mjs'),

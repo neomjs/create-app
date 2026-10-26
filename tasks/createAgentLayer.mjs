@@ -12,6 +12,9 @@
  *   so they update with the package.
  * - `useAiClient` in each app's `neo-config.json`, set to the development environment, so the app connects to the
  *   Neural Link while it is being built and never in a production build.
+ * - project MCP configs, `.mcp.json` for Claude Code and `.codex/config.toml` for Codex, which start the published
+ *   Neural Link package through `npx`. Never the user-home configs: a scaffold has no business there. Each client
+ *   asks before it trusts a project's servers, and that consent stays the client's.
  */
 
 /**
@@ -27,6 +30,12 @@ export const AGENT_SKILLS_RANGE = '^0.1.61';
 export const AI_CLIENT_ENVIRONMENT = 'development';
 
 /**
+ * @summary The npm package that runs the Neural Link MCP server with no checkout.
+ * @member {String}
+ */
+export const NEURAL_LINK_PACKAGE = 'neo-neural-link';
+
+/**
  * @summary The scripts the layer adds to a workspace's `package.json`.
  * @member {Object}
  */
@@ -40,6 +49,34 @@ const
     AGENTS_MD_ARGS = ['--no-install', 'neo-agent-skills-agents-md', '--repo', 'neo-app-workspace', '--audience', 'app', '--out', 'AGENTS.md'];
 
 export default {
+    /**
+     * @summary Writes the project MCP configs that start the Neural Link, each only where the workspace has none.
+     * @param {String} workspace
+     * @param {Object} fs
+     * @param {Object} path
+     * @returns {String[]} The files it wrote, relative to the workspace
+     */
+    writeMcpConfigs(workspace, fs, path) {
+        const
+            written = [],
+            files   = {
+                '.mcp.json'         : JSON.stringify({mcpServers: {'neural-link': {command: 'npx', args: ['-y', NEURAL_LINK_PACKAGE]}}}, null, 4) + '\n',
+                '.codex/config.toml': `[mcp_servers.neural-link]\ncommand = "npx"\nargs    = ["-y", "${NEURAL_LINK_PACKAGE}"]\n`
+            };
+
+        for (const [name, content] of Object.entries(files)) {
+            const file = path.join(workspace, name);
+
+            if (!fs.existsSync(file)) {
+                fs.mkdirSync(path.dirname(file), {recursive: true});
+                fs.writeFileSync(file, content);
+                written.push(name)
+            }
+        }
+
+        return written
+    },
+
     /**
      * @summary Writes `CLAUDE.md` into a workspace that has none.
      * @param {String} workspace
@@ -128,6 +165,8 @@ export default {
         if (this.writeClaudeMd(workspace, fs, path)) {
             changed.push('CLAUDE.md')
         }
+
+        changed.push(...this.writeMcpConfigs(workspace, fs, path));
 
         return changed
     }

@@ -65,7 +65,8 @@ Of course, you can combine the options, e.g.:
 Every new workspace is ready for a coding agent such as Claude Code or Codex:
 - `AGENTS.md` (and a `CLAUDE.md` that imports it) explains how the engine works and where its source, guides and examples live in the workspace;
 - the `neo-app-authoring` and `neural-link` skills are linked into `.agents/skills/` and `.claude/skills/` by the workspace's own `npm install`;
-- each app's `neo-config.json` sets `useAiClient: "development"`, so the app connects to the Neural Link while you build it.
+- each app's `neo-config.json` sets `useAiClient: "development"`, so the app connects to the Neural Link while you build it;
+- `.mcp.json` (Claude Code) and `.codex/config.toml` (Codex) start the Neural Link MCP server from npm (`npx -y neo-neural-link`). Your client asks once before it trusts a project's servers.
 
 Leave all of that out:
 > npx neo-app --no-agent
