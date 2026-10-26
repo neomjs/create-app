@@ -9,7 +9,7 @@
     },
     "scripts"     : {
         "neo-app": "node ./tasks/neo-app.mjs",
-        "test"   : "node scripts/test-check-engine-parity.mjs && node scripts/check-engine-parity.mjs"
+        "test"   : "node scripts/test-check-engine-parity.mjs && node scripts/test-agent-layer.mjs && node scripts/check-engine-parity.mjs"
     },
     "bin"         : {
         "neo-app": "./tasks/neo-app.mjs"

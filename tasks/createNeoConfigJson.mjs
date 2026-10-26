@@ -1,5 +1,19 @@
+import {AI_CLIENT_ENVIRONMENT} from './createAgentLayer.mjs';
+
 export default {
-    init(appName, folder, fs, mainThreadAddons, os, path, themes, useSharedWorkers, useServiceWorker) {
+    /**
+     * @param {String}   appName
+     * @param {String}   folder
+     * @param {Object}   fs
+     * @param {String[]} mainThreadAddons
+     * @param {Object}   os
+     * @param {Object}   path
+     * @param {String[]} themes
+     * @param {String}   useSharedWorkers
+     * @param {String}   useServiceWorker
+     * @param {Boolean}  [agent=true] Let the app connect to the Neural Link in development, so a coding agent can verify it live
+     */
+    init(appName, folder, fs, mainThreadAddons, os, path, themes, useSharedWorkers, useServiceWorker, agent = true) {
         let neoConfig = {
             appPath       : `../../apps/${appName.toLowerCase()}/app.mjs`,
             basePath      : '../../',
@@ -31,6 +45,10 @@ export default {
 
         if (useServiceWorker !== 'no') {
             neoConfig.useServiceWorker = true;
+        }
+
+        if (agent) {
+            neoConfig.useAiClient = AI_CLIENT_ENVIRONMENT;
         }
 
         let configs = Object.entries(neoConfig).sort((a, b) => a[0].localeCompare(b[0]));
