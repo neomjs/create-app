@@ -61,6 +61,18 @@ Choose the themes:
 Of course, you can combine the options, e.g.:
 > npx neo-app -w workspace -n MyApp -t all
 
+### Coding agents
+Every new workspace is ready for a coding agent such as Claude Code or Codex:
+- `AGENTS.md` (and a `CLAUDE.md` that imports it) explains how the engine works and where its source, guides and examples live in the workspace;
+- the `neo-app-authoring` and `neural-link` skills are linked into `.agents/skills/` and `.claude/skills/` by the workspace's own `npm install`;
+- each app's `neo-config.json` sets `useAiClient: "development"`, so the app connects to the Neural Link while you build it.
+
+Leave all of that out:
+> npx neo-app --no-agent
+
+Add it to a workspace you already have (it changes nothing else, and keeps an existing `AGENTS.md` or `CLAUDE.md`):
+> npx neo-app --agent-only -w workspace
+
 ## Starting a local web-server
 By default, npx neo-app will start a webpack dev-server right after the build.
 

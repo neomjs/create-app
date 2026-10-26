@@ -33,6 +33,10 @@ export default {
             "test/playwright/test-results/",
             "# Single-file Playwright runs via npx",
             "test-results/",
+            "",
+            "# Coding-agent skills: links into node_modules, refreshed by every install",
+            ".agents/skills/",
+            ".claude/skills/",
         ].join(os.EOL);
 
         fs.writeFileSync(path.join(folder, '.gitignore'), gitignoreContent);

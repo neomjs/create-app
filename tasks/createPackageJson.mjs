@@ -1,5 +1,15 @@
+import {AGENT_SKILLS_RANGE, agentScripts} from './createAgentLayer.mjs';
+
 export default {
-    init(appName, folder, fs, os, path) {
+    /**
+     * @param {String}  appName
+     * @param {String}  folder
+     * @param {Object}  fs
+     * @param {Object}  os
+     * @param {Object}  path
+     * @param {Boolean} [agent=true] Add the coding-agent layer: the `app` skills, materialized by the workspace's own install
+     */
+    init(appName, folder, fs, os, path, agent = true) {
         const packageJson = {
             name   : appName.toLowerCase(),
             version: '0.1.0',
@@ -82,6 +92,15 @@ export default {
                 "lodash-es"  : "^4.18.0"
             }
         };
+
+        if (agent) {
+            Object.assign(packageJson.scripts, agentScripts);
+            packageJson.devDependencies['neo-agent-skills'] = AGENT_SKILLS_RANGE;
+
+            // Both blocks are written alphabetically; an added key keeps that order.
+            packageJson.scripts         = Object.fromEntries(Object.entries(packageJson.scripts).sort(([a], [b]) => a.localeCompare(b)));
+            packageJson.devDependencies = Object.fromEntries(Object.entries(packageJson.devDependencies).sort(([a], [b]) => a.localeCompare(b)))
+        }
 
         fs.writeFileSync(
             path.join(folder, 'package.json'),

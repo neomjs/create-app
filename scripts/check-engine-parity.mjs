@@ -39,17 +39,30 @@ export function generatedPackageJson() {
 }
 
 /**
+ * @summary DevDependencies both sides declare on purpose at different releases, each with the reason.
+ *
+ * `neo-agent-skills` serves two audiences. The engine pins the maintainer release it lints itself with, and a
+ * workspace installs the release whose skills carry the `app` audience. Equal ranges would be the defect here.
+ * @member {Map<String, String>}
+ */
+export const INDEPENDENT = new Map([
+    ['neo-agent-skills', 'the engine pins its maintainer release; a workspace installs the app-audience release']
+]);
+
+/**
  * @summary Compares the scaffold's devDependencies with the engine's.
  * @param {Object} scaffold The generated devDependencies
  * @param {Object} engine   The engine release's devDependencies
- * @returns {{drift: Object[], scaffoldOnly: String[]}} `drift` holds `{name, scaffold, engine}` for each differing range
+ * @returns {{drift: Object[], independent: String[], scaffoldOnly: String[]}} `drift` holds `{name, scaffold, engine}`
+ * for each differing range; `independent` lists the declared exceptions both sides carry
  */
 export function findDrift(scaffold, engine) {
     const names = Object.keys(scaffold);
 
     return {
-        drift       : names.filter(name => name in engine && scaffold[name] !== engine[name])
+        drift       : names.filter(name => name in engine && !INDEPENDENT.has(name) && scaffold[name] !== engine[name])
             .map(name => ({name, scaffold: scaffold[name], engine: engine[name]})),
+        independent : names.filter(name => name in engine && INDEPENDENT.has(name)),
         scaffoldOnly: names.filter(name => !(name in engine))
     }
 }
@@ -92,12 +105,14 @@ if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToP
         range       = packageJson.dependencies['neo.mjs'],
         // One matching version answers as a string, several as an ascending list
         version     = [].concat(npmView(`neo.mjs@${range}`, 'version')).at(-1),
-        {drift, scaffoldOnly} = findDrift(packageJson.devDependencies, npmView(`neo.mjs@${version}`, 'devDependencies')),
+        {drift, independent, scaffoldOnly} = findDrift(packageJson.devDependencies, npmView(`neo.mjs@${version}`, 'devDependencies')),
         overrideDrift = findOverrideDrift(packageJson.overrides, npmView(`neo.mjs@${version}`, 'overrides'));
 
     if (scaffoldOnly.length > 0) {
         console.log(`check-engine-parity: not compared, no engine counterpart: ${scaffoldOnly.join(', ')}`)
     }
+
+    independent.forEach(name => console.log(`check-engine-parity: not compared, independent by design: ${name} (${INDEPENDENT.get(name)})`));
 
     if (drift.length > 0) {
         console.error(`check-engine-parity: ${drift.length} generated devDependencies differ from neo.mjs@${version} ` +

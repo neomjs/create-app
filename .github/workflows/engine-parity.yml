@@ -24,5 +24,8 @@ jobs:
       - name: Parity check contract
         run: node scripts/test-check-engine-parity.mjs
 
+      - name: Coding-agent layer contract
+        run: node scripts/test-agent-layer.mjs
+
       - name: Generated devDependencies and overrides match the pinned engine release
         run: node scripts/check-engine-parity.mjs

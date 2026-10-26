@@ -37,6 +37,18 @@ import {findDrift, findOverrideDrift, generatedPackageJson} from './check-engine
     assert.deepEqual(scaffoldOnly, ['chromadb'])
 }
 
+// ── A declared independent range is listed, never drift — and only the declared one ──────────────────
+{
+    const {drift, independent} = findDrift(
+        {marked: '^17.0.4', 'neo-agent-skills': '^0.1.60'},
+        {marked: '^18.0.13', 'neo-agent-skills': '0.1.56'}
+    );
+
+    assert.deepEqual(independent, ['neo-agent-skills'], 'the skills package serves another audience in the workspace');
+    assert.deepEqual(drift.map(({name}) => name), ['marked'], 'while an undeclared difference beside it is still drift');
+    assert.ok(generatedPackageJson().devDependencies['neo-agent-skills'], 'and the scaffold really declares it');
+}
+
 // ── Overrides compare in full, both ways: npm reads them only in the root project ──────────────────
 {
     const engine = {'gray-matter': {'js-yaml': '^3.15.2'}, 'lodash-es': '^4.18.0'};
