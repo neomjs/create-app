@@ -9,7 +9,7 @@ import assert                                                from 'node:assert/s
 import fs                                                    from 'node:fs';
 import os                                                    from 'node:os';
 import path                                                  from 'node:path';
-import createAgentLayer, {AGENT_SKILLS_RANGE, AI_CLIENT_ENVIRONMENT} from '../tasks/createAgentLayer.mjs';
+import createAgentLayer, {AGENT_SKILLS_RANGE, AI_CLIENT_ENVIRONMENT, NEURAL_LINK_PACKAGE} from '../tasks/createAgentLayer.mjs';
 import createNeoConfigJson                                   from '../tasks/createNeoConfigJson.mjs';
 import createPackageJson                                     from '../tasks/createPackageJson.mjs';
 
@@ -23,7 +23,10 @@ const
         fs.mkdirSync(appPath, {recursive: true});
         createPackageJson.init('MyApp', workspace, fs, os, path, agent);
         createNeoConfigJson.init('MyApp', appPath, fs, ['DragDrop', 'Navigator', 'Stylesheet'], os, path, ['all'], 'no', 'no', agent);
-        agent && createAgentLayer.writeClaudeMd(workspace, fs, path);
+        if (agent) {
+            createAgentLayer.writeClaudeMd(workspace, fs, path);
+            createAgentLayer.writeMcpConfigs(workspace, fs, path);
+        }
 
         return workspace
     };
@@ -40,6 +43,12 @@ try {
         assert.deepEqual(Object.keys(packageJson.scripts), [...Object.keys(packageJson.scripts)].sort(), 'and so do the scripts');
         assert.equal(read(workspace, 'apps', 'myapp', 'neo-config.json').useAiClient, AI_CLIENT_ENVIRONMENT, 'the app connects to the Neural Link in development');
         assert.equal(fs.readFileSync(path.join(workspace, 'CLAUDE.md'), 'utf-8'), '@AGENTS.md\n', 'and CLAUDE.md only imports AGENTS.md');
+
+        // Project MCP configs start the published Neural Link package; nothing in a user's home is touched.
+        assert.deepEqual(read(workspace, '.mcp.json'), {mcpServers: {'neural-link': {command: 'npx', args: ['-y', NEURAL_LINK_PACKAGE]}}},
+            'Claude Code starts the Neural Link from npm');
+        assert.equal(fs.readFileSync(path.join(workspace, '.codex', 'config.toml'), 'utf-8'),
+            `[mcp_servers.neural-link]\ncommand = "npx"\nargs    = ["-y", "${NEURAL_LINK_PACKAGE}"]\n`, 'and so does Codex');
     }
 
     // ── --no-agent writes none of it ─────────────────────────────────────────────────────────────
@@ -51,6 +60,7 @@ try {
         assert.equal(packageJson.devDependencies['neo-agent-skills'], undefined, 'no skills dependency');
         assert.equal(read(workspace, 'apps', 'myapp', 'neo-config.json').useAiClient, undefined, 'no Neural Link client');
         assert.ok(!fs.existsSync(path.join(workspace, 'CLAUDE.md')), 'no CLAUDE.md');
+        assert.ok(!fs.existsSync(path.join(workspace, '.mcp.json')) && !fs.existsSync(path.join(workspace, '.codex')), 'and no MCP config');
     }
 
     // ── --agent-only adds the layer to an existing workspace, and only once ──────────────────────
@@ -61,11 +71,13 @@ try {
         fs.mkdirSync(other, {recursive: true});
         fs.writeFileSync(path.join(other, 'neo-config.json'), JSON.stringify({useAiClient: false}, null, 4));
         fs.writeFileSync(path.join(workspace, 'README.md'), 'mine\n');
+        fs.writeFileSync(path.join(workspace, '.mcp.json'), '{"mcpServers": {}}\n');
 
         const changed = createAgentLayer.addToWorkspace(workspace, fs, os, path);
 
-        assert.deepEqual(changed.sort(), ['CLAUDE.md', path.join('apps', 'myapp', 'neo-config.json'), 'package.json'].sort(),
-            'it changes the package, the app without the switch, and adds CLAUDE.md');
+        assert.deepEqual(changed.sort(), ['.codex/config.toml', 'CLAUDE.md', path.join('apps', 'myapp', 'neo-config.json'), 'package.json'].sort(),
+            'it changes the package and the app without the switch, and adds CLAUDE.md and the Codex config');
+        assert.equal(fs.readFileSync(path.join(workspace, '.mcp.json'), 'utf-8'), '{"mcpServers": {}}\n', 'a workspace\'s own .mcp.json is never overwritten');
         assert.equal(read(other, 'neo-config.json').useAiClient, false, 'an app that already sets useAiClient keeps its choice');
         assert.equal(fs.readFileSync(path.join(workspace, 'README.md'), 'utf-8'), 'mine\n', 'and no other file changes');
         assert.deepEqual(createAgentLayer.addToWorkspace(workspace, fs, os, path), [], 'a second run changes nothing');
