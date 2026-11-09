@@ -7,6 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    concurrency:
+      group: npm-publish-main
+      cancel-in-progress: false
     # npm Trusted Publishing (OIDC): id-token mints the per-run credential; no NODE_AUTH_TOKEN.
     permissions:
       id-token: write
@@ -18,7 +21,7 @@ jobs:
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - name: Publish if version is not on npm
         run: |
           version="$(jq -r .version package.json)"
