@@ -1,10 +1,15 @@
 name: Publish Package to npmjs
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    concurrency:
+      group: npm-publish-main
+      cancel-in-progress: false
     # npm Trusted Publishing (OIDC): id-token mints the per-run credential; no NODE_AUTH_TOKEN.
     permissions:
       id-token: write
@@ -16,5 +21,12 @@ jobs:
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
-      - run: npm publish
+      - run: npm ci --ignore-scripts
+      - name: Publish if version is not on npm
+        run: |
+          version="$(jq -r .version package.json)"
+          if npm view "neo-app@${version}" version >/dev/null 2>&1; then
+            echo "neo-app@${version} is already on npm; skipping publish."
+          else
+            npm publish
+          fi
