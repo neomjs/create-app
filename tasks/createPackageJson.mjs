@@ -47,7 +47,7 @@ export default {
                 "watch-themes"       : "node ./node_modules/neo.mjs/buildScripts/helpers/watchThemes.mjs"
             },
             dependencies: {
-                "neo.mjs": "^13.3.1"
+                "neo.mjs": "^13.4.0"
             },
             devDependencies: {
                 "@fortawesome/fontawesome-free": "^7.3.1",
@@ -86,7 +86,7 @@ export default {
             // npm reads overrides only in the root project, so the engine's floors reach the app's own install
             // through this copy alone. check-engine-parity.mjs keeps it equal to the pinned release's.
             overrides: {
-                "dompurify"  : "^3.4.16",
+                "dompurify"  : "^3.4.17",
                 "gray-matter": {"js-yaml": "^3.15.2"},
                 "katex"      : "^0.18.2",
                 "lodash-es"  : "^4.18.0"
