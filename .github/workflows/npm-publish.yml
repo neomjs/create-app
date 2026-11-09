@@ -1,5 +1,7 @@
 name: Publish Package to npmjs
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -17,4 +19,11 @@ jobs:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
-      - run: npm publish
+      - name: Publish if version is not on npm
+        run: |
+          version="$(jq -r .version package.json)"
+          if npm view "neo-app@${version}" version >/dev/null 2>&1; then
+            echo "neo-app@${version} is already on npm; skipping publish."
+          else
+            npm publish
+          fi
