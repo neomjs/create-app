@@ -4,8 +4,8 @@
  * divergence, stays quiet on a match, and lists what it does not compare.
  */
 
-import assert                                                from 'node:assert/strict';
-import {findDrift, findOverrideDrift, generatedPackageJson} from './check-engine-parity.mjs';
+import assert                                                                 from 'node:assert/strict';
+import {CARET_OF_ENGINE, findDrift, findOverrideDrift, generatedPackageJson} from './check-engine-parity.mjs';
 
 // ── It reads the package.json the scaffold writes ──────────────────────────────────────────────────
 {
@@ -37,16 +37,26 @@ import {findDrift, findOverrideDrift, generatedPackageJson} from './check-engine
     assert.deepEqual(scaffoldOnly, ['chromadb'])
 }
 
-// ── A declared independent range is listed, never drift — and only the declared one ──────────────────
+// ── The skills package compares as the caret of the engine's pin: same release, another shape ───────
 {
-    const {drift, independent} = findDrift(
-        {marked: '^17.0.4', 'neo-agent-skills': '^0.1.60'},
-        {marked: '^18.0.13', 'neo-agent-skills': '0.1.56'}
-    );
+    const engine = {marked: '^18.0.13', 'neo-agent-skills': '1.2.0'};
 
-    assert.deepEqual(independent, ['neo-agent-skills'], 'the skills package serves another audience in the workspace');
-    assert.deepEqual(drift.map(({name}) => name), ['marked'], 'while an undeclared difference beside it is still drift');
-    assert.ok(generatedPackageJson().devDependencies['neo-agent-skills'], 'and the scaffold really declares it');
+    assert.deepEqual(findDrift({'neo-agent-skills': '^1.2.0'}, engine).drift, [], 'the caret of the engine\'s pin passes');
+
+    assert.deepEqual(findDrift({'neo-agent-skills': '^0.1.61'}, engine).drift,
+        [{name: 'neo-agent-skills', scaffold: '^0.1.61', engine: '^1.2.0'}], 'a caret a major behind is drift');
+
+    assert.deepEqual(findDrift({'neo-agent-skills': '1.2.0'}, engine).drift,
+        [{name: 'neo-agent-skills', scaffold: '1.2.0', engine: '^1.2.0'}], 'an exact copy stops the updates, so it is drift too');
+
+    assert.deepEqual(findDrift({'neo-agent-skills': '^1.2.0'}, {'neo-agent-skills': '^1.2.0'}).drift, [],
+        'an engine that declares a caret itself still compares as one caret');
+
+    assert.deepEqual(findDrift({marked: '^17.0.4', 'neo-agent-skills': '^1.2.0'}, engine).drift.map(({name}) => name), ['marked'],
+        'while a difference beside it is still drift');
+
+    assert.ok(CARET_OF_ENGINE.has('neo-agent-skills') && generatedPackageJson().devDependencies['neo-agent-skills'],
+        'and the scaffold really declares it')
 }
 
 // ── Overrides compare in full, both ways: npm reads them only in the root project ──────────────────

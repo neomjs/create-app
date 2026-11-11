@@ -8,7 +8,8 @@
  * hoisted copies, or from the engine's nested ones after its `postinstall`, is not settled here (#34's release-gate
  * run reports it): the declared ranges should agree either way.
  *
- * Scope: every devDependency BOTH sides declare, compared exactly. The engine is read from npm, never from a checkout,
+ * Scope: every devDependency BOTH sides declare, compared exactly, except a `CARET_OF_ENGINE` package, which compares
+ * as the caret of the engine's pin. The engine is read from npm, never from a checkout,
  * because a scaffolded app installs the published package and a checkout can be ahead of it. The pin decides which
  * release: the newest published version its range allows. A package only the scaffold declares has no engine
  * counterpart to drift from, so it is listed and not compared.
@@ -39,30 +40,32 @@ export function generatedPackageJson() {
 }
 
 /**
- * @summary DevDependencies both sides declare on purpose at different releases, each with the reason.
+ * @summary DevDependencies a workspace declares as the caret of the engine release's pin, each with the reason.
  *
- * `neo-agent-skills` serves two audiences. The engine pins the maintainer release it lints itself with, and a
- * workspace installs the release whose skills carry the `app` audience. Equal ranges would be the defect here.
+ * The engine pins `neo-agent-skills` exactly, because it lints itself with that release. A workspace's `prepare`
+ * re-links the skills on every install, so it takes the same release and the newer ones in its major. The two
+ * declarations differ in shape, never in release: a caret behind the engine's pin is drift, and so is an exact copy.
  * @member {Map<String, String>}
  */
-export const INDEPENDENT = new Map([
-    ['neo-agent-skills', 'the engine pins its maintainer release; a workspace installs the app-audience release']
+export const CARET_OF_ENGINE = new Map([
+    ['neo-agent-skills', 'the engine pins the release it lints itself with; a workspace takes it and the newer ones in its major']
 ]);
 
 /**
  * @summary Compares the scaffold's devDependencies with the engine's.
  * @param {Object} scaffold The generated devDependencies
  * @param {Object} engine   The engine release's devDependencies
- * @returns {{drift: Object[], independent: String[], scaffoldOnly: String[]}} `drift` holds `{name, scaffold, engine}`
- * for each differing range; `independent` lists the declared exceptions both sides carry
+ * @returns {{drift: Object[], scaffoldOnly: String[]}} `drift` holds `{name, scaffold, engine}` for each differing
+ * range, where `engine` is the range the scaffold has to declare: the engine's own, or the caret of its pin
  */
 export function findDrift(scaffold, engine) {
-    const names = Object.keys(scaffold);
+    const
+        names    = Object.keys(scaffold),
+        expected = name => CARET_OF_ENGINE.has(name) ? `^${engine[name].replace(/^[\^~]/, '')}` : engine[name];
 
     return {
-        drift       : names.filter(name => name in engine && !INDEPENDENT.has(name) && scaffold[name] !== engine[name])
-            .map(name => ({name, scaffold: scaffold[name], engine: engine[name]})),
-        independent : names.filter(name => name in engine && INDEPENDENT.has(name)),
+        drift       : names.filter(name => name in engine && scaffold[name] !== expected(name))
+            .map(name => ({name, scaffold: scaffold[name], engine: expected(name)})),
         scaffoldOnly: names.filter(name => !(name in engine))
     }
 }
@@ -105,20 +108,19 @@ if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToP
         range       = packageJson.dependencies['neo.mjs'],
         // One matching version answers as a string, several as an ascending list
         version     = [].concat(npmView(`neo.mjs@${range}`, 'version')).at(-1),
-        {drift, independent, scaffoldOnly} = findDrift(packageJson.devDependencies, npmView(`neo.mjs@${version}`, 'devDependencies')),
+        {drift, scaffoldOnly} = findDrift(packageJson.devDependencies, npmView(`neo.mjs@${version}`, 'devDependencies')),
         overrideDrift = findOverrideDrift(packageJson.overrides, npmView(`neo.mjs@${version}`, 'overrides'));
 
     if (scaffoldOnly.length > 0) {
         console.log(`check-engine-parity: not compared, no engine counterpart: ${scaffoldOnly.join(', ')}`)
     }
 
-    independent.forEach(name => console.log(`check-engine-parity: not compared, independent by design: ${name} (${INDEPENDENT.get(name)})`));
-
     if (drift.length > 0) {
         console.error(`check-engine-parity: ${drift.length} generated devDependencies differ from neo.mjs@${version} ` +
             `(the newest release \`${range}\` allows):`);
-        drift.forEach(({name, scaffold, engine}) => console.error(`  ${name}  scaffold ${scaffold}  engine ${engine}`));
-        console.error('Move them in tasks/createPackageJson.mjs to the engine\'s values.');
+        drift.forEach(({name, scaffold, engine}) => console.error(`  ${name}  scaffold ${scaffold}  engine ${engine}` +
+            (CARET_OF_ENGINE.has(name) ? ` (the caret of its pin: ${CARET_OF_ENGINE.get(name)})` : '')));
+        console.error('Move them in tasks/createPackageJson.mjs to the engine\'s values (neo-agent-skills: AGENT_SKILLS_RANGE in tasks/createAgentLayer.mjs).');
         process.exitCode = 1
     } else {
         console.log(`check-engine-parity: every devDependency the scaffold shares with neo.mjs@${version} matches.`)

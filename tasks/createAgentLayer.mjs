@@ -18,10 +18,12 @@
  */
 
 /**
- * @summary The release whose skills carry the `app` audience.
+ * @summary The skills release a workspace takes: the caret of the release the engine pins, so the workspace gets the
+ * engine's release and the newer ones in its major. `scripts/check-engine-parity.mjs` fails when it differs from the
+ * caret of the pin in the engine release the scaffold's `neo.mjs` range resolves to.
  * @member {String}
  */
-export const AGENT_SKILLS_RANGE = '^0.1.61';
+export const AGENT_SKILLS_RANGE = '^1.2.0';
 
 /**
  * @summary The environment in which a scaffolded app connects to the Neural Link.
