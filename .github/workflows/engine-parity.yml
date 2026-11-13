@@ -27,5 +27,8 @@ jobs:
       - name: Coding-agent layer contract
         run: node scripts/test-agent-layer.mjs
 
+      - name: create-neo-app forwarder contract
+        run: node scripts/test-create-neo-app.mjs
+
       - name: Generated devDependencies and overrides match the pinned engine release
         run: node scripts/check-engine-parity.mjs

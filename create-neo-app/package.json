@@ -1,6 +1,6 @@
 {
     "name"       : "create-neo-app",
-    "version"    : "1.0.0",
+    "version"    : "1.0.1",
     "description": "Runs the neo-app generator for `npm create neo-app`. The generator itself is `npx neo-app`.",
     "type"       : "module",
     "repository" : {
@@ -12,6 +12,7 @@
         "create-neo-app": "./index.mjs"
     },
     "files"      : [
+        "forward.mjs",
         "index.mjs"
     ],
     "keywords"   : [
