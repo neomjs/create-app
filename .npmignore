@@ -4,6 +4,8 @@
 .github/RELEASE_NOTES
 .github/.sync-metadata.json
 scripts
+# A package of its own (the `npm create neo-app` forwarder), published from its folder.
+create-neo-app
 
 # Original content of the .gitignore file
 # See http://help.github.com/ignore-files/ for more about ignoring files.
