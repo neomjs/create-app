@@ -30,3 +30,16 @@ jobs:
           else
             npm publish
           fi
+      # `npm create neo-app` resolves to the package create-neo-app: the same files under a second
+      # name. The manifest is renamed in the runner only; nothing is committed.
+      - name: Publish the create-neo-app name if its version is not on npm
+        run: |
+          version="$(jq -r .version package.json)"
+          if npm view "create-neo-app@${version}" version >/dev/null 2>&1; then
+            echo "create-neo-app@${version} is already on npm; skipping publish."
+          else
+            npm pkg set name=create-neo-app
+            npm pkg delete bin
+            npm pkg set bin.create-neo-app=./tasks/neo-app.mjs
+            npm publish
+          fi
