@@ -1,0 +1,29 @@
+{
+    "name"       : "create-neo-app",
+    "version"    : "1.0.1",
+    "description": "Runs the neo-app generator for `npm create neo-app`. The generator itself is `npx neo-app`.",
+    "type"       : "module",
+    "repository" : {
+        "type"     : "git",
+        "url"      : "git+https://github.com/neomjs/create-app.git",
+        "directory": "create-neo-app"
+    },
+    "bin"        : {
+        "create-neo-app": "./index.mjs"
+    },
+    "files"      : [
+        "forward.mjs",
+        "index.mjs"
+    ],
+    "keywords"   : [
+        "neomjs",
+        "neo.mjs",
+        "neo-app"
+    ],
+    "author"     : "Tobias Uhlig",
+    "license"    : "MIT",
+    "bugs"       : {
+        "url": "https://github.com/neomjs/create-app/issues"
+    },
+    "homepage"   : "https://neomjs.com/"
+}

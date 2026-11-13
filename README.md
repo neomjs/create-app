@@ -10,6 +10,7 @@
 Create a new <a href="https://github.com/neomjs/neo">neo.mjs</a> app (workspace) using the 1-liner:
 > npx neo-app
 
+`npm create neo-app` runs the same generator.<br>
 npx neo-app works on macOS, Linux and Windows 10+.<br>
 If errors occur for your local environment, please <a href="https://github.com/neomjs/create-app/issues/new">file an issue</a>.<br>
 
