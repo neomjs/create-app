@@ -9,7 +9,14 @@ import assert                                                from 'node:assert/s
 import fs                                                    from 'node:fs';
 import os                                                    from 'node:os';
 import path                                                  from 'node:path';
-import createAgentLayer, {AGENT_SKILLS_RANGE, AI_CLIENT_ENVIRONMENT, NEURAL_LINK_PACKAGE} from '../tasks/createAgentLayer.mjs';
+import createAgentLayer, {
+    AGENT_SKILLS_RANGE,
+    AI_CLIENT_ENVIRONMENT,
+    MEMORY_CORE_PACKAGE,
+    NEURAL_LINK_PACKAGE,
+    resolveUseMemory,
+    toWorkspaceSlug
+} from '../tasks/createAgentLayer.mjs';
 import createNeoConfigJson                                   from '../tasks/createNeoConfigJson.mjs';
 import createPackageJson                                     from '../tasks/createPackageJson.mjs';
 
@@ -101,6 +108,113 @@ try {
         const workspace = path.join(root, 'without');
 
         assert.throws(() => createAgentLayer.generateAgentsMd(workspace, fs, path, () => ({status: 1}), 'npx'), /AGENTS\.md generator exited 1/);
+    }
+
+    // ── Opt-in --memory wiring: slug normalization, MCP configs, AGENTS.md & --agent-only ──────
+    {
+        assert.equal(resolveUseMemory(true), true);
+        assert.equal(resolveUseMemory('yes'), true);
+        assert.equal(resolveUseMemory('no'), false);
+        assert.equal(resolveUseMemory(false), false);
+        assert.equal(resolveUseMemory(undefined), false);
+
+        assert.equal(toWorkspaceSlug('MyApp'), 'myapp');
+        assert.equal(toWorkspaceSlug('My Cool App'), 'my-cool-app');
+        assert.equal(toWorkspaceSlug('.'), 'neo-app');
+        assert.equal(toWorkspaceSlug(path.basename('/tmp/Demo_App')), 'demo-app');
+
+        const workspace = path.join(root, 'with-memory');
+
+        fs.mkdirSync(workspace, {recursive: true});
+        createAgentLayer.writeMcpConfigs(workspace, fs, path, {appName: 'MyApp', useMemory: true});
+
+        const mcpJson = read(workspace, '.mcp.json');
+
+        assert.deepEqual(mcpJson, {
+            mcpServers: {
+                'neural-link': {command: 'npx', args: ['-y', NEURAL_LINK_PACKAGE]},
+                'memory-core': {command: 'npx', args: ['-y', MEMORY_CORE_PACKAGE, '--workspace', 'myapp']}
+            }
+        });
+        assert.ok(!mcpJson.mcpServers['memory-core'].args.some(arg => arg === '.' || path.isAbsolute(arg)));
+
+        assert.equal(
+            fs.readFileSync(path.join(workspace, '.codex', 'config.toml'), 'utf-8'),
+            `[mcp_servers.neural-link]\ncommand = "npx"\nargs    = ["-y", "${NEURAL_LINK_PACKAGE}"]\n\n` +
+            `[mcp_servers.memory-core]\ncommand = "npx"\nargs    = ["-y", "${MEMORY_CORE_PACKAGE}", "--workspace", "myapp"]\n`
+        );
+
+        const spawnStub = (targetDir) => () => {
+            fs.writeFileSync(path.join(targetDir, 'AGENTS.md'), '# AGENTS\n');
+            return {status: 0}
+        };
+
+        assert.equal(createAgentLayer.generateAgentsMd(workspace, fs, path, spawnStub(workspace), 'npx', {useMemory: true}), true);
+        const agentsMd = fs.readFileSync(path.join(workspace, 'AGENTS.md'), 'utf-8');
+        assert.match(agentsMd, /^# AGENTS\n\n## Persistent Memory \(neo-memory-core\)/);
+        assert.match(agentsMd, /query_recent_turns/);
+        assert.match(agentsMd, /add_memory/);
+        assert.equal(createAgentLayer.generateAgentsMd(workspace, fs, path, () => {
+            throw new Error('should not spawn when AGENTS.md exists')
+        }, 'npx', {useMemory: true}), false);
+        assert.equal(fs.readFileSync(path.join(workspace, 'AGENTS.md'), 'utf-8'), agentsMd);
+
+        const defaultAgentsWorkspace = path.join(root, 'default-agents');
+        fs.mkdirSync(defaultAgentsWorkspace, {recursive: true});
+        assert.equal(createAgentLayer.generateAgentsMd(defaultAgentsWorkspace, fs, path, spawnStub(defaultAgentsWorkspace), 'npx', {useMemory: false}), true);
+        assert.equal(fs.readFileSync(path.join(defaultAgentsWorkspace, 'AGENTS.md'), 'utf-8'), '# AGENTS\n');
+
+        const existingWorkspace = path.join(root, 'existing-memory');
+        fs.mkdirSync(path.join(existingWorkspace, 'apps', 'demo'), {recursive: true});
+        createPackageJson.init('ExistingApp', existingWorkspace, fs, os, path, false);
+        const changed = createAgentLayer.addToWorkspace(existingWorkspace, fs, os, path, {useMemory: true});
+        assert.ok(changed.includes('.mcp.json') && changed.includes('.codex/config.toml'));
+        assert.deepEqual(read(existingWorkspace, '.mcp.json').mcpServers['memory-core'], {
+            command: 'npx',
+            args   : ['-y', MEMORY_CORE_PACKAGE, '--workspace', 'existingapp']
+        });
+
+        // Upgrading a workspace that already has the agent layer adds memory-core idempotently.
+        const upgradeWs   = scaffold('upgrade-existing-layer', true);
+        const initialMcp  = read(upgradeWs, '.mcp.json');
+        initialMcp.mcpServers.custom = {command: 'npx', args: ['-y', 'custom-mcp']};
+        fs.writeFileSync(path.join(upgradeWs, '.mcp.json'), JSON.stringify(initialMcp, null, 4) + '\n');
+        fs.appendFileSync(path.join(upgradeWs, '.codex', 'config.toml'), '\n[mcp_servers.custom]\ncommand = "npx"\nargs    = ["-y", "custom-mcp"]\n');
+        fs.writeFileSync(path.join(upgradeWs, 'AGENTS.md'), '# AGENTS\n\nCustom rule.\n');
+
+        assert.deepEqual(createAgentLayer.addToWorkspace(upgradeWs, fs, os, path, {useMemory: false}), []);
+        assert.equal(createAgentLayer.generateAgentsMd(upgradeWs, fs, path, () => {
+            throw new Error('must not regenerate existing AGENTS.md');
+        }, 'npx', {useMemory: false}), false);
+
+        const upgradeChanged = createAgentLayer.addToWorkspace(upgradeWs, fs, os, path, {useMemory: true});
+        assert.deepEqual(upgradeChanged.sort(), ['.codex/config.toml', '.mcp.json']);
+        assert.deepEqual(read(upgradeWs, '.mcp.json').mcpServers, {
+            'neural-link': {command: 'npx', args: ['-y', NEURAL_LINK_PACKAGE]},
+            custom       : {command: 'npx', args: ['-y', 'custom-mcp']},
+            'memory-core': {command: 'npx', args: ['-y', MEMORY_CORE_PACKAGE, '--workspace', 'myapp']}
+        });
+        assert.equal(
+            fs.readFileSync(path.join(upgradeWs, '.codex', 'config.toml'), 'utf-8'),
+            `[mcp_servers.neural-link]\ncommand = "npx"\nargs    = ["-y", "${NEURAL_LINK_PACKAGE}"]\n\n` +
+            '[mcp_servers.custom]\ncommand = "npx"\nargs    = ["-y", "custom-mcp"]\n\n' +
+            `[mcp_servers.memory-core]\ncommand = "npx"\nargs    = ["-y", "${MEMORY_CORE_PACKAGE}", "--workspace", "myapp"]\n`
+        );
+        assert.equal(createAgentLayer.generateAgentsMd(upgradeWs, fs, path, () => {
+            throw new Error('must not regenerate existing AGENTS.md');
+        }, 'npx', {useMemory: true}), true);
+        const upgradedAgents = fs.readFileSync(path.join(upgradeWs, 'AGENTS.md'), 'utf-8');
+        assert.match(upgradedAgents, /^# AGENTS\n\nCustom rule\.\n\n## Persistent Memory \(neo-memory-core\)/);
+
+        const snapshotMcp    = fs.readFileSync(path.join(upgradeWs, '.mcp.json'), 'utf-8');
+        const snapshotCodex  = fs.readFileSync(path.join(upgradeWs, '.codex', 'config.toml'), 'utf-8');
+        assert.deepEqual(createAgentLayer.addToWorkspace(upgradeWs, fs, os, path, {useMemory: true}), []);
+        assert.equal(createAgentLayer.generateAgentsMd(upgradeWs, fs, path, () => {
+            throw new Error('must not regenerate existing AGENTS.md');
+        }, 'npx', {useMemory: true}), false);
+        assert.equal(fs.readFileSync(path.join(upgradeWs, '.mcp.json'), 'utf-8'), snapshotMcp);
+        assert.equal(fs.readFileSync(path.join(upgradeWs, '.codex', 'config.toml'), 'utf-8'), snapshotCodex);
+        assert.equal(fs.readFileSync(path.join(upgradeWs, 'AGENTS.md'), 'utf-8'), upgradedAgents);
     }
 } finally {
     fs.rmSync(root, {force: true, recursive: true});

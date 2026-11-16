@@ -1,26 +1,26 @@
 #!/usr/bin/env node
 
-import chalk               from 'chalk';
-import {spawnSync}         from 'child_process';
-import {Command, Option}   from 'commander/esm.mjs';
-import copyDocsApp         from './copyDocsApp.mjs';
-import createAgentLayer    from './createAgentLayer.mjs';
-import createApp           from './createApp.mjs';
-import createGitignore     from './createGitignore.mjs';
-import createIndexHtml     from './createIndexHtml.mjs';
-import createMyAppsJson    from './createMyAppsJson.mjs';
-import createNeoConfigJson from './createNeoConfigJson.mjs';
-import createPackageJson   from './createPackageJson.mjs';
-import createScssResources from './createScssResources.mjs';
-import createSrcFolder     from './createSrcFolder.mjs';
-import createServiceWorker from './createServiceWorker.mjs';
-import createViewport      from './createViewport.mjs';
-import envinfo             from 'envinfo';
-import fs                  from 'fs-extra';
-import inquirer            from 'inquirer';
-import os                  from 'os';
-import path                from 'path';
-import {fileURLToPath}     from 'url';
+import chalk                                   from 'chalk';
+import {spawnSync}                             from 'child_process';
+import {Command, InvalidArgumentError, Option} from 'commander/esm.mjs';
+import copyDocsApp                             from './copyDocsApp.mjs';
+import createAgentLayer, {resolveUseMemory}    from './createAgentLayer.mjs';
+import createApp                               from './createApp.mjs';
+import createGitignore                         from './createGitignore.mjs';
+import createIndexHtml                         from './createIndexHtml.mjs';
+import createMyAppsJson                        from './createMyAppsJson.mjs';
+import createNeoConfigJson                     from './createNeoConfigJson.mjs';
+import createPackageJson                       from './createPackageJson.mjs';
+import createScssResources                     from './createScssResources.mjs';
+import createSrcFolder                         from './createSrcFolder.mjs';
+import createServiceWorker                     from './createServiceWorker.mjs';
+import createViewport                          from './createViewport.mjs';
+import envinfo                                 from 'envinfo';
+import fs                                      from 'fs-extra';
+import inquirer                                from 'inquirer';
+import os                                      from 'os';
+import path                                    from 'path';
+import {fileURLToPath}                         from 'url';
 
 const
     __dirname     = fileURLToPath(path.dirname(import.meta.url)),
@@ -49,6 +49,13 @@ program
     .option('-w, --workspace <name>',                       'name of the project root folder', sanitizeInput)
     .option('--no-agent',                                   'skip the coding-agent layer (AGENTS.md, CLAUDE.md, the app skills, the Neural Link in development)')
     .option('--agent-only',                                 'add the coding-agent layer to the existing workspace named by -w, then exit')
+    .addOption(new Option('--memory [value]',              'configure standalone neo-memory-core MCP server ("yes", "no")').choices(['yes', 'no']).default('no').preset('yes').argParser(value => {
+        const clean = sanitizeInput(value);
+        if (!['yes', 'no'].includes(clean)) {
+            throw new InvalidArgumentError('Allowed choices are yes, no.');
+        }
+        return clean;
+    }))
     .allowUnknownOption()
     .on('--help', () => {
         console.log('\nIn case you have any issues, please create a ticket here:');
@@ -56,7 +63,9 @@ program
     })
     .parse(process.argv);
 
-const programOpts = program.opts();
+const
+    programOpts = program.opts(),
+    useMemory   = resolveUseMemory(programOpts.memory);
 
 if (programOpts.info) {
     console.log(chalk.bold('\nEnvironment Info:'));
@@ -87,11 +96,11 @@ if (programOpts.info) {
         process.exit(1);
     }
 
-    const changed = createAgentLayer.addToWorkspace(workspace, fs, os, path);
+    const changed = createAgentLayer.addToWorkspace(workspace, fs, os, path, {appName: programOpts.appName, useMemory});
 
     spawnSync(npmCmd, ['i'], {encoding: 'utf-8', env: process.env, cwd: workspace, shell: true, stdio: 'inherit'});
 
-    if (createAgentLayer.generateAgentsMd(workspace, fs, path, spawnSync, npxCmd)) {
+    if (createAgentLayer.generateAgentsMd(workspace, fs, path, spawnSync, npxCmd, {useMemory})) {
         changed.push('AGENTS.md');
     }
 
@@ -196,7 +205,7 @@ if (programOpts.info) {
 
             if (programOpts.agent) {
                 createAgentLayer.writeClaudeMd(workspace, fs, path);
-                createAgentLayer.writeMcpConfigs(workspace, fs, path);
+                createAgentLayer.writeMcpConfigs(workspace, fs, path, {appName, useMemory});
             }
 
             fs.copySync(
@@ -209,7 +218,7 @@ if (programOpts.info) {
             // npm install — its `prepare` links the app skills when the agent layer is on
             spawnSync(npmCmd, ['i'], cpOpts);
 
-            programOpts.agent && createAgentLayer.generateAgentsMd(workspace, fs, path, spawnSync, npxCmd);
+            programOpts.agent && createAgentLayer.generateAgentsMd(workspace, fs, path, spawnSync, npxCmd, {useMemory});
 
             copyDocsApp.init(fs, os, path, workspace);
 
