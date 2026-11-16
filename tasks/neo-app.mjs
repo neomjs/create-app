@@ -1,26 +1,26 @@
 #!/usr/bin/env node
 
-import chalk                                  from 'chalk';
-import {spawnSync}                            from 'child_process';
+import chalk                                   from 'chalk';
+import {spawnSync}                             from 'child_process';
 import {Command, InvalidArgumentError, Option} from 'commander/esm.mjs';
-import copyDocsApp         from './copyDocsApp.mjs';
-import createAgentLayer, {resolveUseMemory} from './createAgentLayer.mjs';
-import createApp           from './createApp.mjs';
-import createGitignore     from './createGitignore.mjs';
-import createIndexHtml     from './createIndexHtml.mjs';
-import createMyAppsJson    from './createMyAppsJson.mjs';
-import createNeoConfigJson from './createNeoConfigJson.mjs';
-import createPackageJson   from './createPackageJson.mjs';
-import createScssResources from './createScssResources.mjs';
-import createSrcFolder     from './createSrcFolder.mjs';
-import createServiceWorker from './createServiceWorker.mjs';
-import createViewport      from './createViewport.mjs';
-import envinfo             from 'envinfo';
-import fs                  from 'fs-extra';
-import inquirer            from 'inquirer';
-import os                  from 'os';
-import path                from 'path';
-import {fileURLToPath}     from 'url';
+import copyDocsApp                             from './copyDocsApp.mjs';
+import createAgentLayer, {resolveUseMemory}    from './createAgentLayer.mjs';
+import createApp                               from './createApp.mjs';
+import createGitignore                         from './createGitignore.mjs';
+import createIndexHtml                         from './createIndexHtml.mjs';
+import createMyAppsJson                        from './createMyAppsJson.mjs';
+import createNeoConfigJson                     from './createNeoConfigJson.mjs';
+import createPackageJson                       from './createPackageJson.mjs';
+import createScssResources                     from './createScssResources.mjs';
+import createSrcFolder                         from './createSrcFolder.mjs';
+import createServiceWorker                     from './createServiceWorker.mjs';
+import createViewport                          from './createViewport.mjs';
+import envinfo                                 from 'envinfo';
+import fs                                      from 'fs-extra';
+import inquirer                                from 'inquirer';
+import os                                      from 'os';
+import path                                    from 'path';
+import {fileURLToPath}                         from 'url';
 
 const
     __dirname     = fileURLToPath(path.dirname(import.meta.url)),
