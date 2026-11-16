@@ -76,6 +76,9 @@ Leave all of that out:
 Add it to a workspace you already have (it changes nothing else, and keeps an existing `AGENTS.md` or `CLAUDE.md`):
 > npx neo-app --agent-only -w workspace
 
+Opt into standalone cross-harness persistent memory (`neo-memory-core`):
+> npx neo-app --memory
+
 ## Starting a local web-server
 By default, npx neo-app will start a webpack dev-server right after the build.
 

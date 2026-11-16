@@ -38,6 +38,36 @@ export const AI_CLIENT_ENVIRONMENT = 'development';
 export const NEURAL_LINK_PACKAGE = 'neo-neural-link';
 
 /**
+ * @summary The npm package that runs the standalone Memory Core MCP server with no checkout.
+ * @member {String}
+ */
+export const MEMORY_CORE_PACKAGE = 'neo-memory-core';
+
+/**
+ * @summary Normalizes an app or folder name into a portable lowercase slug (`neo-app` fallback), never a path.
+ * @param {String} rawName
+ * @returns {String}
+ */
+export function toWorkspaceSlug(rawName) {
+    const cleaned = String(rawName ?? '')
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+    return cleaned || 'neo-app'
+}
+
+/**
+ * @summary Normalizes the CLI `--memory` flag (`true`, `'yes'`, or `'no'`) into a boolean.
+ * @param {Boolean|String} value
+ * @returns {Boolean}
+ */
+export function resolveUseMemory(value) {
+    return value === true || value === 'yes'
+}
+
+/**
  * @summary The scripts the layer adds to a workspace's `package.json`.
  * @member {Object}
  */
@@ -48,22 +78,43 @@ export const agentScripts = {
 const
     CLAUDE_MD = '@AGENTS.md\n',
     // The generator's declared kind for a workspace `neo-app` creates; never one of the engine's own repositories.
-    AGENTS_MD_ARGS = ['--no-install', 'neo-agent-skills-agents-md', '--repo', 'neo-app-workspace', '--audience', 'app', '--out', 'AGENTS.md'];
+    AGENTS_MD_ARGS = ['--no-install', 'neo-agent-skills-agents-md', '--repo', 'neo-app-workspace', '--audience', 'app', '--out', 'AGENTS.md'],
+    MEMORY_AGENTS_MD_SECTION = [
+        '## Persistent Memory (neo-memory-core)',
+        '',
+        'This workspace configures standalone `neo-memory-core` (`npx -y neo-memory-core`) for cross-harness episodic memory:',
+        '- At session start, call `query_recent_turns` (and `query_raw_memories` for targeted keyword recall) to recover prior decisions before re-deriving context.',
+        '- After completing meaningful work, call `add_memory` (`prompt`, `decisionContext`, `response`) so subsequent sessions inherit durable context.'
+    ].join('\n') + '\n';
 
 export default {
     /**
-     * @summary Writes the project MCP configs that start the Neural Link, each only where the workspace has none.
-     * @param {String} workspace
-     * @param {Object} fs
-     * @param {Object} path
+     * @summary Writes the project MCP configs that start the Neural Link (and optional Memory Core), each only where the workspace has none.
+     * @param {String}  workspace
+     * @param {Object}  fs
+     * @param {Object}  path
+     * @param {Object}  [options={}]
+     * @param {String}  [options.appName]
+     * @param {Boolean} [options.useMemory=false]
      * @returns {String[]} The files it wrote, relative to the workspace
      */
-    writeMcpConfigs(workspace, fs, path) {
+    writeMcpConfigs(workspace, fs, path, {appName, useMemory = false} = {}) {
+        const
+            mcpServers = {'neural-link': {command: 'npx', args: ['-y', NEURAL_LINK_PACKAGE]}},
+            codexLines = [`[mcp_servers.neural-link]\ncommand = "npx"\nargs    = ["-y", "${NEURAL_LINK_PACKAGE}"]\n`];
+
+        if (useMemory) {
+            const slug = toWorkspaceSlug(appName || path.basename(workspace));
+
+            mcpServers['memory-core'] = {command: 'npx', args: ['-y', MEMORY_CORE_PACKAGE, '--workspace', slug]};
+            codexLines.push(`\n[mcp_servers.memory-core]\ncommand = "npx"\nargs    = ["-y", "${MEMORY_CORE_PACKAGE}", "--workspace", "${slug}"]\n`);
+        }
+
         const
             written = [],
             files   = {
-                '.mcp.json'         : JSON.stringify({mcpServers: {'neural-link': {command: 'npx', args: ['-y', NEURAL_LINK_PACKAGE]}}}, null, 4) + '\n',
-                '.codex/config.toml': `[mcp_servers.neural-link]\ncommand = "npx"\nargs    = ["-y", "${NEURAL_LINK_PACKAGE}"]\n`
+                '.mcp.json'         : JSON.stringify({mcpServers}, null, 4) + '\n',
+                '.codex/config.toml': codexLines.join('')
             };
 
         for (const [name, content] of Object.entries(files)) {
@@ -105,10 +156,14 @@ export default {
      * @param {Object}   path
      * @param {Function} spawnSync
      * @param {String}   npxCmd
+     * @param {Object}   [options={}]
+     * @param {Boolean}  [options.useMemory=false]
      * @returns {Boolean} Whether the file was written
      */
-    generateAgentsMd(workspace, fs, path, spawnSync, npxCmd) {
-        if (fs.existsSync(path.join(workspace, 'AGENTS.md'))) {
+    generateAgentsMd(workspace, fs, path, spawnSync, npxCmd, {useMemory = false} = {}) {
+        const target = path.join(workspace, 'AGENTS.md');
+
+        if (fs.existsSync(target)) {
             return false
         }
 
@@ -118,23 +173,35 @@ export default {
             throw new Error(`neo-app: the AGENTS.md generator exited ${result.status ?? result.error?.message}; is neo-agent-skills ${AGENT_SKILLS_RANGE} installed?`)
         }
 
+        if (useMemory && fs.existsSync(target)) {
+            const existing = fs.readFileSync(target, 'utf-8');
+
+            if (!existing.includes(MEMORY_CORE_PACKAGE)) {
+                fs.writeFileSync(target, `${existing.trimEnd()}\n\n${MEMORY_AGENTS_MD_SECTION}`);
+            }
+        }
+
         return true
     },
 
     /**
      * @summary Adds the layer to an existing workspace (`--agent-only`): the skills dependency and its `prepare`, and
      * `useAiClient` in every app that does not set it. A key the workspace already sets is left as it is.
-     * @param {String} workspace
-     * @param {Object} fs
-     * @param {Object} os
-     * @param {Object} path
+     * @param {String}  workspace
+     * @param {Object}  fs
+     * @param {Object}  os
+     * @param {Object}  path
+     * @param {Object}  [options={}]
+     * @param {String}  [options.appName]
+     * @param {Boolean} [options.useMemory=false]
      * @returns {String[]} The files it changed, relative to the workspace
      */
-    addToWorkspace(workspace, fs, os, path) {
+    addToWorkspace(workspace, fs, os, path, {appName, useMemory = false} = {}) {
         const
             changed         = [],
             packageJsonPath = path.join(workspace, 'package.json'),
-            packageJson     = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+            packageJson     = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8')),
+            resolvedAppName = appName || packageJson.name || path.basename(workspace);
 
         packageJson.scripts         ??= {};
         packageJson.devDependencies ??= {};
@@ -168,7 +235,7 @@ export default {
             changed.push('CLAUDE.md')
         }
 
-        changed.push(...this.writeMcpConfigs(workspace, fs, path));
+        changed.push(...this.writeMcpConfigs(workspace, fs, path, {appName: resolvedAppName, useMemory}));
 
         return changed
     }
