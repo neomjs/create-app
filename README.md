@@ -109,6 +109,11 @@ The beauty inside this screen is:
     2.  No need for source-maps
 
 ## Viewing your app in dist modes
+The first run builds what dev mode needs: the development themes. The dist modes exist after you build them:
+```bash
+npm run build-all
+```
+
 dist/development is using webpack based builds (source-maps, not minified)
 > http://localhost:8096/dist/development/apps/myapp/
 
