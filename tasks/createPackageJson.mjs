@@ -2,7 +2,7 @@ import {AGENT_SKILLS_RANGE, agentScripts} from './createAgentLayer.mjs';
 
 export default {
     /**
-     * @param {String}  appName
+     * @param {String}  appName Its lower-cased form names the folder under `apps/` that `server-start` opens
      * @param {String}  folder
      * @param {Object}  fs
      * @param {Object}  os
@@ -39,7 +39,7 @@ export default {
                 // The engine package ships no generated bundles, and an install replaces node_modules/neo.mjs, so every
                 // install rebuilds the two the engine imports at module scope. The others load lazily: bundle-browser-deps.
                 "postinstall"        : "cd node_modules/neo.mjs && npm i && npm run bundle-parse5 && npm run bundle-marked",
-                "server-start"       : "webpack serve -c ./node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.mjs --open",
+                "server-start"       : `webpack serve -c ./node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.mjs --open apps/${appName.toLowerCase()}/`,
                 "test"               : "playwright test -c node_modules/neo.mjs/test/playwright/playwright.config.mjs",
                 "test-components"    : "playwright test -c node_modules/neo.mjs/test/playwright/playwright.config.component.mjs",
                 "test-e2e"           : "playwright test -c node_modules/neo.mjs/test/playwright/playwright.config.e2e.mjs",
