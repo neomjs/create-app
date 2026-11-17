@@ -1,23 +1,8 @@
 import {AGENT_SKILLS_RANGE, agentScripts} from './createAgentLayer.mjs';
 
-/**
- * @summary The URL path segment of an app's folder, written in characters no shell gives a meaning to.
- *
- * The segment lands inside the npm script `server-start`, which a shell parses, so every character outside
- * `[a-z0-9._-]` is percent-encoded, including those `encodeURIComponent` keeps. The app name stays data, and the
- * browser decodes the segment back to the folder the generator wrote.
- * @param {String} appName
- * @returns {String}
- */
-export function toRouteSegment(appName) {
-    return [...appName.toLowerCase()].map(char => /[a-z0-9._-]/.test(char) ? char :
-        encodeURIComponent(char).replace(/[!'()*~]/g, keep => '%' + keep.charCodeAt(0).toString(16).toUpperCase())
-    ).join('')
-}
-
 export default {
     /**
-     * @param {String}  appName Its lower-cased form names the folder under `apps/` that `server-start` opens
+     * @param {String}  appName
      * @param {String}  folder
      * @param {Object}  fs
      * @param {Object}  os
@@ -54,7 +39,8 @@ export default {
                 // The engine package ships no generated bundles, and an install replaces node_modules/neo.mjs, so every
                 // install rebuilds the two the engine imports at module scope. The others load lazily: bundle-browser-deps.
                 "postinstall"        : "cd node_modules/neo.mjs && npm i && npm run bundle-parse5 && npm run bundle-marked",
-                "server-start"       : `webpack serve -c ./node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.mjs --open apps/${toRouteSegment(appName)}/`,
+                // The app it opens lives in that config as data (createServerConfig.mjs), never in this shell line
+                "server-start"       : "webpack serve -c ./buildScripts/webpack.server.config.mjs",
                 "test"               : "playwright test -c node_modules/neo.mjs/test/playwright/playwright.config.mjs",
                 "test-components"    : "playwright test -c node_modules/neo.mjs/test/playwright/playwright.config.component.mjs",
                 "test-e2e"           : "playwright test -c node_modules/neo.mjs/test/playwright/playwright.config.e2e.mjs",
