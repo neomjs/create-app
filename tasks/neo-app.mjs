@@ -222,11 +222,14 @@ if (programOpts.info) {
 
             copyDocsApp.init(fs, os, path, workspace);
 
-            spawnSync('node', ['./node_modules/neo.mjs/buildScripts/build/all.mjs', '-n', '-l', 'no', '-p', 'no'], {
+            // Dev mode reads only the development themes; the dist environments wait for `npm run build-all`
+            spawnSync('node', ['./node_modules/neo.mjs/buildScripts/build/themes.mjs', '-e', 'dev', '-n'], {
                 cwd  : path.join(cwd, workspace),
                 env  : process.env,
                 stdio: 'inherit'
             });
+
+            console.log(`\n${chalk.cyan('npm run build-all')} builds dist/development, dist/production and dist/esm.`);
 
             if (programOpts.start === 'true') {
                 logBuildTime();
