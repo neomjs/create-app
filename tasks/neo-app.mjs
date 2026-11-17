@@ -12,6 +12,7 @@ import createMyAppsJson                        from './createMyAppsJson.mjs';
 import createNeoConfigJson                     from './createNeoConfigJson.mjs';
 import createPackageJson                       from './createPackageJson.mjs';
 import createScssResources                     from './createScssResources.mjs';
+import createServerConfig                      from './createServerConfig.mjs';
 import createSrcFolder                         from './createSrcFolder.mjs';
 import createServiceWorker                     from './createServiceWorker.mjs';
 import createViewport                          from './createViewport.mjs';
@@ -47,6 +48,7 @@ program
     .addOption(new Option('-u, --useSharedWorkers <name>',  'use SharedWorkers').choices(['yes', 'no']).argParser(sanitizeInput))
     .addOption(new Option('-v, --useServiceWorker <value>', 'use ServiceWorker').choices(['yes', 'no']).argParser(sanitizeInput))
     .option('-w, --workspace <name>',                       'name of the project root folder', sanitizeInput)
+    .option('--docs',                                       'copy the engine\'s docs app into the workspace; it shows nothing until `npm run generate-docs-json`')
     .option('--no-agent',                                   'skip the coding-agent layer (AGENTS.md, CLAUDE.md, the app skills, the Neural Link in development)')
     .option('--agent-only',                                 'add the coding-agent layer to the existing workspace named by -w, then exit')
     .addOption(new Option('--memory [value]',              'configure standalone neo-memory-core MCP server ("yes", "no")').choices(['yes', 'no']).default('no').preset('yes').argParser(value => {
@@ -200,6 +202,7 @@ if (programOpts.info) {
             createNeoConfigJson.init(appName, appPath, fs, mainThreadAddons, os, path, themes, useSharedWorkers, useServiceWorker, programOpts.agent);
             createPackageJson  .init(appName, workspace, fs, os, path, programOpts.agent);
             createScssResources.init(appName, workspace, fs, os, path);
+            createServerConfig .init(appName, workspace, fs, os, path);
             createServiceWorker.init(appName, workspace, fs, os, path);
             createSrcFolder    .init(path.join(cwd, workspace), fs, os, path, __dirname);
 
@@ -220,7 +223,7 @@ if (programOpts.info) {
 
             programOpts.agent && createAgentLayer.generateAgentsMd(workspace, fs, path, spawnSync, npxCmd, {useMemory});
 
-            copyDocsApp.init(fs, os, path, workspace);
+            programOpts.docs && copyDocsApp.init(fs, os, path, workspace);
 
             // Dev mode reads only the development themes; the dist environments wait for `npm run build-all`
             spawnSync('node', ['./node_modules/neo.mjs/buildScripts/build/themes.mjs', '-e', 'dev', '-n'], {

@@ -60,6 +60,9 @@ Choose an app name:
 Choose the themes:
 > npx neo-app -t all
 
+Copy the engine's docs app into the workspace (it shows nothing until you run `npm run generate-docs-json`):
+> npx neo-app --docs
+
 Of course, you can combine the options, e.g.:
 > npx neo-app -w workspace -n MyApp -t all
 
@@ -80,10 +83,7 @@ Opt into standalone cross-harness persistent memory (`neo-memory-core`):
 > npx neo-app --memory
 
 ## Starting a local web-server
-By default, npx neo-app will start a webpack dev-server right after the build.
-
-A new browser tab should open right away:<br>
-<img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/serverStart.png">
+By default, npx neo-app will start a webpack dev-server right after the build, and a new browser tab opens on your app.
 
 In case you do not want to start the dev-server automatically, you can use the -s option:
 > npx neo-app -s false
@@ -96,8 +96,10 @@ You can use a different web-server of your choice (e.g. webstorm) or you can sta
 ## Viewing your app in development mode
 The dev mode works in all major browsers (Chromium, Firefox & Safari).
 
-To view your new app, you can navigate to:
-> http://localhost:8096/apps/myapp/
+The tab the server opens shows your new app at:
+> http://localhost:8080/apps/myapp/
+
+The server takes the next free port when 8080 is in use; the terminal prints the address.
 
 <img width="1100px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/serverMyApp.png">
 
@@ -115,12 +117,12 @@ npm run build-all
 ```
 
 dist/development is using webpack based builds (source-maps, not minified)
-> http://localhost:8096/dist/development/apps/myapp/
+> http://localhost:8080/dist/development/apps/myapp/
 
 <img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/Safari.png">
 
 dist/production is using webpack based builds (no source-maps, minified)
-> http://localhost:8096/dist/production/apps/myapp/
+> http://localhost:8080/dist/production/apps/myapp/
 
 <img width="700px" src="https://raw.githubusercontent.com/neomjs/pages/master/resources_pub/images/createApp/Firefox.png">
 
@@ -132,9 +134,10 @@ Using the script will create the following content:<br>
 2.  apps contains the source files of your new app. You can create multiple apps as needed.
 3.  buildScripts contains meta-infos (in theory this could get stored inside the neo.mjs node_module, but then every
 framework version update would require to re-create it)
-4.  dist contains the development & production builds of your app, as well as the docs app
-5.  docs contains a copy of the neo.mjs non dist version of the docs app. This version does show documentation views of
-your app as well as all neo.mjs examples
+4.  dist holds the development themes after the first run; `npm run build-all` adds the development, production and esm
+builds of your app
+5.  docs exists only with `--docs`: a copy of the engine's docs app, which shows documentation views of your app and the
+engine's examples once `npm run generate-docs-json` has run
 6.  node_modules => all related dependencies which are required for the build scripts & the dev-server
 7.  package.json => defines scripts and dependencies.
 
@@ -147,13 +150,13 @@ You can run each script via
 > npm run \<script-name\>
 
 ### Main Scripts
-*   `server-start`: Starts the webpack dev-server
+*   `server-start`: Starts the webpack dev-server and opens your app; `npm run server-start -- --no-open` starts it without a browser
 *   `build-all`: npm install & builds literally everything.
 *   `build-all-questions`: same as build all, but you can choose what to build using the inquirer interface.
 *   `build-themes`: builds the themes for dev and / or prod and lets you choose if want to use CSS variables.
 *   `build-threads`: builds main, data & vdom (or any combinations) for dev and / or prod.
 *   `create-app`: add an additional app to your project. You can also trigger npx neo-app multiple times.
-*   `generate-docs-json`: When you change your app code (e.g. adding new files) and want to see those changes inside the Docs app, you need to run this script to update the content.
+*   `generate-docs-json`: writes the data the docs app of a `--docs` workspace reads. Run it once before that app shows anything, and again when you change your app code (e.g. adding new files).
 *   `bundle-browser-deps`: builds the browser bundles the engine loads from `node_modules/neo.mjs/dist/`. The npm package ships none of them. `npm install` builds the two the engine imports at startup (`parse5`, `marked`); run this script for the ones loaded on demand (Mermaid, Monaco, highlight.js).
 
 ## Working on your new neo.mjs App

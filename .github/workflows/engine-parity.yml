@@ -32,3 +32,10 @@ jobs:
 
       - name: Generated devDependencies and overrides match the pinned engine release
         run: node scripts/check-engine-parity.mjs
+
+      # The contracts above run with no install; this one runs the generator itself
+      - name: Install the generator's dependencies
+        run: npm ci --ignore-scripts
+
+      - name: First-run contract
+        run: node scripts/test-neo-app.mjs

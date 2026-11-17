@@ -39,7 +39,8 @@ export default {
                 // The engine package ships no generated bundles, and an install replaces node_modules/neo.mjs, so every
                 // install rebuilds the two the engine imports at module scope. The others load lazily: bundle-browser-deps.
                 "postinstall"        : "cd node_modules/neo.mjs && npm i && npm run bundle-parse5 && npm run bundle-marked",
-                "server-start"       : "webpack serve -c ./node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.mjs --open",
+                // The app it opens lives in that config as data (createServerConfig.mjs), never in this shell line
+                "server-start"       : "webpack serve -c ./buildScripts/webpack.server.config.mjs",
                 "test"               : "playwright test -c node_modules/neo.mjs/test/playwright/playwright.config.mjs",
                 "test-components"    : "playwright test -c node_modules/neo.mjs/test/playwright/playwright.config.component.mjs",
                 "test-e2e"           : "playwright test -c node_modules/neo.mjs/test/playwright/playwright.config.e2e.mjs",
