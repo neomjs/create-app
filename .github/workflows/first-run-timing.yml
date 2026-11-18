@@ -11,18 +11,24 @@ permissions:
 
 jobs:
   time:
-    name: ${{ matrix.arm }}
+    name: ${{ matrix.arm }}, ${{ matrix.path }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 75
     strategy:
       fail-fast: false
       matrix:
-        # Run 44227540176 holds the plain arms of the baseline; this push repeats only the arm whose shaping failed there
+        # published: the generator a stranger gets from npm today. main: the 14.0 path, packed from this repository's main
+        path: [published, main]
+        arm: [ubuntu-plain, ubuntu-shaped, windows-plain]
         include:
+          - arm: ubuntu-plain
+            os: ubuntu-latest
           - arm: ubuntu-shaped
             os: ubuntu-latest
             rate: 10mbit
             delay: 50ms
+          - arm: windows-plain
+            os: windows-latest
     defaults:
       run:
         shell: bash
@@ -45,39 +51,63 @@ jobs:
           npm install playwright@1.65.1 > /dev/null
           npx playwright install --with-deps chromium
 
-      # Each direction gets the delay, so the round trip is twice it. Incoming traffic is shaped through ifb0.
+      # main is not on npm, so its tarball stands in for the registry copy; its dependencies still come from the registry
+      - name: The generator from main, packed
+        if: matrix.path == 'main'
+        run: |
+          git fetch --depth 1 origin main
+          mkdir -p "$RUNNER_TEMP/gen"
+          git archive FETCH_HEAD | tar -x -C "$RUNNER_TEMP/gen"
+          SHA=$(git rev-parse --short FETCH_HEAD)
+          cd "$RUNNER_TEMP/gen"
+          TARBALL=$(npm pack --silent | tail -1)
+          echo "GENERATOR=$RUNNER_TEMP/gen/$TARBALL" >> "$GITHUB_ENV"
+          echo "GENERATOR_REF=neo-app from main@$SHA, packed" >> "$GITHUB_ENV"
+
+      # The runs of this arm happen in a network namespace of their own, behind a veth pair. Each end delays and limits
+      # what it sends, so the round trip is twice the delay. The image's own hooks on its uplink stay untouched: its
+      # ingress hook is taken by a filter of the image (runs 44227540176 and 44230236374).
       - name: Shape the link
-        if: matrix.rate != ''
+        if: matrix.rate
         run: |
           set -euxo pipefail
           DEV=$(ip route get 1.1.1.1 | awk '{for (i = 1; i <= NF; i++) if ($i == "dev") print $(i + 1)}')
           URL=https://registry.npmjs.org/neo.mjs/-/neo.mjs-13.4.0.tgz
-          probe() { curl -s -o /dev/null --max-time 8 -w '%{speed_download} %{time_connect}' "$URL" || true; }
-          echo "control, before shaping (B/s, connect s): $(probe)"
-          tc qdisc show dev "$DEV"
-          tc filter show dev "$DEV" ingress || true
+          probe() { "$@" curl -s -o /dev/null --max-time 8 -w '%{speed_download} %{time_connect}' "$URL" || true; }
+          echo "control, the runner's own link (B/s, connect s): $(probe)"
           sudo modprobe sch_netem || { sudo apt-get update -qq; sudo apt-get install -y -qq "linux-modules-extra-$(uname -r)"; sudo modprobe sch_netem; }
-          sudo modprobe ifb numifbs=1
-          sudo modprobe act_mirred || true
-          sudo modprobe cls_matchall || true
-          sudo ip link set dev ifb0 up
-          sudo tc qdisc replace dev "$DEV" root netem delay ${{ matrix.delay }} rate ${{ matrix.rate }}
-          # The image already carries an ingress hook on this device and refuses a second one, so the filter joins it
-          sudo tc qdisc add dev "$DEV" clsact 2> /dev/null || true
-          sudo tc filter add dev "$DEV" ingress protocol all prio 1 matchall action mirred egress redirect dev ifb0
-          sudo tc qdisc replace dev ifb0 root netem delay ${{ matrix.delay }} rate ${{ matrix.rate }}
-          tc qdisc show
-          tc filter show dev "$DEV" ingress
-          AFTER=$(probe)
-          echo "after shaping (B/s, connect s): $AFTER"
-          # An arm that is not shaped reports nothing: 10 Mbit/s is 1.25 MB/s, so twice that fails the step
-          echo "$AFTER" | awk '{ exit ($1 > 2500000) ? 1 : 0 }'
+          sudo ip netns add shaped
+          sudo ip link add veth-host type veth peer name veth-ns
+          sudo ip link set veth-ns netns shaped
+          sudo ip addr add 10.200.0.1/24 dev veth-host
+          sudo ip link set veth-host up
+          sudo ip netns exec shaped ip addr add 10.200.0.2/24 dev veth-ns
+          sudo ip netns exec shaped ip link set veth-ns up
+          sudo ip netns exec shaped ip link set lo up
+          sudo ip netns exec shaped ip route add default via 10.200.0.1
+          sudo sysctl -q -w net.ipv4.ip_forward=1
+          sudo iptables -t nat -A POSTROUTING -s 10.200.0.0/24 -o "$DEV" -j MASQUERADE
+          sudo iptables -I FORWARD -i veth-host -j ACCEPT
+          sudo iptables -I FORWARD -o veth-host -j ACCEPT
+          sudo mkdir -p /etc/netns/shaped
+          grep -E '^nameserver' /run/systemd/resolve/resolv.conf | sudo tee /etc/netns/shaped/resolv.conf
+          echo "control, the namespace before shaping (B/s, connect s): $(probe sudo ip netns exec shaped)"
+          sudo tc qdisc add dev veth-host root netem delay ${{ matrix.delay }} rate ${{ matrix.rate }}
+          sudo ip netns exec shaped tc qdisc add dev veth-ns root netem delay ${{ matrix.delay }} rate ${{ matrix.rate }}
+          AFTER=$(probe sudo ip netns exec shaped)
+          echo "the namespace after shaping (B/s, connect s): $AFTER"
+          # An arm that is not shaped reports nothing: 10 Mbit/s is 1.25 MB/s, so a read above twice that, or no read, fails
+          echo "$AFTER" | awk '{ exit ($1 > 2500000 || $1 + 0 == 0) ? 1 : 0 }'
 
       - name: Three first runs
         run: |
-          SHAPING="none"
-          if [ -n "${{ matrix.rate }}" ]; then SHAPING="${{ matrix.rate }} and ${{ matrix.delay }} in each direction (tc netem, incoming through ifb0)"; fi
-          node scripts/first-run/arm.mjs "${{ matrix.arm }}" "$RUNS" "$GENERATOR" "$RUNNER_TEMP/pw" "$RUNNER_TEMP/out" "$SHAPING"
+          RUN=(node scripts/first-run/arm.mjs "${{ matrix.arm }}" "$RUNS" "$GENERATOR" "$RUNNER_TEMP/pw" "$RUNNER_TEMP/out")
+          if [ -n "${{ matrix.rate }}" ]; then
+            sudo ip netns exec shaped sudo -u "$(id -un)" env "PATH=$PATH" "HOME=$HOME" "GITHUB_STEP_SUMMARY=$GITHUB_STEP_SUMMARY" "GENERATOR_REF=${GENERATOR_REF:-}" \
+              "${RUN[@]}" "${{ matrix.rate }} and ${{ matrix.delay }} in each direction (tc netem on a veth pair; the runs sit in a network namespace)"
+          else
+            "${RUN[@]}" none
+          fi
 
       - name: The first run's stamped generator log
         if: always()
@@ -86,5 +116,5 @@ jobs:
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: first-run-${{ matrix.arm }}
+          name: first-run-${{ matrix.arm }}-${{ matrix.path }}
           path: ${{ runner.temp }}/out

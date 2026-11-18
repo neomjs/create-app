@@ -15,6 +15,11 @@ const
     isWin   = process.platform === 'win32',
     pwPath  = pathToFileURL(path.join(pwDir, 'node_modules/playwright/index.mjs')).href,
     seconds = ms => +(ms / 1000).toFixed(2),
+    // A packed generator stands in for a registry copy that does not exist yet. npx would install it into its cache
+    // and run its bin; `npx --package <tarball>` is no stand-in, because it hands npm_config_package to every npx
+    // the generator starts itself.
+    packed  = /\.tgz$/.test(generator),
+    measure = path.join(here, 'measure.mjs'),
     lastJson = text => { try { return JSON.parse(text.trim().split('\n').pop()) } catch (e) { return null } },
     runs    = [];
 
@@ -32,6 +37,34 @@ const waitForServer = async (base, timeoutMs) => {
     }
 
     throw new Error(`${base} did not answer within ${timeoutMs / 1000} s`)
+};
+
+// Reads the phases out of a stamped generator log. A marker a generator version does not print leaves its phase null.
+const phases = logFile => {
+    const
+        lines = fs.readFileSync(logFile, 'utf8').split('\n').map(line => line.match(/^\s*([\d.]+) (.*)$/)).filter(Boolean)
+            .map(([, at, text]) => ({at: +at, text})),
+        at    = (pattern, from = 0) => lines.find(l => l.at >= from && pattern.test(l.text))?.at ?? null,
+        span  = (start, end) => start != null && end != null ? +(end - start).toFixed(2) : null,
+        welcome      = at(/Welcome to the Neo\.mjs App Generator/),
+        firstBuild   = at(/ build(All|Themes)\b|Bundling highlight\.js/),
+        installEnd   = lines.filter(l => /^added \d+ packages/.test(l.text) && (firstBuild == null || l.at <= firstBuild)).at(-1)?.at ?? null,
+        nestedStart  = at(/ postinstall$/),
+        hljsStart    = at(/Bundling highlight\.js/),
+        themesStart  = at(/ buildThemes$/),
+        threadsStart = at(/ buildThreads$/),
+        threadsEnd   = at(/Total time for \S+ buildThreads/),
+        end          = lines.at(-1)?.at ?? null;
+
+    return {
+        fetchGenerator: welcome,
+        install       : span(welcome, installEnd),
+        nestedInstall : span(nestedStart, nestedStart == null ? null : at(/^added \d+ packages/, nestedStart)),
+        highlightJs   : span(hljsStart, at(/Minified highlight\.js bundle created/)),
+        themes        : span(themesStart, threadsStart ?? end),
+        webpack       : span(threadsStart, threadsEnd),
+        distEsm       : span(threadsEnd, at(/Total time for dist\/esm/))
+    }
 };
 
 const stop = server => {
@@ -54,14 +87,35 @@ for (let i = 1; i <= +runCount; i++) {
         t0    = Date.now();
 
     // 1. The generator. Its defaults are passed as options, so no prompt waits.
-    const generated = spawnSync(process.execPath, [path.join(here, 'measure.mjs'), `generator-${i}`, root, cache, '--',
-        'npx', '--yes', generator, '-n', 'MyApp', '-w', 'ws', '-t', 'all', '-u', 'no', '-s', 'false'], {encoding: 'utf8'});
+    let command = ['npx', '--yes', generator], fetchSeconds = 0;
+
+    if (packed) {
+        const
+            prefix  = path.join(root, 'generator'),
+            fetched = spawnSync(process.execPath, [measure, `fetch-${i}`, root, cache, '--',
+                'npm', 'install', '--prefix', prefix, '--no-audit', '--no-fund', generator], {encoding: 'utf8'});
+
+        fetchSeconds = lastJson(fetched.stdout)?.wallSeconds ?? 0;
+        command      = [path.join(prefix, 'node_modules', '.bin', 'neo-app')]
+    }
+
+    const generated = spawnSync(process.execPath, [measure, `generator-${i}`, root, cache, '--',
+        ...command, '-n', 'MyApp', '-w', 'ws', '-t', 'all', '-u', 'no', '-s', 'false'], {encoding: 'utf8'});
 
     run.generatorSeconds = seconds(Date.now() - t0);
     run.generatorCode    = lastJson(generated.stdout)?.code ?? null;
 
-    fs.existsSync(path.join(root, `generator-${i}.log`)) &&
+    if (fs.existsSync(path.join(root, `generator-${i}.log`))) {
         fs.copyFileSync(path.join(root, `generator-${i}.log`), path.join(outDir, `generator-${i}.log`));
+        run.phases = phases(path.join(outDir, `generator-${i}.log`));
+
+        // the fetch of a packed generator is its install; the generator's own log starts after it
+        run.phases.fetchGenerator != null && (run.phases.fetchGenerator = +(run.phases.fetchGenerator + fetchSeconds).toFixed(2))
+    }
+
+    try {
+        run.engine = JSON.parse(fs.readFileSync(path.join(ws, 'node_modules/neo.mjs/package.json'), 'utf8')).version
+    } catch (e) { /* the generator did not get that far */ }
 
     if (run.generatorCode !== 0 || !fs.existsSync(path.join(ws, 'package.json'))) {
         run.error = 'the generator did not finish';
@@ -117,7 +171,8 @@ const
         return values.length ? {min: values[0], median: values[Math.floor(values.length / 2)], max: values.at(-1)} : null
     },
     report   = {
-        arm, generator, shaping,
+        arm, shaping,
+        generator: process.env.GENERATOR_REF || generator,
         machine: {
             platform: `${os.platform()} ${os.release()}`,
             image   : [process.env.ImageOS, process.env.ImageVersion].filter(Boolean).join(' ') || null,
@@ -139,16 +194,25 @@ fs.writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(report, null, 
 console.log(JSON.stringify(report, null, 2));
 
 if (process.env.GITHUB_STEP_SUMMARY) {
-    const rows = runs.map(r => `| ${r.run} | ${r.generatorSeconds ?? ''} | ${r.serverSeconds ?? ''} | ${r.frame?.textMs ?? ''} | ${r.frame?.idleMs ?? ''} | ${r.toTextSeconds ?? ''} | ${r.toIdleSeconds ?? ''} | ${r.frame?.requests ?? ''} | ${r.frame?.failedCount ?? ''} | ${r.error || r.frame?.errors?.[0] || ''} |`);
+    const
+        cell      = value => value ?? '',
+        rows      = runs.map(r => `| ${r.run} | ${cell(r.generatorSeconds)} | ${cell(r.serverSeconds)} | ${cell(r.frame?.textMs)} | ${cell(r.frame?.idleMs)} | ${cell(r.toTextSeconds)} | ${cell(r.toIdleSeconds)} | ${cell(r.frame?.requests)} | ${cell(r.frame?.failedCount)} | ${r.error || r.frame?.errors?.[0] || ''} |`),
+        phaseRows = runs.map(r => `| ${r.run} | ${cell(r.engine)} | ${['fetchGenerator', 'install', 'nestedInstall', 'highlightJs', 'themes', 'webpack', 'distEsm'].map(key => cell(r.phases?.[key])).join(' | ')} |`);
 
     fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, [
-        `## ${arm}: ${generator}, shaping ${shaping}`,
+        `## ${arm}: ${report.generator}, shaping ${shaping}`,
         '',
         `${report.machine.cpu}, ${report.machine.memoryGb} GB, ${report.machine.platform}, ${report.machine.image || 'no image id'}, Node ${report.machine.node}, npm ${report.machine.npm}`,
         '',
         '| run | generator s | server s | text ms | idle ms | to text s | to idle s | requests | failed | first error |',
         '|---|---:|---:|---:|---:|---:|---:|---:|---:|---|',
         ...rows,
+        '',
+        'Seconds per generator phase; the nested install is part of the install, and an empty cell is a phase this generator does not run.',
+        '',
+        '| run | engine | fetch of the generator | install | nested install | highlight.js | themes | webpack | dist/esm |',
+        '|---|---|---:|---:|---:|---:|---:|---:|---:|',
+        ...phaseRows,
         '',
         `To the styled frame (network idle): ${JSON.stringify(report.toIdleSeconds)}. Five seconds met: ${report.fiveSecondsMet}.`,
         ''
