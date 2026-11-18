@@ -38,9 +38,9 @@ jobs:
     env:
       GENERATOR: neo-app@13.4.1
       RUNS: '3'
-      # The third path's two sources. Once neomjs/neo#21295 and #75 are merged: dev and main.
-      ENGINE_SOURCE_REF: refs/pull/21295/head
-      GENERATOR_SOURCE_REF: refs/pull/75/head
+      # The third path's two sources, both merged: neomjs/neo#21295 and #21314 are on dev, #75 and #77 on main.
+      ENGINE_SOURCE_REF: dev
+      GENERATOR_SOURCE_REF: main
     steps:
       - uses: actions/checkout@v7
 
