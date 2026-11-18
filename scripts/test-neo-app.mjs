@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
- * @summary Contract checks for the first run: `server-start` opens the app the generator wrote, with the app name as
- * data in the workspace's server config and never in a shell line, and the engine's docs app is copied only with
+ * @summary Contract checks for the first run: `server-start` starts the engine's file server, no webpack, and opens
+ * the app the generator wrote, with the app name as data in the workspace's server script and never in a shell line;
+ * a workspace gets no `src/index.js` and no `webpack-dev-server`, and the engine's docs app is copied only with
  * `--docs`. The generator runs for real in a throwaway directory; a stand-in for npm installs nothing, so each
  * workspace gets the slice of the installed engine the run reads.
  */
@@ -13,26 +14,30 @@ import os                 from 'node:os';
 import path               from 'node:path';
 import {fileURLToPath,
         pathToFileURL}    from 'node:url';
-import createServerConfig from '../tasks/createServerConfig.mjs';
+import createServerScript from '../tasks/createServerScript.mjs';
 
 const
     generator   = fileURLToPath(new URL('../tasks/neo-app.mjs', import.meta.url)),
     root        = fs.mkdtempSync(path.join(os.tmpdir(), 'neo-app-first-run-')),
     bin         = path.join(root, 'bin'),
-    serverStart = 'webpack serve -c ./buildScripts/webpack.server.config.mjs',
+    serverStart = 'node ./buildScripts/server.mjs',
     exists      = (...parts) => fs.existsSync(path.join(root, ...parts)),
     write       = (file, content) => {
         fs.mkdirSync(path.dirname(file), {recursive: true});
         fs.writeFileSync(file, content)
     },
-    // The engine's own server config, reduced to a devServer value the workspace's config has to keep
-    writeEngineServerConfig = workspace => write(
-        path.join(workspace, 'node_modules/neo.mjs/buildScripts/webpack/webpack.server.config.mjs'),
-        'export default {devServer: {port: 4321}};'
+    // The engine's file server, reduced to its `run` entry, which records what the workspace script hands it
+    writeEngineFileServer = workspace => write(
+        path.join(workspace, 'node_modules/neo.mjs/buildScripts/util/fileServer.mjs'),
+        'export function run(options) {globalThis.fileServerRuns.push(options)}'
     ),
-    serverConfig = async workspace => (await import(
-        pathToFileURL(path.join(workspace, 'buildScripts/webpack.server.config.mjs')).href
-    )).default,
+    // The route the workspace's server script hands the engine, read by importing the script
+    openedRoute = async workspace => {
+        globalThis.fileServerRuns = [];
+        await import(pathToFileURL(path.join(workspace, 'buildScripts/server.mjs')).href);
+        assert.equal(globalThis.fileServerRuns.length, 1, 'the script starts the server once');
+        return globalThis.fileServerRuns[0].open
+    },
     run = (workspace, ...options) => {
         const engine = path.join(root, workspace, 'node_modules/neo.mjs');
 
@@ -42,7 +47,7 @@ const
         write(path.join(engine, 'docs/examples.json'),            '[]');
         write(path.join(engine, 'docs/neo-config.json'),          '{}');
         write(path.join(engine, 'docs/resources/logo.svg'),       '<svg/>');
-        writeEngineServerConfig(path.join(root, workspace));
+        writeEngineFileServer(path.join(root, workspace));
 
         const result = spawnSync(process.execPath, [
             generator, '-w', workspace, '-n', 'MyApp', '-t', 'neo-theme-dark', '-u', 'no', '-s', 'false', '--no-agent', ...options
@@ -56,7 +61,7 @@ write(path.join(bin, 'npm'), '#!/bin/sh\nexit 0\n');
 fs.chmodSync(path.join(bin, 'npm'), 0o755);
 
 try {
-    // ── The app name stays data: the config holds the route as a string, and the engine's devServer stays ──────────
+    // ── The app name stays data: the server script holds the route as a string ─────────────────────────────────────
     // `%CD%` and `ͻ` (UTF-8 CD BB) are the names a percent-encoded route in a cmd.exe line would expand
     const names = ['MyApp', 'Sales Desk', "O'Brien", 'x; touch pwned', '$(id)', '`id`', 'a&b|c>d', '"q"', 'Ünïcödé',
         '~(!*)', '%CD%', 'ͻ', '</script>\\', ' '];
@@ -64,14 +69,13 @@ try {
     for (const [index, name] of names.entries()) {
         const workspace = path.join(root, 'names', String(index));
 
-        writeEngineServerConfig(workspace);
-        createServerConfig.init(name, workspace, fs, os, path);
+        writeEngineFileServer(workspace);
+        createServerScript.init(name, workspace, fs, os, path);
 
-        const {devServer} = await serverConfig(workspace);
+        const open = await openedRoute(workspace);
 
-        assert.match(devServer.open, /^apps\/[^/]+\/$/, `${name} → ${devServer.open}`);
-        assert.equal(decodeURIComponent(devServer.open.slice(5, -1)), name.toLowerCase(), `${devServer.open} decodes to the folder name`);
-        assert.equal(devServer.port, 4321, 'the engine\'s devServer values stay')
+        assert.match(open, /^apps\/[^/]+\/$/, `${name} → ${open}`);
+        assert.equal(decodeURIComponent(open.slice(5, -1)), name.toLowerCase(), `${open} decodes to the folder name`)
     }
 
     // ── A name with a space: the folder keeps it, the route encodes it, the shell line never sees it ───────────────
@@ -79,16 +83,23 @@ try {
         const {scripts} = run('spaced', '-n', 'Sales Desk');
 
         assert.equal(scripts['server-start'], serverStart, 'the shell line holds no app name');
-        assert.equal((await serverConfig(path.join(root, 'spaced'))).devServer.open, 'apps/sales%20desk/');
+        assert.equal(await openedRoute(path.join(root, 'spaced')), 'apps/sales%20desk/');
         assert.ok(exists('spaced', 'apps/sales desk/index.html'), 'the folder the route decodes to')
     }
 
-    // ── The defaults: the server opens the app, and nothing of the docs app is copied ──────────────────────────────
+    // ── The defaults: the file server opens the app; no webpack dev server, no src/index.js, no docs app ───────────
     {
-        const {scripts} = run('plain');
+        const {devDependencies, scripts} = run('plain');
 
         assert.equal(scripts['server-start'], serverStart, 'the same shell line for every app name');
-        assert.equal((await serverConfig(path.join(root, 'plain'))).devServer.open, 'apps/myapp/', 'server-start opens the app the generator wrote');
+        assert.doesNotMatch(scripts['server-start'], /webpack/, 'server-start starts no webpack process');
+        assert.equal(devDependencies['webpack-dev-server'], undefined, 'a workspace installs no webpack dev server');
+        assert.equal(await openedRoute(path.join(root, 'plain')), 'apps/myapp/', 'server-start opens the app the generator wrote');
+        assert.equal(exists('plain', 'src/index.js'), false, 'no webpack entry is written');
+
+        for (const file of ['src/MicroLoader.mjs', 'src/main/addon/README.md']) {
+            assert.ok(exists('plain', file), `${file} is still written`)
+        }
 
         for (const folder of ['docs', 'dist/development/docs', 'dist/production/docs']) {
             assert.equal(exists('plain', folder), false, `without --docs there is no ${folder}`)
