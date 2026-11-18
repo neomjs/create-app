@@ -1,0 +1,87 @@
+name: First-run timing
+
+# A measurement for neomjs/create-app#71. It lives on its branch only and runs when that branch is pushed;
+# nothing here merges to main. The receipt is the run and its log.
+on:
+  push:
+    branches: [mnemosyne/71-first-run-timing]
+
+permissions:
+  contents: read
+
+jobs:
+  time:
+    name: ${{ matrix.arm }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arm: ubuntu-plain
+            os: ubuntu-latest
+            rate: ''
+            delay: ''
+          - arm: ubuntu-shaped
+            os: ubuntu-latest
+            rate: 10mbit
+            delay: 50ms
+          - arm: windows-plain
+            os: windows-latest
+            rate: ''
+            delay: ''
+    defaults:
+      run:
+        shell: bash
+    env:
+      GENERATOR: neo-app@13.4.1
+      RUNS: '3'
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      # Outside the clock and before any shaping: the browser is the instrument, not the run
+      - name: Headless browser
+        run: |
+          mkdir -p "$RUNNER_TEMP/pw"
+          cd "$RUNNER_TEMP/pw"
+          npm init -y > /dev/null
+          npm install playwright@1.65.1 > /dev/null
+          npx playwright install --with-deps chromium
+
+      # Each direction gets the delay, so the round trip is twice it. Incoming traffic is shaped through ifb0.
+      - name: Shape the link
+        if: matrix.rate != ''
+        run: |
+          set -euxo pipefail
+          DEV=$(ip route get 1.1.1.1 | awk '{for (i = 1; i <= NF; i++) if ($i == "dev") print $(i + 1)}')
+          probe() { curl -s -o /dev/null --max-time 8 -w "$1: %{speed_download} B/s, connect %{time_connect} s\n" https://registry.npmjs.org/neo.mjs/-/neo.mjs-13.4.0.tgz || true; }
+          probe 'control, before shaping'
+          sudo modprobe sch_netem || { sudo apt-get update -qq; sudo apt-get install -y -qq "linux-modules-extra-$(uname -r)"; sudo modprobe sch_netem; }
+          sudo modprobe ifb numifbs=1
+          sudo ip link set dev ifb0 up
+          sudo tc qdisc add dev "$DEV" root netem delay ${{ matrix.delay }} rate ${{ matrix.rate }}
+          sudo tc qdisc add dev "$DEV" handle ffff: ingress
+          sudo tc filter add dev "$DEV" parent ffff: protocol all u32 match u32 0 0 action mirred egress redirect dev ifb0
+          sudo tc qdisc add dev ifb0 root netem delay ${{ matrix.delay }} rate ${{ matrix.rate }}
+          tc qdisc show
+          probe 'after shaping'
+
+      - name: Three first runs
+        run: |
+          SHAPING="none"
+          if [ -n "${{ matrix.rate }}" ]; then SHAPING="${{ matrix.rate }} and ${{ matrix.delay }} in each direction (tc netem, incoming through ifb0)"; fi
+          node scripts/first-run/arm.mjs "${{ matrix.arm }}" "$RUNS" "$GENERATOR" "$RUNNER_TEMP/pw" "$RUNNER_TEMP/out" "$SHAPING"
+
+      - name: The first run's stamped generator log
+        if: always()
+        run: cat "$RUNNER_TEMP/out/generator-1.log" || true
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: first-run-${{ matrix.arm }}
+          path: ${{ runner.temp }}/out
