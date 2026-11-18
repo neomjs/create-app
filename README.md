@@ -83,9 +83,9 @@ Opt into standalone cross-harness persistent memory (`neo-memory-core`):
 > npx neo-app --memory
 
 ## Starting a local web-server
-By default, npx neo-app will start a webpack dev-server right after the build, and a new browser tab opens on your app.
+By default, npx neo-app starts the engine's file server right after the build, and a new browser tab opens on your app.
 
-In case you do not want to start the dev-server automatically, you can use the -s option:
+In case you do not want to start the server automatically, you can use the -s option:
 > npx neo-app -s false
 
 You can use a different web-server of your choice (e.g. webstorm) or you can start the default one manually later:
@@ -138,7 +138,7 @@ framework version update would require to re-create it)
 builds of your app
 5.  docs exists only with `--docs`: a copy of the engine's docs app, which shows documentation views of your app and the
 engine's examples once `npm run generate-docs-json` has run
-6.  node_modules => all related dependencies which are required for the build scripts & the dev-server
+6.  node_modules => all related dependencies which are required for the build scripts & the file server
 7.  package.json => defines scripts and dependencies.
 
 ## package.json Scripts
@@ -150,7 +150,7 @@ You can run each script via
 > npm run \<script-name\>
 
 ### Main Scripts
-*   `server-start`: Starts the webpack dev-server and opens your app; `npm run server-start -- --no-open` starts it without a browser
+*   `server-start`: Starts the engine's file server and opens your app; `npm run server-start -- --no-open` starts it without a browser, and `-- --port <n>` or `PORT=<n>` picks the port
 *   `build-all`: npm install & builds literally everything.
 *   `build-all-questions`: same as build all, but you can choose what to build using the inquirer interface.
 *   `build-themes`: builds the themes for dev and / or prod and lets you choose if want to use CSS variables.
