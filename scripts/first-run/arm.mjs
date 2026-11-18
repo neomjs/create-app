@@ -173,6 +173,8 @@ const
     report   = {
         arm, shaping,
         generator: process.env.GENERATOR_REF || generator,
+        // a packed engine is read from disk: its download is not in the clock
+        engineSource: process.env.ENGINE_LABEL || 'the registry, by the range the generator writes',
         machine: {
             platform: `${os.platform()} ${os.release()}`,
             image   : [process.env.ImageOS, process.env.ImageVersion].filter(Boolean).join(' ') || null,

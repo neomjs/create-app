@@ -17,16 +17,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # published: the generator a stranger gets from npm today. main: the 14.0 path, packed from this repository's main
-        # The whole table is `path: [published, main]` and `arm: [ubuntu-plain, ubuntu-shaped, windows-plain]` (run
-        # 44231048865). This push repeats the one arm that failed there, in the step that packs the generator.
-        path: [main]
-        arm: [windows-plain]
-        # An include entry whose arm is not in the list above would start a job of its own, so the two Linux entries
-        # wait here as comments:
-        #   - {arm: ubuntu-plain, os: ubuntu-latest}
+        # published: the generator a stranger gets from npm today. main: the 14.0 path, packed from this repository's main.
+        # fileserver: the generator and the engine that carry the engine's own file server, each packed from the ref
+        # named in env below (the two open pull requests until they merge, then main and dev).
+        # The table so far is `path: [published, main]` and `arm: [ubuntu-plain, ubuntu-shaped, windows-plain]` (runs
+        # 44231048865 and 44233652087). This push runs the third path.
+        path: [fileserver]
+        arm: [ubuntu-plain, windows-plain]
+        # An include entry whose arm is not in the list above would start a job of its own, so the shaped entry waits
+        # here as a comment. A packed engine is read from disk, so a shaped run of this path would not download it:
         #   - {arm: ubuntu-shaped, os: ubuntu-latest, rate: 10mbit, delay: 50ms}
         include:
+          - arm: ubuntu-plain
+            os: ubuntu-latest
           - arm: windows-plain
             os: windows-latest
     defaults:
@@ -35,6 +38,9 @@ jobs:
     env:
       GENERATOR: neo-app@13.4.1
       RUNS: '3'
+      # The third path's two sources. Once neomjs/neo#21295 and #75 are merged: dev and main.
+      ENGINE_SOURCE_REF: refs/pull/21295/head
+      GENERATOR_SOURCE_REF: refs/pull/75/head
     steps:
       - uses: actions/checkout@v7
 
@@ -51,11 +57,32 @@ jobs:
           npm install playwright@1.65.1 > /dev/null
           npx playwright install --with-deps chromium
 
-      # main is not on npm, so its tarball stands in for the registry copy; its dependencies still come from the registry
-      - name: The generator from main, packed
-        if: matrix.path == 'main'
+      # The third path's engine is not on npm either. `prepare` would install that repository's git hooks, and `prepack`
+      # only folds .gitignore into .npmignore; a fresh checkout holds no ignored file, so the pack skips both.
+      - name: The engine, packed
+        if: matrix.path == 'fileserver'
         run: |
-          git fetch --depth 1 origin main
+          ENG="$RUNNER_TEMP/engine"
+          if command -v cygpath > /dev/null; then ENG=$(cygpath -u "$ENG"); fi
+          git init -q "$ENG"
+          cd "$ENG"
+          git config core.longpaths true
+          git remote add origin https://github.com/neomjs/neo.git
+          git fetch -q --depth 1 origin "$ENGINE_SOURCE_REF"
+          git checkout -q FETCH_HEAD
+          SHA=$(git rev-parse --short FETCH_HEAD)
+          TARBALL=$(npm pack --ignore-scripts --silent | tail -1)
+          echo "ENGINE_TARBALL=$RUNNER_TEMP/engine/$TARBALL" >> "$GITHUB_ENV"
+          echo "ENGINE_LABEL=neo.mjs from $ENGINE_SOURCE_REF@$SHA, packed" >> "$GITHUB_ENV"
+
+      # A generator that is not on npm is packed, and its tarball stands in for the registry copy; its dependencies
+      # still come from the registry. On the third path the workspace it writes installs the packed engine.
+      - name: The generator, packed
+        if: matrix.path != 'published'
+        run: |
+          REF=main
+          if [ "${{ matrix.path }}" = fileserver ]; then REF="$GENERATOR_SOURCE_REF"; fi
+          git fetch --depth 1 origin "$REF"
           # tar reads a drive letter as a host name, so Git Bash on Windows gets the path in its own form
           GEN="$RUNNER_TEMP/gen"
           if command -v cygpath > /dev/null; then GEN=$(cygpath -u "$GEN"); fi
@@ -63,9 +90,12 @@ jobs:
           git archive FETCH_HEAD | tar -x -C "$GEN"
           SHA=$(git rev-parse --short FETCH_HEAD)
           cd "$GEN"
+          if [ -n "${ENGINE_TARBALL:-}" ]; then
+            node "$GITHUB_WORKSPACE/scripts/first-run/point-engine.mjs" tasks/createPackageJson.mjs "$ENGINE_TARBALL"
+          fi
           TARBALL=$(npm pack --silent | tail -1)
           echo "GENERATOR=$RUNNER_TEMP/gen/$TARBALL" >> "$GITHUB_ENV"
-          echo "GENERATOR_REF=neo-app from main@$SHA, packed" >> "$GITHUB_ENV"
+          echo "GENERATOR_REF=neo-app from $REF@$SHA, packed${ENGINE_LABEL:+; $ENGINE_LABEL}" >> "$GITHUB_ENV"
 
       # The runs of this arm happen in a network namespace of their own, behind a veth pair. Each end delays and limits
       # what it sends, so the round trip is twice the delay. The image's own hooks on its uplink stay untouched: its
