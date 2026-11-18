@@ -41,10 +41,6 @@ export default {
                 "postinstall"        : "cd node_modules/neo.mjs && npm i && npm run bundle-parse5 && npm run bundle-marked",
                 // The app it opens lives in that script as data (createServerScript.mjs), never in this shell line
                 "server-start"       : "node ./buildScripts/server.mjs",
-                "test"               : "playwright test -c node_modules/neo.mjs/test/playwright/playwright.config.mjs",
-                "test-components"    : "playwright test -c node_modules/neo.mjs/test/playwright/playwright.config.component.mjs",
-                "test-e2e"           : "playwright test -c node_modules/neo.mjs/test/playwright/playwright.config.e2e.mjs",
-                "test-unit"          : "playwright test -c node_modules/neo.mjs/test/playwright/playwright.config.unit.mjs",
                 "watch-themes"       : "node ./node_modules/neo.mjs/buildScripts/helpers/watchThemes.mjs"
             },
             dependencies: {

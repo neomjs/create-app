@@ -2,8 +2,8 @@
 /**
  * @summary Contract checks for the first run: `server-start` starts the engine's file server, no webpack, and opens
  * the app the generator wrote, with the app name as data in the workspace's server script and never in a shell line;
- * a workspace gets no `src/index.js` and no `webpack-dev-server`, and the engine's docs app is copied only with
- * `--docs`. The generator runs for real in a throwaway directory; a stand-in for npm installs nothing, so each
+ * a workspace gets no `src/index.js`, no `webpack-dev-server` and no command that runs the engine's own test suite,
+ * and the engine's docs app is copied only with `--docs`. The generator runs for real in a throwaway directory; a stand-in for npm installs nothing, so each
  * workspace gets the slice of the installed engine the run reads.
  */
 
@@ -94,6 +94,8 @@ try {
         assert.equal(scripts['server-start'], serverStart, 'the same shell line for every app name');
         assert.doesNotMatch(scripts['server-start'], /webpack/, 'server-start starts no webpack process');
         assert.equal(devDependencies['webpack-dev-server'], undefined, 'a workspace installs no webpack dev server');
+        // The engine's Playwright configs test the engine's own tree, and its specs are not in the npm package
+        assert.deepEqual(Object.keys(scripts).filter(name => /^test(-|$)/.test(name)), [], 'a workspace carries no engine test command');
         assert.equal(await openedRoute(path.join(root, 'plain')), 'apps/myapp/', 'server-start opens the app the generator wrote');
         assert.equal(exists('plain', 'src/index.js'), false, 'no webpack entry is written');
 
