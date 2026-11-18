@@ -18,15 +18,15 @@ jobs:
       fail-fast: false
       matrix:
         # published: the generator a stranger gets from npm today. main: the 14.0 path, packed from this repository's main
-        path: [published, main]
-        arm: [ubuntu-plain, ubuntu-shaped, windows-plain]
+        # The whole table is `path: [published, main]` and `arm: [ubuntu-plain, ubuntu-shaped, windows-plain]` (run
+        # 44231048865). This push repeats the one arm that failed there, in the step that packs the generator.
+        path: [main]
+        arm: [windows-plain]
+        # An include entry whose arm is not in the list above would start a job of its own, so the two Linux entries
+        # wait here as comments:
+        #   - {arm: ubuntu-plain, os: ubuntu-latest}
+        #   - {arm: ubuntu-shaped, os: ubuntu-latest, rate: 10mbit, delay: 50ms}
         include:
-          - arm: ubuntu-plain
-            os: ubuntu-latest
-          - arm: ubuntu-shaped
-            os: ubuntu-latest
-            rate: 10mbit
-            delay: 50ms
           - arm: windows-plain
             os: windows-latest
     defaults:
@@ -56,10 +56,13 @@ jobs:
         if: matrix.path == 'main'
         run: |
           git fetch --depth 1 origin main
-          mkdir -p "$RUNNER_TEMP/gen"
-          git archive FETCH_HEAD | tar -x -C "$RUNNER_TEMP/gen"
+          # tar reads a drive letter as a host name, so Git Bash on Windows gets the path in its own form
+          GEN="$RUNNER_TEMP/gen"
+          if command -v cygpath > /dev/null; then GEN=$(cygpath -u "$GEN"); fi
+          mkdir -p "$GEN"
+          git archive FETCH_HEAD | tar -x -C "$GEN"
           SHA=$(git rev-parse --short FETCH_HEAD)
-          cd "$RUNNER_TEMP/gen"
+          cd "$GEN"
           TARBALL=$(npm pack --silent | tail -1)
           echo "GENERATOR=$RUNNER_TEMP/gen/$TARBALL" >> "$GITHUB_ENV"
           echo "GENERATOR_REF=neo-app from main@$SHA, packed" >> "$GITHUB_ENV"
