@@ -17,19 +17,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Run 44227540176 holds the plain arms of the baseline; this push repeats only the arm whose shaping failed there
         include:
-          - arm: ubuntu-plain
-            os: ubuntu-latest
-            rate: ''
-            delay: ''
           - arm: ubuntu-shaped
             os: ubuntu-latest
             rate: 10mbit
             delay: 50ms
-          - arm: windows-plain
-            os: windows-latest
-            rate: ''
-            delay: ''
     defaults:
       run:
         shell: bash
@@ -58,17 +51,27 @@ jobs:
         run: |
           set -euxo pipefail
           DEV=$(ip route get 1.1.1.1 | awk '{for (i = 1; i <= NF; i++) if ($i == "dev") print $(i + 1)}')
-          probe() { curl -s -o /dev/null --max-time 8 -w "$1: %{speed_download} B/s, connect %{time_connect} s\n" https://registry.npmjs.org/neo.mjs/-/neo.mjs-13.4.0.tgz || true; }
-          probe 'control, before shaping'
+          URL=https://registry.npmjs.org/neo.mjs/-/neo.mjs-13.4.0.tgz
+          probe() { curl -s -o /dev/null --max-time 8 -w '%{speed_download} %{time_connect}' "$URL" || true; }
+          echo "control, before shaping (B/s, connect s): $(probe)"
+          tc qdisc show dev "$DEV"
+          tc filter show dev "$DEV" ingress || true
           sudo modprobe sch_netem || { sudo apt-get update -qq; sudo apt-get install -y -qq "linux-modules-extra-$(uname -r)"; sudo modprobe sch_netem; }
           sudo modprobe ifb numifbs=1
+          sudo modprobe act_mirred || true
+          sudo modprobe cls_matchall || true
           sudo ip link set dev ifb0 up
-          sudo tc qdisc add dev "$DEV" root netem delay ${{ matrix.delay }} rate ${{ matrix.rate }}
-          sudo tc qdisc add dev "$DEV" handle ffff: ingress
-          sudo tc filter add dev "$DEV" parent ffff: protocol all u32 match u32 0 0 action mirred egress redirect dev ifb0
-          sudo tc qdisc add dev ifb0 root netem delay ${{ matrix.delay }} rate ${{ matrix.rate }}
+          sudo tc qdisc replace dev "$DEV" root netem delay ${{ matrix.delay }} rate ${{ matrix.rate }}
+          # The image already carries an ingress hook on this device and refuses a second one, so the filter joins it
+          sudo tc qdisc add dev "$DEV" clsact 2> /dev/null || true
+          sudo tc filter add dev "$DEV" ingress protocol all prio 1 matchall action mirred egress redirect dev ifb0
+          sudo tc qdisc replace dev ifb0 root netem delay ${{ matrix.delay }} rate ${{ matrix.rate }}
           tc qdisc show
-          probe 'after shaping'
+          tc filter show dev "$DEV" ingress
+          AFTER=$(probe)
+          echo "after shaping (B/s, connect s): $AFTER"
+          # An arm that is not shaped reports nothing: 10 Mbit/s is 1.25 MB/s, so twice that fails the step
+          echo "$AFTER" | awk '{ exit ($1 > 2500000) ? 1 : 0 }'
 
       - name: Three first runs
         run: |
