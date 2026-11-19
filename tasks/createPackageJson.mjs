@@ -44,7 +44,7 @@ export default {
                 "watch-themes"       : "node ./node_modules/neo.mjs/buildScripts/helpers/watchThemes.mjs"
             },
             dependencies: {
-                "neo.mjs": "^13.4.0"
+                "neo.mjs": "^14.0.0"
             },
             devDependencies: {
                 "@fortawesome/fontawesome-free": "^7.3.1",
@@ -60,6 +60,7 @@ export default {
                 "fast-glob"                    : "^3.3.3",
                 "fs-extra"                     : "^11.4.1",
                 "gray-matter"                  : "^4.0.3",
+                "highlight.js"                 : "^11.12.0",
                 "highlightjs-line-numbers.js"  : "^2.9.1",
                 "html-minifier-terser"         : "^7.2.0",
                 "inquirer"                     : "^14.2.3",
@@ -70,7 +71,6 @@ export default {
                 "monaco-editor"                : "0.57.0",
                 "parse5"                       : "^8.0.1",
                 "postcss"                      : "^8.5.29",
-                "sass"                         : "^1.105.1",
                 "semver"                       : "^7.8.5",
                 "terser"                       : "^5.51.2",
                 "url"                          : "^0.11.4",
