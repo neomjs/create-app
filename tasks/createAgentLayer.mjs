@@ -23,7 +23,7 @@
  * caret of the pin in the engine release the scaffold's `neo.mjs` range resolves to.
  * @member {String}
  */
-export const AGENT_SKILLS_RANGE = '^1.2.0';
+export const AGENT_SKILLS_RANGE = '^2.0.1';
 
 /**
  * @summary The environment in which a scaffolded app connects to the Neural Link.

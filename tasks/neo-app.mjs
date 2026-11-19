@@ -11,7 +11,7 @@ import createIndexHtml                         from './createIndexHtml.mjs';
 import createMyAppsJson                        from './createMyAppsJson.mjs';
 import createNeoConfigJson                     from './createNeoConfigJson.mjs';
 import createPackageJson                       from './createPackageJson.mjs';
-import createScssResources                     from './createScssResources.mjs';
+import createCssResources                      from './createCssResources.mjs';
 import createServerScript                      from './createServerScript.mjs';
 import createSrcFolder                         from './createSrcFolder.mjs';
 import createServiceWorker                     from './createServiceWorker.mjs';
@@ -201,7 +201,7 @@ if (programOpts.info) {
             createMyAppsJson   .init(appName, workspace, fs, os, path);
             createNeoConfigJson.init(appName, appPath, fs, mainThreadAddons, os, path, themes, useSharedWorkers, useServiceWorker, programOpts.agent);
             createPackageJson  .init(appName, workspace, fs, os, path, programOpts.agent);
-            createScssResources.init(appName, workspace, fs, os, path);
+            createCssResources .init(appName, workspace, fs, os, path);
             createServerScript .init(appName, workspace, fs, os, path);
             createServiceWorker.init(appName, workspace, fs, os, path);
             createSrcFolder    .init(path.join(cwd, workspace), fs, os, path, __dirname);

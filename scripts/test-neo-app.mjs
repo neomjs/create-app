@@ -3,7 +3,7 @@
  * @summary Contract checks for the first run: `server-start` starts the engine's file server, no webpack, and opens
  * the app the generator wrote, with the app name as data in the workspace's server script and never in a shell line;
  * a workspace gets no `src/index.js`, no `webpack-dev-server` and no command that runs the engine's own test suite,
- * and the engine's docs app is copied only with `--docs`. The generator runs for real in a throwaway directory; a stand-in for npm installs nothing, so each
+ * its styles are plain CSS under `resources/css` with no Sass, and the engine's docs app is copied only with `--docs`. The generator runs for real in a throwaway directory; a stand-in for npm installs nothing, so each
  * workspace gets the slice of the installed engine the run reads.
  */
 
@@ -106,6 +106,21 @@ try {
         for (const folder of ['docs', 'dist/development/docs', 'dist/production/docs']) {
             assert.equal(exists('plain', folder), false, `without --docs there is no ${folder}`)
         }
+    }
+
+    // ── Styles are plain CSS: the app's folder per theme under resources/css, and no Sass anywhere ─────────────────
+    {
+        const {devDependencies} = JSON.parse(fs.readFileSync(path.join(root, 'plain/package.json'), 'utf-8'));
+
+        for (const folder of ['src', 'theme-dark', 'theme-light', 'theme-neo-light']) {
+            assert.ok(exists('plain', `resources/css/${folder}/apps/myapp`), `resources/css/${folder} holds the app's folder`)
+        }
+
+        assert.equal(exists('plain', 'resources/scss'), false, 'no resources/scss');
+        assert.deepEqual(fs.readdirSync(path.join(root, 'plain'), {recursive: true}).filter(file => file.endsWith('.scss')), [], 'no .scss file');
+        assert.equal(devDependencies.sass, undefined, 'a workspace installs no Sass');
+        // The parity check compares only declared ranges, so it cannot see this one missing
+        assert.ok(devDependencies['highlight.js'], 'the engine builds its highlight.js bundle from the workspace install')
     }
 
     // ── --docs: the copy runs as before ─────────────────────────────────────────────────────────────────────────────
