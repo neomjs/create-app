@@ -123,6 +123,12 @@ for (let i = 1; i <= +runCount; i++) {
         continue
     }
 
+    // What the install wrote
+    try {
+        run.packages      = Object.keys(JSON.parse(fs.readFileSync(path.join(ws, 'node_modules/.package-lock.json'), 'utf8')).packages).length;
+        run.nodeModulesMb = Math.round(+spawnSync('du', ['-sk', path.join(ws, 'node_modules')], {encoding: 'utf8'}).stdout.split('\t')[0] / 1024)
+    } catch (e) { /* no du on this platform */ }
+
     // On a machine that runs a Neural Link of its own, the probe app must not connect to it.
     if (process.env.FIRST_RUN_STRIP_AI_CLIENT) {
         const

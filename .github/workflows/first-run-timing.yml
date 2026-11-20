@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   time:
-    name: ${{ matrix.arm }}, ${{ matrix.path }}
+    name: ${{ matrix.arm }}, ${{ matrix.path }}, ${{ matrix.variant }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 75
     strategy:
@@ -28,11 +28,13 @@ jobs:
         # An include entry whose arm is not in the list above would start a job of its own, so the shaped entry waits
         # here as a comment. A packed engine is read from disk, so a shaped run of this path would not download it:
         #   - {arm: ubuntu-shaped, os: ubuntu-latest, rate: 10mbit, delay: 50ms}
+        # What the scaffold installs (scripts/first-run/lean-variant.mjs): the candidate as it is, without the nested
+        # install, with one list split along npm's two groups and the first install run as `npm i --omit=dev`, and
+        # with the first-run packages alone.
+        variant: [control, no-nested, omit-dev, lean]
         include:
           - arm: ubuntu-plain
             os: ubuntu-latest
-          - arm: windows-plain
-            os: windows-latest
     defaults:
       run:
         shell: bash
@@ -95,9 +97,10 @@ jobs:
           if [ -n "${ENGINE_TARBALL:-}" ]; then
             node "$GITHUB_WORKSPACE/scripts/first-run/point-engine.mjs" tasks/createPackageJson.mjs "$ENGINE_TARBALL"
           fi
+          node "$GITHUB_WORKSPACE/scripts/first-run/lean-variant.mjs" . "${{ matrix.variant }}"
           TARBALL=$(npm pack --silent | tail -1)
           echo "GENERATOR=$RUNNER_TEMP/gen/$TARBALL" >> "$GITHUB_ENV"
-          echo "GENERATOR_REF=neo-app from $REF@$SHA, packed${ENGINE_LABEL:+; $ENGINE_LABEL}" >> "$GITHUB_ENV"
+          echo "GENERATOR_REF=neo-app from $REF@$SHA, packed, variant ${{ matrix.variant }}${ENGINE_LABEL:+; $ENGINE_LABEL}" >> "$GITHUB_ENV"
 
       # The runs of this arm happen in a network namespace of their own, behind a veth pair. Each end delays and limits
       # what it sends, so the round trip is twice the delay. The image's own hooks on its uplink stay untouched: its
@@ -136,7 +139,9 @@ jobs:
 
       - name: Three first runs
         run: |
-          RUN=(node scripts/first-run/arm.mjs "${{ matrix.arm }}" "$RUNS" "$GENERATOR" "$RUNNER_TEMP/pw" "$RUNNER_TEMP/out")
+          # The generator starts `npm i` itself; npm reads this as --omit=dev
+          if [ "${{ matrix.variant }}" = omit-dev ]; then export npm_config_omit=dev; fi
+          RUN=(node scripts/first-run/arm.mjs "${{ matrix.arm }}, ${{ matrix.variant }}" "$RUNS" "$GENERATOR" "$RUNNER_TEMP/pw" "$RUNNER_TEMP/out")
           if [ -n "${{ matrix.rate }}" ]; then
             sudo ip netns exec shaped sudo -u "$(id -un)" env "PATH=$PATH" "HOME=$HOME" "GITHUB_STEP_SUMMARY=$GITHUB_STEP_SUMMARY" "GENERATOR_REF=${GENERATOR_REF:-}" \
               "${RUN[@]}" "${{ matrix.rate }} and ${{ matrix.delay }} in each direction (tc netem on a veth pair; the runs sit in a network namespace)"
@@ -151,5 +156,5 @@ jobs:
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: first-run-${{ matrix.arm }}-${{ matrix.path }}
+          name: first-run-${{ matrix.arm }}-${{ matrix.path }}-${{ matrix.variant }}
           path: ${{ runner.temp }}/out
