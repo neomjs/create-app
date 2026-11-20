@@ -1,5 +1,36 @@
 import {AGENT_SKILLS_RANGE, agentScripts} from './createAgentLayer.mjs';
 
+/**
+ * @summary The devDependencies a default first run imports. A workspace installs these and the engine; every other
+ * name of the list below is a build tool, which waits in `package.json` under `neo.buildTools`.
+ *
+ * The two bundles `postinstall` builds need `esbuild`, `parse5` and `marked`. The development theme build
+ * (`themes.mjs`) imports `autoprefixer`, `chalk`, `commander`, `cssnano`, `envinfo`, `fs-extra`, `inquirer` and
+ * `postcss`. The engine's file server imports `commander`, and dev mode loads the icon font from `node_modules`.
+ * `scripts/check-engine-parity.mjs` fails when a name here is missing from the list.
+ * @member {Set<String>}
+ */
+export const FIRST_RUN = new Set([
+    '@fortawesome/fontawesome-free', 'autoprefixer', 'chalk', 'commander', 'cssnano', 'envinfo', 'esbuild', 'fs-extra',
+    'inquirer', 'marked', 'parse5', 'postcss'
+]);
+
+/**
+ * @summary The command that installs the build tools once (`resources/addBuildTools.mjs`, copied into the workspace).
+ * @member {String}
+ */
+export const ADD_BUILD_TOOLS = 'node ./buildScripts/addBuildTools.mjs';
+
+/**
+ * @summary The generated scripts that import or spawn a build tool. Each runs {@link ADD_BUILD_TOOLS} first, so it
+ * works in a fresh workspace with no command before it.
+ * @member {String[]}
+ */
+export const NEEDS_BUILD_TOOLS = [
+    'build-all', 'build-all-questions', 'build-dist-esm', 'build-highlightjs', 'build-threads', 'bundle-mermaid',
+    'bundle-monaco', 'generate-docs-json'
+];
+
 export default {
     /**
      * @param {String}  appName
@@ -16,6 +47,7 @@ export default {
             private: true,
             type   : 'module',
             scripts: {
+                "add-build-tools"    : ADD_BUILD_TOOLS,
                 "add-config"         : "node ./node_modules/neo.mjs/buildScripts/create/addConfig.mjs",
                 "add-reactive-tags"  : "node ./node_modules/neo.mjs/buildScripts/helpers/addReactiveTags.mjs",
                 "build-all"          : "node ./node_modules/neo.mjs/buildScripts/build/all.mjs -n",
@@ -88,6 +120,19 @@ export default {
                 "lodash-es"  : "^4.18.0"
             }
         };
+
+        // A workspace installs what its first run runs. The build tools wait as data, and addBuildTools.mjs moves
+        // them into devDependencies.
+        const split = firstRun => Object.fromEntries(
+            Object.entries(packageJson.devDependencies).filter(([name]) => FIRST_RUN.has(name) === firstRun)
+        );
+
+        packageJson.neo             = {buildTools: split(false)};
+        packageJson.devDependencies = split(true);
+
+        for (const name of NEEDS_BUILD_TOOLS) {
+            packageJson.scripts[name] = `${ADD_BUILD_TOOLS} && ${packageJson.scripts[name]}`
+        }
 
         if (agent) {
             Object.assign(packageJson.scripts, agentScripts);

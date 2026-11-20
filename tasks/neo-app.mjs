@@ -211,10 +211,12 @@ if (programOpts.info) {
                 createAgentLayer.writeMcpConfigs(workspace, fs, path, {appName, useMemory});
             }
 
-            fs.copySync(
-                path.join(__dirname, '../resources/copyExamples.mjs'),
-                path.join(workspace, 'buildScripts/copyExamples.mjs')
-            );
+            for (const script of ['addBuildTools.mjs', 'copyExamples.mjs']) {
+                fs.copySync(
+                    path.join(__dirname, '../resources', script),
+                    path.join(workspace, 'buildScripts', script)
+                );
+            }
 
             const cpOpts = { encoding: 'utf-8', env: process.env, cwd: workspace, shell: true, stdio: 'inherit' };
 
@@ -232,7 +234,7 @@ if (programOpts.info) {
                 stdio: 'inherit'
             });
 
-            console.log(`\n${chalk.cyan('npm run build-all')} builds dist/development, dist/production and dist/esm.`);
+            console.log(`\nThis install holds what dev mode needs. ${chalk.cyan('npm run build-all')} adds the build tools once, then builds dist/development, dist/production and dist/esm.`);
 
             if (programOpts.start === 'true') {
                 logBuildTime();
