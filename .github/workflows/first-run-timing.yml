@@ -21,9 +21,10 @@ jobs:
         # fileserver: the generator and the engine that carry the engine's own file server, each packed from the ref
         # named in env below (the two open pull requests until they merge, then main and dev).
         # The table so far is `path: [published, main]` and `arm: [ubuntu-plain, ubuntu-shaped, windows-plain]` (runs
-        # 44231048865 and 44233652087). This push runs the third path.
+        # 44231048865 and 44233652087). This push runs the third path on Linux alone: the question is the release
+        # candidate's number against ten seconds, and the Windows rows of 44383710739 stand.
         path: [fileserver]
-        arm: [ubuntu-plain, windows-plain]
+        arm: [ubuntu-plain]
         # An include entry whose arm is not in the list above would start a job of its own, so the shaped entry waits
         # here as a comment. A packed engine is read from disk, so a shaped run of this path would not download it:
         #   - {arm: ubuntu-shaped, os: ubuntu-latest, rate: 10mbit, delay: 50ms}
@@ -38,9 +39,10 @@ jobs:
     env:
       GENERATOR: neo-app@13.4.1
       RUNS: '3'
-      # The third path's two sources, both merged: neomjs/neo#21295 and #21314 are on dev, #75 and #77 on main.
+      # The third path's two sources: the engine's dev, and the generator of the open 14.0.0 pull request (#78),
+      # which is what Monday's publish carries.
       ENGINE_SOURCE_REF: dev
-      GENERATOR_SOURCE_REF: main
+      GENERATOR_SOURCE_REF: refs/pull/78/head
     steps:
       - uses: actions/checkout@v7
 
