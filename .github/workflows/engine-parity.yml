@@ -30,12 +30,14 @@ jobs:
       - name: create-neo-app forwarder contract
         run: node scripts/test-create-neo-app.mjs
 
-      - name: Generated devDependencies and overrides match the pinned engine release
-        run: node scripts/check-engine-parity.mjs
-
       # The contracts above run with no install; this one runs the generator itself
       - name: Install the generator's dependencies
         run: npm ci --ignore-scripts
 
       - name: First-run contract
         run: node scripts/test-neo-app.mjs
+
+      # Last, because it reads npm: before a major is published the pin resolves to nothing, and a step that fails
+      # skips every step after it
+      - name: Generated devDependencies and build tools match the pinned engine release
+        run: node scripts/check-engine-parity.mjs

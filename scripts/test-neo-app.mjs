@@ -3,7 +3,9 @@
  * @summary Contract checks for the first run: `server-start` starts the engine's file server, no webpack, and opens
  * the app the generator wrote, with the app name as data in the workspace's server script and never in a shell line;
  * a workspace gets no `src/index.js`, no `webpack-dev-server` and no command that runs the engine's own test suite,
- * and the engine's docs app is copied only with `--docs`. The generator runs for real in a throwaway directory; a stand-in for npm installs nothing, so each
+ * its styles are plain CSS under `resources/css` with no Sass, and the engine's docs app is copied only with `--docs`.
+ * A workspace declares only the packages its first run imports; the build tools wait under `neo.buildTools`, and
+ * `buildScripts/addBuildTools.mjs` adds them once. The generator runs for real in a throwaway directory; a stand-in for npm installs nothing, so each
  * workspace gets the slice of the installed engine the run reads.
  */
 
@@ -14,6 +16,8 @@ import os                 from 'node:os';
 import path               from 'node:path';
 import {fileURLToPath,
         pathToFileURL}    from 'node:url';
+import {ADD_BUILD_TOOLS, FIRST_RUN,
+        NEEDS_BUILD_TOOLS} from '../tasks/createPackageJson.mjs';
 import createServerScript from '../tasks/createServerScript.mjs';
 
 const
@@ -106,6 +110,68 @@ try {
         for (const folder of ['docs', 'dist/development/docs', 'dist/production/docs']) {
             assert.equal(exists('plain', folder), false, `without --docs there is no ${folder}`)
         }
+    }
+
+    // ── Styles are plain CSS: the app's folder per theme under resources/css, and no Sass anywhere ─────────────────
+    {
+        const {devDependencies, neo} = JSON.parse(fs.readFileSync(path.join(root, 'plain/package.json'), 'utf-8'));
+
+        for (const folder of ['src', 'theme-dark', 'theme-light', 'theme-neo-light']) {
+            assert.ok(exists('plain', `resources/css/${folder}/apps/myapp`), `resources/css/${folder} holds the app's folder`)
+        }
+
+        assert.equal(exists('plain', 'resources/scss'), false, 'no resources/scss');
+        assert.deepEqual(fs.readdirSync(path.join(root, 'plain'), {recursive: true}).filter(file => file.endsWith('.scss')), [], 'no .scss file');
+        assert.equal(devDependencies.sass, undefined, 'a workspace installs no Sass');
+        // The parity check compares only declared ranges, so it cannot see this one missing
+        assert.ok(neo.buildTools['highlight.js'], 'the engine builds its highlight.js bundle from the workspace install')
+    }
+
+    // ── The first run installs what it runs; the build tools wait as data, and one step adds them once ─────────────
+    {
+        const
+            workspace = path.join(root, 'plain'),
+            read      = () => fs.readFileSync(path.join(workspace, 'package.json'), 'utf-8'),
+            lean      = read(),
+            {devDependencies, neo, scripts} = JSON.parse(lean),
+            addTools  = npmBin => spawnSync(process.execPath, ['buildScripts/addBuildTools.mjs'],
+                {cwd: workspace, encoding: 'utf-8', env: {...process.env, PATH: npmBin + path.delimiter + process.env.PATH}});
+
+        assert.deepEqual(Object.keys(devDependencies).sort(), [...FIRST_RUN].sort(), 'devDependencies hold what the first run imports');
+
+        for (const name of ['webpack', 'webpack-cli', 'terser', 'monaco-editor', 'mermaid', '@playwright/test', 'jsdoc-api']) {
+            assert.ok(neo.buildTools[name], `${name} waits with the build tools`)
+        }
+
+        assert.equal(scripts['add-build-tools'], ADD_BUILD_TOOLS);
+
+        for (const name of NEEDS_BUILD_TOOLS) {
+            assert.ok(scripts[name].startsWith(`${ADD_BUILD_TOOLS} && node `), `${name} adds the build tools first`)
+        }
+
+        for (const name of ['server-start', 'build-themes', 'postinstall', 'create-app']) {
+            assert.doesNotMatch(scripts[name], /addBuildTools/, `${name} runs on the first install`)
+        }
+
+        // An install that fails leaves the block where it was, so the next run tries again
+        write(path.join(root, 'failing/npm'), '#!/bin/sh\nexit 1\n');
+        fs.chmodSync(path.join(root, 'failing/npm'), 0o755);
+        assert.equal(addTools(path.join(root, 'failing')).status, 1);
+        assert.equal(read(), lean, 'a failed install changes nothing');
+
+        assert.equal(addTools(bin).status, 0);
+
+        const merged = JSON.parse(read());
+
+        assert.equal(merged.neo, undefined, 'the block leaves package.json with the merge');
+        assert.deepEqual(Object.keys(merged.devDependencies).sort(), [...Object.keys(devDependencies), ...Object.keys(neo.buildTools)].sort(),
+            'every build tool is declared, each once');
+        assert.equal(merged.devDependencies.webpack, neo.buildTools.webpack, 'with the range it waited with');
+
+        const text = read();
+
+        assert.equal(addTools(bin).status, 0);
+        assert.equal(read(), text, 'a second run changes nothing')
     }
 
     // ── --docs: the copy runs as before ─────────────────────────────────────────────────────────────────────────────

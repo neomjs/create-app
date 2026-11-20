@@ -9,7 +9,9 @@
  * run reports it): the declared ranges should agree either way.
  *
  * Scope: every devDependency BOTH sides declare, compared exactly, except a `CARET_OF_ENGINE` package, which compares
- * as the caret of the engine's pin. The engine is read from npm, never from a checkout,
+ * as the caret of the engine's pin. The scaffold's side is one list in two places: the first-run packages under
+ * `devDependencies` and the build tools under `neo.buildTools` ({@link declaredTools}). A first-run name that is in
+ * neither is a workspace whose first run cannot import it, so it fails. The engine is read from npm, never from a checkout,
  * because a scaffolded app installs the published package and a checkout can be ahead of it. The pin decides which
  * release: the newest published version its range allows. A package only the scaffold declares has no engine
  * counterpart to drift from, so it is listed and not compared.
@@ -25,7 +27,8 @@ import os                  from 'node:os';
 import path                from 'node:path';
 import process             from 'node:process';
 import {fileURLToPath}     from 'node:url';
-import createPackageJson   from '../tasks/createPackageJson.mjs';
+import createPackageJson,
+       {FIRST_RUN}         from '../tasks/createPackageJson.mjs';
 
 /**
  * @summary The package.json the scaffold writes, captured without touching a disk.
@@ -37,6 +40,25 @@ export function generatedPackageJson() {
     createPackageJson.init('parity-check', 'parity-check', {writeFileSync: (file, text) => {packageJson = JSON.parse(text)}}, os, path);
 
     return packageJson
+}
+
+/**
+ * @summary Every toolchain package the scaffold declares: what the first run installs and what the first build adds.
+ * @param {Object} packageJson The generated package.json
+ * @returns {Object} name → range
+ */
+export function declaredTools(packageJson) {
+    return {...packageJson.neo?.buildTools, ...packageJson.devDependencies}
+}
+
+/**
+ * @summary The first-run names the scaffold declares in the wrong place or not at all.
+ * @param {Object}        packageJson The generated package.json
+ * @param {Iterable<String>} [firstRun=FIRST_RUN]
+ * @returns {String[]} Names missing from `devDependencies`, and names that also wait under `neo.buildTools`
+ */
+export function findMisplacedFirstRun(packageJson, firstRun = FIRST_RUN) {
+    return [...firstRun].filter(name => !(name in packageJson.devDependencies) || name in (packageJson.neo?.buildTools || {}))
 }
 
 /**
@@ -108,22 +130,29 @@ if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToP
         range       = packageJson.dependencies['neo.mjs'],
         // One matching version answers as a string, several as an ascending list
         version     = [].concat(npmView(`neo.mjs@${range}`, 'version')).at(-1),
-        {drift, scaffoldOnly} = findDrift(packageJson.devDependencies, npmView(`neo.mjs@${version}`, 'devDependencies')),
-        overrideDrift = findOverrideDrift(packageJson.overrides, npmView(`neo.mjs@${version}`, 'overrides'));
+        {drift, scaffoldOnly} = findDrift(declaredTools(packageJson), npmView(`neo.mjs@${version}`, 'devDependencies')),
+        overrideDrift = findOverrideDrift(packageJson.overrides, npmView(`neo.mjs@${version}`, 'overrides')),
+        misplaced     = findMisplacedFirstRun(packageJson);
+
+    if (misplaced.length > 0) {
+        console.error(`check-engine-parity: a first run imports these, and the scaffold does not install them: ${misplaced.join(', ')}`);
+        console.error('Each name of FIRST_RUN in tasks/createPackageJson.mjs has to stand in its devDependencies list.');
+        process.exitCode = 1
+    }
 
     if (scaffoldOnly.length > 0) {
         console.log(`check-engine-parity: not compared, no engine counterpart: ${scaffoldOnly.join(', ')}`)
     }
 
     if (drift.length > 0) {
-        console.error(`check-engine-parity: ${drift.length} generated devDependencies differ from neo.mjs@${version} ` +
+        console.error(`check-engine-parity: ${drift.length} generated devDependencies or build tools differ from neo.mjs@${version} ` +
             `(the newest release \`${range}\` allows):`);
         drift.forEach(({name, scaffold, engine}) => console.error(`  ${name}  scaffold ${scaffold}  engine ${engine}` +
             (CARET_OF_ENGINE.has(name) ? ` (the caret of its pin: ${CARET_OF_ENGINE.get(name)})` : '')));
         console.error('Move them in tasks/createPackageJson.mjs to the engine\'s values (neo-agent-skills: AGENT_SKILLS_RANGE in tasks/createAgentLayer.mjs).');
         process.exitCode = 1
     } else {
-        console.log(`check-engine-parity: every devDependency the scaffold shares with neo.mjs@${version} matches.`)
+        console.log(`check-engine-parity: every devDependency and build tool the scaffold shares with neo.mjs@${version} matches.`)
     }
 
     if (overrideDrift.length > 0) {

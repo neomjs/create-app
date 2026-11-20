@@ -4,8 +4,10 @@
  * divergence, stays quiet on a match, and lists what it does not compare.
  */
 
-import assert                                                                 from 'node:assert/strict';
-import {CARET_OF_ENGINE, findDrift, findOverrideDrift, generatedPackageJson} from './check-engine-parity.mjs';
+import assert      from 'node:assert/strict';
+import {CARET_OF_ENGINE, declaredTools, findDrift, findMisplacedFirstRun, findOverrideDrift,
+        generatedPackageJson} from './check-engine-parity.mjs';
+import {FIRST_RUN} from '../tasks/createPackageJson.mjs';
 
 // ── It reads the package.json the scaffold writes ──────────────────────────────────────────────────
 {
@@ -14,6 +16,25 @@ import {CARET_OF_ENGINE, findDrift, findOverrideDrift, generatedPackageJson} fro
     assert.match(packageJson.dependencies['neo.mjs'], /^\^\d+\.\d+\.\d+$/, 'the engine pin is read from the generator');
     assert.ok(Object.keys(packageJson.devDependencies).length > 10, 'and so are the devDependencies');
     assert.ok(Object.keys(packageJson.overrides).length > 0, 'and the overrides');
+}
+
+// ── One list in two places: what the first run installs, and the build tools that wait ─────────────
+{
+    const
+        packageJson = generatedPackageJson(),
+        tools       = declaredTools(packageJson);
+
+    assert.deepEqual(Object.keys(packageJson.devDependencies).sort(), [...FIRST_RUN, 'neo-agent-skills'].sort(),
+        'a workspace installs the first-run packages and the skills');
+    assert.ok(tools.webpack && tools['monaco-editor'] && tools.postcss, 'the check reads both places');
+    assert.deepEqual(Object.keys(packageJson.neo.buildTools).filter(name => name in packageJson.devDependencies), [],
+        'no name stands in both');
+    assert.deepEqual(findMisplacedFirstRun(packageJson), [], 'every first-run name is installed');
+
+    assert.deepEqual(findMisplacedFirstRun({devDependencies: {postcss: '^8.5.29'}, neo: {buildTools: {}}}, ['postcss', 'esbuild']),
+        ['esbuild'], 'a first-run name that left the list fails');
+    assert.deepEqual(findMisplacedFirstRun({devDependencies: {postcss: '^8.5.29'}, neo: {buildTools: {postcss: '^8.5.29'}}}, ['postcss']),
+        ['postcss'], 'and so does one that also waits with the build tools')
 }
 
 // ── A planted divergence is reported, a match is not ───────────────────────────────────────────────
