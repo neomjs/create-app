@@ -31,7 +31,9 @@ jobs:
         # What the scaffold installs (scripts/first-run/lean-variant.mjs): the candidate as it is, without the nested
         # install, with one list split along npm's two groups and the first install run as `npm i --omit=dev`, and
         # with the first-run packages alone.
-        variant: [control, no-nested, omit-dev, lean]
+        # On the branch of #80 the scaffold is already lean: `control` is that branch as it stands, `no-nested` adds
+        # the one postinstall line it holds back for #68. The other two variants rewrite a list that branch no longer has.
+        variant: [control, no-nested]
         include:
           - arm: ubuntu-plain
             os: ubuntu-latest
@@ -41,10 +43,10 @@ jobs:
     env:
       GENERATOR: neo-app@13.4.1
       RUNS: '3'
-      # The third path's two sources: the engine's dev, and the generator of the open 14.0.0 pull request (#78),
-      # which is what Monday's publish carries.
+      # The third path's two sources: the engine's dev, and the branch of #80, which is stacked on the generator of
+      # the open 14.0.0 pull request (#78).
       ENGINE_SOURCE_REF: dev
-      GENERATOR_SOURCE_REF: refs/pull/78/head
+      GENERATOR_SOURCE_REF: refs/heads/mnemosyne/80-first-run-install
     steps:
       - uses: actions/checkout@v7
 
