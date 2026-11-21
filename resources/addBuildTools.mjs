@@ -10,15 +10,17 @@
  * for it and then finds the tools. `package.json` is written once, before npm starts, with the tools the workspace
  * does not declare yet. Nothing is written back afterwards, so an edit made in the meantime stays.
  */
-import {spawnSync}                                                                    from 'node:child_process';
-import {existsSync, mkdirSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync} from 'node:fs';
-import path                                                                           from 'node:path';
-import process                                                                        from 'node:process';
-import {fileURLToPath}                                                                from 'node:url';
+import {spawnSync}                                                                       from 'node:child_process';
+import {existsSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync} from 'node:fs';
+import path                                                                              from 'node:path';
+import process                                                                           from 'node:process';
+import {fileURLToPath}                                                                   from 'node:url';
 
 const
     LOCK         = path.join('node_modules', '.neo-build-tools.lock'),
-    LOCK_PID     = path.join(LOCK, 'pid'),
+    // This run's entry in the lock folder. The pid tells whether the run still lives, the time keeps a later
+    // process with the same pid apart.
+    ENTRY        = path.join(LOCK, `${process.pid}-${Date.now()}`),
     LOCK_TIMEOUT = 15 * 60 * 1000,
     sleep        = ms => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 
@@ -61,23 +63,11 @@ export function declareTools(text, tools) {
 }
 
 /**
- * @summary Does the process that holds the lock still run?
+ * @summary Does a process with this pid run?
+ * @param {Number} pid
  * @returns {Boolean}
  */
-function holderRuns() {
-    let pid;
-
-    try {
-        pid = Number(readFileSync(LOCK_PID, 'utf8'))
-    } catch {
-        // A holder writes its pid right after it makes the folder, so a folder that stays empty is a leftover
-        try {
-            return Date.now() - statSync(LOCK).mtimeMs < 5000
-        } catch {
-            return false
-        }
-    }
-
+function isRunning(pid) {
     try {
         process.kill(pid, 0);
         return true
@@ -87,61 +77,69 @@ function holderRuns() {
 }
 
 /**
- * @summary Waits until no other run adds the build tools, then holds the lock. A lock whose holder is gone is taken.
+ * @summary The entries of the other runs in the lock folder that still live.
+ *
+ * An entry whose process is gone is removed, by its own name: no step here can take a living run's entry.
+ * @returns {String[]}
+ */
+function otherRuns() {
+    return readdirSync(LOCK).filter(name => {
+        const
+            file = path.join(LOCK, name),
+            pid  = parseInt(name, 10);
+
+        if (file === ENTRY) {
+            return false
+        }
+
+        // This run's own pid under another name was left by an earlier process
+        if (pid > 0 && pid !== process.pid && isRunning(pid)) {
+            return true
+        }
+
+        rmSync(file, {force: true});
+        return false
+    })
+}
+
+/**
+ * @summary Waits until no other run adds the build tools, then holds the lock.
+ *
+ * A run writes its entry first and looks second, so of two runs at least one sees the other. It holds the lock while
+ * its entry is the only living one in the folder; a run that sees another takes its entry back, waits and tries
+ * again. No run removes the folder, so none can remove what another is about to write into.
  */
 function lock() {
     const deadline = Date.now() + LOCK_TIMEOUT;
-    let told = false;
 
-    mkdirSync('node_modules', {recursive: true});
+    for (let look = 1;; look++) {
+        mkdirSync(LOCK, {recursive: true});
+        writeFileSync(ENTRY, '');
 
-    for (;;) {
-        try {
-            mkdirSync(LOCK);
-            writeFileSync(LOCK_PID, String(process.pid));
-
-            // Two runs can take a leftover lock in the same moment; the one whose pid stands holds it
-            sleep(50);
-
-            if (holdsLock()) {
-                return
-            }
-
-            continue
-        } catch (error) {
-            if (error.code !== 'EEXIST') {
-                throw error
-            }
+        if (otherRuns().length === 0) {
+            return
         }
 
-        if (!holderRuns()) {
-            rmSync(LOCK, {force: true, recursive: true});
-            continue
-        }
+        unlock();
 
         if (Date.now() > deadline) {
             console.error(`Another run still adds the build tools. If none does, remove ${LOCK} and run this again.`);
             process.exit(1)
         }
 
-        if (!told) {
-            console.log('Waiting for the run that adds the build tools …');
-            told = true
-        }
+        // Two runs that start together both step back once; one that is still there at the second look works
+        look === 2 && console.log('Waiting for the run that adds the build tools …');
 
-        sleep(250)
+        // A different wait for each run, so two that stepped back together do not meet again
+        sleep(200 + Math.random() * 100)
     }
 }
 
 /**
- * @returns {Boolean}
+ * @summary Takes this run's entry out of the lock folder.
  */
-function holdsLock() {
-    try {
-        return readFileSync(LOCK_PID, 'utf8') === String(process.pid)
-    } catch {
-        return false
-    }
+function unlock() {
+    rmSync(ENTRY, {force: true})
 }
 
 if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {
@@ -150,8 +148,8 @@ if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToP
         installed = name => existsSync(path.join('node_modules', name, 'package.json')),
         pending   = () => missingBuildTools(JSON.parse(readFileSync(file, 'utf8')), installed);
 
-    // The usual run: the tools are there, and no other run is installing them
-    if (pending().missing.length > 0 || existsSync(LOCK)) {
+    // The usual run: the tools are there, and no run stands in the lock folder
+    if (pending().missing.length > 0 || existsSync(LOCK) && readdirSync(LOCK).length > 0) {
         let status = 0;
 
         lock();
@@ -176,7 +174,7 @@ if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToP
                 }
             }
         } finally {
-            holdsLock() && rmSync(LOCK, {force: true, recursive: true})
+            unlock()
         }
 
         status !== 0 && process.exit(status)

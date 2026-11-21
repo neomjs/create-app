@@ -199,6 +199,24 @@ try {
                 "packageJson.scripts.mine = 'echo';",
                 "fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 4) + '\\n')"
             ]),
+            // Loaded with -r: the first call of fs[PAUSE_AT] on a path that matches PAUSE_PATH leaves PAUSE_FILE and
+            // waits there until PAUSE_FILE.go stands
+            pauser    = helper('pause.cjs', [
+                "const fs = require('node:fs'), {existsSync, writeFileSync} = fs;",
+                "const original = fs[process.env.PAUSE_AT], pattern = new RegExp(process.env.PAUSE_PATH);",
+                "let done = false;",
+                "fs[process.env.PAUSE_AT] = (...args) => {",
+                "    if (!done && pattern.test(String(args[0]).replaceAll('\\\\', '/'))) {",
+                "        done = true;",
+                "        writeFileSync(process.env.PAUSE_FILE, '');",
+                "        while (!existsSync(`${process.env.PAUSE_FILE}.go`)) {",
+                "            Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 20)",
+                "        }",
+                "    }",
+                "    return original(...args)",
+                "};",
+                "require('node:module').syncBuiltinESMExports();"
+            ]),
             // A stand-in for npm: it notes the call, then runs its lines
             standIn   = (name, ...lines) => {
                 write(path.join(root, name, 'npm'), ['#!/bin/sh', 'echo run >> "$NPM_LOG"', ...lines, ''].join('\n'));
@@ -265,37 +283,88 @@ try {
         assert.equal(JSON.parse(read()).devDependencies.webpack, '5.0.0', 'a range the workspace declares stays');
         fs.writeFileSync(manifest, text);
 
-        // A lock whose holder is gone
+        // An entry whose run is gone
+        const gone = `${spawnSync(process.execPath, ['-e', '']).pid}-1`;
+
         remove();
         fs.mkdirSync(lockDir, {recursive: true});
-        fs.writeFileSync(path.join(lockDir, 'pid'), String(spawnSync(process.execPath, ['-e', '']).pid));
-        assert.equal(addTools(working).status, 0, 'a lock whose holder is gone is taken');
+        fs.writeFileSync(path.join(lockDir, gone), '');
+        assert.equal(addTools(working).status, 0, 'a run that is gone holds no lock');
         assert.deepEqual(present(), tools);
-        assert.equal(fs.existsSync(lockDir), false, 'and given back');
+        assert.deepEqual(fs.readdirSync(lockDir), [], 'and the lock folder is empty again');
 
         // Two runs at once: one installs, the other waits for it and finds the tools
         remove();
         runs = npmRuns();
 
         const
-            start = () => new Promise(resolve => {
-                const child = spawn(process.execPath, ['buildScripts/addBuildTools.mjs'], options(slow));
-                let out = '';
+            start = pause => {
+                const
+                    {env, ...spawnOptions} = options(slow),
+                    run   = {out: ''},
+                    child = spawn(process.execPath, [...(pause ? ['-r', pauser] : []), 'buildScripts/addBuildTools.mjs'],
+                        {...spawnOptions, env: {...env, ...pause}});
 
-                child.stdout.on('data', chunk => out += chunk);
-                child.on('close', status => resolve({out, status}))
-            }),
+                child.stdout.on('data', chunk => run.out += chunk);
+                run.done = new Promise(resolve => child.on('close', status => resolve(Object.assign(run, {status}))));
+                return run
+            },
             first = start();
 
         await new Promise(resolve => setTimeout(resolve, 400));
 
-        const [one, two] = await Promise.all([first, start()]);
+        let [one, two] = await Promise.all([first.done, start().done]);
 
         assert.deepEqual([one.status, two.status], [0, 0], 'two runs at once both end well');
         assert.equal(npmRuns(), runs + 1, 'with one install between them');
         assert.match(two.out, /Waiting for the run that adds the build tools/, 'the second one waited');
         assert.deepEqual(present(), tools);
         assert.equal(read(), text, 'and package.json is as one run leaves it');
+
+        // One run stopped inside the step that takes the lock, and a second run started beside it. The second one gets
+        // the time to wait or to start npm before the first goes on.
+        const
+            until  = async (what, condition) => {
+                const end = Date.now() + 20000;
+
+                while (!condition()) {
+                    assert.ok(Date.now() < end, what);
+                    await new Promise(resolve => setTimeout(resolve, 20))
+                }
+            },
+            paused = async (name, at, pattern, settled) => {
+                const
+                    file    = path.join(root, `${name}.paused`),
+                    stopped = start({PAUSE_AT: at, PAUSE_FILE: file, PAUSE_PATH: pattern});
+
+                await until(`${name}: the first run reaches ${at}`, () => fs.existsSync(file));
+
+                const beside = start();
+
+                await until(`${name}: the second run waits or installs`, () => settled(beside));
+                fs.writeFileSync(`${file}.go`, '');
+
+                return Promise.all([stopped.done, beside.done])
+            };
+
+        // Both find an entry whose run is gone, and the first is stopped before it removes what it found
+        remove();
+        runs = npmRuns();
+        fs.writeFileSync(path.join(lockDir, gone), '');
+        [one, two] = await paused('gone', 'rmSync', `\\.neo-build-tools\\.lock(/${gone})?$`,
+            beside => /Waiting for the run/.test(beside.out) || npmRuns() > runs);
+
+        assert.deepEqual([one.status, two.status], [0, 0], 'two runs that find a run gone both end well');
+        assert.equal(npmRuns(), runs + 1, 'and only one of them installs');
+        assert.deepEqual(fs.readdirSync(lockDir), [], 'and no entry stays');
+
+        // The first is stopped before it writes its entry, and goes on while the second one installs
+        remove();
+        runs = npmRuns();
+        [one, two] = await paused('entry', 'writeFileSync', '\\.neo-build-tools\\.lock/\\d+-\\d+$', () => npmRuns() > runs);
+
+        assert.deepEqual([one.status, two.status], [0, 0], 'a run that arrives during an install ends well');
+        assert.equal(npmRuns(), runs + 1, 'and starts no second one');
 
         // The two decisions as data
         assert.deepEqual(missingBuildTools({devDependencies: {a: '^1'}, neo: {buildTools: {a: '^2', b: '^3', c: '^4'}}}, name => name === 'c'),
