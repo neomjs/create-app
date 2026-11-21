@@ -70,7 +70,8 @@ export default {
                 "generate-docs-json" : "node ./node_modules/neo.mjs/buildScripts/docs/generateDocsJson.mjs",
                 // The engine package ships no generated bundles, and an install replaces node_modules/neo.mjs, so every
                 // install rebuilds the two the engine imports at module scope. The others load lazily: bundle-browser-deps.
-                "postinstall"        : "cd node_modules/neo.mjs && npm i && npm run bundle-parse5 && npm run bundle-marked",
+                // It installs nothing inside the engine: the engine's build scripts resolve the workspace's packages.
+                "postinstall"        : "npm run bundle-parse5 && npm run bundle-marked",
                 // The app it opens lives in that script as data (createServerScript.mjs), never in this shell line
                 "server-start"       : "node ./buildScripts/server.mjs",
                 "watch-themes"       : "node ./node_modules/neo.mjs/buildScripts/helpers/watchThemes.mjs"
@@ -121,8 +122,8 @@ export default {
             }
         };
 
-        // A workspace installs what its first run runs. The build tools wait as data, and addBuildTools.mjs moves
-        // them into devDependencies.
+        // A workspace installs what its first run runs. The build tools stand as a recipe, and addBuildTools.mjs
+        // installs them and declares them in devDependencies.
         const split = firstRun => Object.fromEntries(
             Object.entries(packageJson.devDependencies).filter(([name]) => FIRST_RUN.has(name) === firstRun)
         );

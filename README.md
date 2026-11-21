@@ -141,8 +141,9 @@ builds of your app
 5.  docs exists only with `--docs`: a copy of the engine's docs app, which shows documentation views of your app and the
 engine's examples once `npm run generate-docs-json` has run
 6.  node_modules => what dev mode and the file server need; the build tools arrive with your first build
-7.  package.json => defines scripts and dependencies. The build tools wait under `neo.buildTools` until a build script
-moves them into `devDependencies`.
+7.  package.json => defines scripts and dependencies. `neo.buildTools` lists the build tools. Your first build installs
+them and adds them to `devDependencies`; the list stays as the recipe, so a build that was interrupted finishes the
+install the next time.
 
 ## package.json Scripts
 
