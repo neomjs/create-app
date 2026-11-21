@@ -200,17 +200,23 @@ try {
                 "fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 4) + '\\n')"
             ]),
             // Loaded with -r: the first call of fs[PAUSE_AT] on a path that matches PAUSE_PATH leaves PAUSE_FILE and
-            // waits there until PAUSE_FILE.go stands
+            // waits there until PAUSE_FILE.go stands. With PAUSE_EMPTY the wait stands inside a write: the file is
+            // opened and emptied first, and its content follows after the wait.
             pauser    = helper('pause.cjs', [
                 "const fs = require('node:fs'), {existsSync, writeFileSync} = fs;",
                 "const original = fs[process.env.PAUSE_AT], pattern = new RegExp(process.env.PAUSE_PATH);",
                 "let done = false;",
                 "fs[process.env.PAUSE_AT] = (...args) => {",
                 "    if (!done && pattern.test(String(args[0]).replaceAll('\\\\', '/'))) {",
+                "        const fd = process.env.PAUSE_EMPTY && fs.openSync(args[0], 'w');",
                 "        done = true;",
                 "        writeFileSync(process.env.PAUSE_FILE, '');",
                 "        while (!existsSync(`${process.env.PAUSE_FILE}.go`)) {",
                 "            Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 20)",
+                "        }",
+                "        if (fd) {",
+                "            fs.writeSync(fd, args[1]);",
+                "            return fs.closeSync(fd)",
                 "        }",
                 "    }",
                 "    return original(...args)",
@@ -307,6 +313,7 @@ try {
 
                 child.stdout.on('data', chunk => run.out += chunk);
                 run.done = new Promise(resolve => child.on('close', status => resolve(Object.assign(run, {status}))));
+                run.kill = () => child.kill('SIGKILL');
                 return run
             },
             first = start();
@@ -332,10 +339,10 @@ try {
                     await new Promise(resolve => setTimeout(resolve, 20))
                 }
             },
-            paused = async (name, at, pattern, settled) => {
+            paused = async (name, at, pattern, settled, more) => {
                 const
                     file    = path.join(root, `${name}.paused`),
-                    stopped = start({PAUSE_AT: at, PAUSE_FILE: file, PAUSE_PATH: pattern});
+                    stopped = start({PAUSE_AT: at, PAUSE_FILE: file, PAUSE_PATH: pattern, ...more});
 
                 await until(`${name}: the first run reaches ${at}`, () => fs.existsSync(file));
 
@@ -365,6 +372,39 @@ try {
 
         assert.deepEqual([one.status, two.status], [0, 0], 'a run that arrives during an install ends well');
         assert.equal(npmRuns(), runs + 1, 'and starts no second one');
+
+        // The first is stopped inside its write of package.json, with the file empty: a run beside it waits for the text
+        const bare = JSON.parse(text);
+
+        tools.forEach(name => delete bare.devDependencies[name]);
+        fs.writeFileSync(manifest, JSON.stringify(bare, null, 4) + '\n');
+        remove();
+        runs = npmRuns();
+        [one, two] = await paused('manifest', 'writeFileSync', '/package\\.json$',
+            beside => 'status' in beside || /Waiting for the run/.test(beside.out), {PAUSE_EMPTY: '1'});
+
+        assert.deepEqual([one.status, two.status], [0, 0], 'a run that arrives during the write of package.json ends well');
+        assert.match(two.out, /Waiting for the run that adds the build tools/, 'it waited for the writer');
+        assert.equal(npmRuns(), runs + 1, 'with one install between them');
+        assert.equal(read(), text, 'and package.json is as one run leaves it');
+
+        // The first run is killed alone and its npm goes on: a run beside it waits for that npm
+        remove();
+        runs = npmRuns();
+
+        const killed = start();
+
+        await until('the first run starts npm', () => npmRuns() > runs);
+        await new Promise(resolve => setTimeout(resolve, 100));
+        killed.kill();
+        [one, two] = await Promise.all([killed.done, start().done]);
+
+        assert.equal(one.status, null, 'the first run was killed');
+        assert.equal(two.status, 0, 'a run beside an npm whose run was killed ends well');
+        assert.equal(npmRuns(), runs + 1, 'and starts no second npm');
+        assert.match(two.out, /Waiting for the run that adds the build tools/, 'it waited for that npm');
+        assert.deepEqual(present(), tools);
+        assert.deepEqual(fs.readdirSync(lockDir), [], 'and no entry stays');
 
         // The two decisions as data
         assert.deepEqual(missingBuildTools({devDependencies: {a: '^1'}, neo: {buildTools: {a: '^2', b: '^3', c: '^4'}}}, name => name === 'c'),

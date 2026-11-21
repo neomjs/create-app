@@ -7,10 +7,11 @@
  *
  * The block is the recipe and stays. Done means that every tool of it is installed, so the next run repeats one that
  * failed or was interrupted, and a run with nothing to do changes no file. One run works at a time: a second one waits
- * for it and then finds the tools. `package.json` is written once, before npm starts, with the tools the workspace
- * does not declare yet. Nothing is written back afterwards, so an edit made in the meantime stays.
+ * for it, and for its npm when the run alone was killed, and then finds the tools. `package.json` is written once,
+ * before npm starts, with the tools the workspace does not declare yet. Nothing is written back afterwards, so an edit
+ * made in the meantime stays.
  */
-import {spawnSync}                                                                       from 'node:child_process';
+import {spawn}                                                                           from 'node:child_process';
 import {existsSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync} from 'node:fs';
 import path                                                                              from 'node:path';
 import process                                                                           from 'node:process';
@@ -142,14 +143,47 @@ function unlock() {
     rmSync(ENTRY, {force: true})
 }
 
+/**
+ * @summary Runs npm under an entry of its own in the lock folder.
+ *
+ * npm is the process that writes the install, and it goes on when this run alone is killed. Its entry holds the lock
+ * until npm ends.
+ * @returns {Promise<Number>} The exit status
+ */
+function install() {
+    const
+        // One string: the shell finds npm.cmd on Windows, and no argument list goes through it.
+        // --include=dev: a production environment would skip the tools and report success.
+        npm   = spawn('npm install --include=dev', {shell: true, stdio: 'inherit'}),
+        entry = path.join(LOCK, `${npm.pid}-npm`);
+
+    npm.pid && writeFileSync(entry, '');
+
+    return new Promise(resolve => npm.on('error', () => resolve(1)).on('close', status => {
+        rmSync(entry, {force: true});
+        resolve(status ?? 1)
+    }))
+}
+
 if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {
     const
         file      = path.resolve('package.json'),
         installed = name => existsSync(path.join('node_modules', name, 'package.json')),
         pending   = () => missingBuildTools(JSON.parse(readFileSync(file, 'utf8')), installed);
 
-    // The usual run: the tools are there, and no run stands in the lock folder
-    if (pending().missing.length > 0 || existsSync(LOCK) && readdirSync(LOCK).length > 0) {
+    let busy = true;
+
+    // The usual run: the tools are there, and no run stands in the lock folder. A manifest that does not parse may be
+    // one that a run under the lock is writing, so this run goes there and reads again.
+    try {
+        busy = pending().missing.length > 0 || existsSync(LOCK) && readdirSync(LOCK).length > 0
+    } catch (error) {
+        if (!(error instanceof SyntaxError)) {
+            throw error
+        }
+    }
+
+    if (busy) {
         let status = 0;
 
         lock();
@@ -164,9 +198,7 @@ if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToP
                     writeFileSync(file, declareTools(readFileSync(file, 'utf8'), undeclared))
                 }
 
-                // One string: the shell finds npm.cmd on Windows, and no argument list goes through it.
-                // --include=dev: a production environment would skip the tools and report success.
-                status = spawnSync('npm install --include=dev', {shell: true, stdio: 'inherit'}).status ?? 1;
+                status = await install();
 
                 if (status === 0 && pending().missing.length > 0) {
                     console.error(`npm install ended without these build tools: ${pending().missing.join(', ')}`);
