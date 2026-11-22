@@ -8,16 +8,20 @@
  * The block is the recipe and stays. Done means that every tool of it is installed, so the next run repeats one that
  * failed or was interrupted, and a run with nothing to do changes no file. One run works at a time: a second one waits
  * for it, and for its npm when the run alone was killed, and then finds the tools. `package.json` is written once,
- * before npm starts, with the tools the workspace does not declare yet. Nothing is written back afterwards, so an edit
- * made in the meantime stays.
+ * before npm starts, with the tools the workspace does not declare yet, and in one step: npm reads it before it starts
+ * any script, so no moment of the write may show a part of it. Nothing is written back afterwards, so an edit made in
+ * the meantime stays.
  */
-import {spawn}                                                                           from 'node:child_process';
-import {existsSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync} from 'node:fs';
-import path                                                                              from 'node:path';
-import process                                                                           from 'node:process';
-import {fileURLToPath}                                                                   from 'node:url';
+import {spawn}                                                    from 'node:child_process';
+import {existsSync, mkdirSync, readdirSync, readFileSync,
+        realpathSync, renameSync, rmSync, statSync, writeFileSync} from 'node:fs';
+import path                                                       from 'node:path';
+import process                                                    from 'node:process';
+import {fileURLToPath}                                            from 'node:url';
 
 const
+    // The new package.json stands under this suffix beside the old one until a rename puts it in place
+    DRAFT        = '.neo-build-tools.tmp',
     LOCK         = path.join('node_modules', '.neo-build-tools.lock'),
     // This run's entry in the lock folder. The pid tells whether the run still lives, the time keeps a later
     // process with the same pid apart.
@@ -61,6 +65,41 @@ export function declareTools(text, tools) {
     );
 
     return JSON.stringify(packageJson, null, indent).replaceAll('\n', eol) + (/\n$/.test(text) ? eol : '')
+}
+
+/**
+ * @summary Puts a new text into `package.json` in one step.
+ *
+ * The text is written beside the manifest and renamed onto it, so a reader finds the old text or the new one and
+ * never a part: a second `npm run` that arrives in the middle parses, and its loader then waits at the lock. Windows
+ * refuses a rename onto a file that another process holds open. That is tried again for half a second, and after it
+ * the text is written in place, which is what this step did before. A draft that a killed run left is overwritten
+ * here by the next one.
+ * @param {String} file The path of `package.json`
+ * @param {String} text
+ */
+function publish(file, text) {
+    const
+        target = realpathSync(file),
+        draft  = target + DRAFT;
+
+    writeFileSync(draft, text, {mode: statSync(target).mode & 0o777});
+
+    for (let attempt = 1; attempt <= 10; attempt++) {
+        try {
+            return renameSync(draft, target)
+        } catch (error) {
+            if (!['EACCES', 'EBUSY', 'EPERM'].includes(error.code)) {
+                rmSync(draft, {force: true});
+                throw error
+            }
+
+            sleep(50)
+        }
+    }
+
+    rmSync(draft, {force: true});
+    writeFileSync(target, text)
 }
 
 /**
@@ -174,7 +213,8 @@ if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToP
     let busy = true;
 
     // The usual run: the tools are there, and no run stands in the lock folder. A manifest that does not parse may be
-    // one that a run under the lock is writing, so this run goes there and reads again.
+    // one that a run under the lock writes in place, where the platform refused its rename, so this run goes there
+    // and reads again.
     try {
         busy = pending().missing.length > 0 || existsSync(LOCK) && readdirSync(LOCK).length > 0
     } catch (error) {
@@ -195,7 +235,7 @@ if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToP
                 console.log(`Adding the build tools: ${missing.join(', ')}`);
 
                 if (Object.keys(undeclared).length > 0) {
-                    writeFileSync(file, declareTools(readFileSync(file, 'utf8'), undeclared))
+                    publish(file, declareTools(readFileSync(file, 'utf8'), undeclared))
                 }
 
                 status = await install();

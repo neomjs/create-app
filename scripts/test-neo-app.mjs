@@ -223,6 +223,12 @@ try {
                 "};",
                 "require('node:module').syncBuiltinESMExports();"
             ]),
+            // Loaded with -r: every rename is refused, as Windows refuses one onto a file another process holds open
+            refuser   = helper('refuse.cjs', [
+                "const fs = require('node:fs');",
+                "fs.renameSync = () => {throw Object.assign(new Error('EPERM: operation not permitted, rename'), {code: 'EPERM'})};",
+                "require('node:module').syncBuiltinESMExports();"
+            ]),
             // A stand-in for npm: it notes the call, then runs its lines
             standIn   = (name, ...lines) => {
                 write(path.join(root, name, 'npm'), ['#!/bin/sh', 'echo run >> "$NPM_LOG"', ...lines, ''].join('\n'));
@@ -339,14 +345,14 @@ try {
                     await new Promise(resolve => setTimeout(resolve, 20))
                 }
             },
-            paused = async (name, at, pattern, settled, more) => {
+            paused = async (name, at, pattern, settled, more, second = start) => {
                 const
                     file    = path.join(root, `${name}.paused`),
                     stopped = start({PAUSE_AT: at, PAUSE_FILE: file, PAUSE_PATH: pattern, ...more});
 
                 await until(`${name}: the first run reaches ${at}`, () => fs.existsSync(file));
 
-                const beside = start();
+                const beside = second();
 
                 await until(`${name}: the second run waits or installs`, () => settled(beside));
                 fs.writeFileSync(`${file}.go`, '');
@@ -373,20 +379,62 @@ try {
         assert.deepEqual([one.status, two.status], [0, 0], 'a run that arrives during an install ends well');
         assert.equal(npmRuns(), runs + 1, 'and starts no second one');
 
-        // The first is stopped inside its write of package.json, with the file empty: a run beside it waits for the text
-        const bare = JSON.parse(text);
+        // The first is stopped inside its write of the new package.json, with the written file empty: a run beside it
+        // waits for the writer
+        const
+            bare    = JSON.parse(text),
+            draft   = `${manifest}.neo-build-tools.tmp`,
+            written = '/package\\.json(\\.neo-build-tools\\.tmp)?$',
+            waiting = beside => 'status' in beside || /Waiting for the run/.test(beside.out),
+            strip   = () => {
+                fs.writeFileSync(manifest, JSON.stringify(bare, null, 4) + '\n');
+                remove();
+                runs = npmRuns()
+            };
 
         tools.forEach(name => delete bare.devDependencies[name]);
-        fs.writeFileSync(manifest, JSON.stringify(bare, null, 4) + '\n');
-        remove();
-        runs = npmRuns();
-        [one, two] = await paused('manifest', 'writeFileSync', '/package\\.json$',
-            beside => 'status' in beside || /Waiting for the run/.test(beside.out), {PAUSE_EMPTY: '1'});
+        strip();
+        [one, two] = await paused('manifest', 'writeFileSync', written, waiting, {PAUSE_EMPTY: '1'});
 
         assert.deepEqual([one.status, two.status], [0, 0], 'a run that arrives during the write of package.json ends well');
         assert.match(two.out, /Waiting for the run that adds the build tools/, 'it waited for the writer');
         assert.equal(npmRuns(), runs + 1, 'with one install between them');
         assert.equal(read(), text, 'and package.json is as one run leaves it');
+
+        // The same stop, met through npm itself. npm reads package.json before it starts a script, so no check inside
+        // the loader can cover that read: the manifest has to be whole at every moment of the write.
+        const
+            npmFile = process.env.PATH.split(path.delimiter).map(folder => path.join(folder, 'npm')).find(file => fs.existsSync(file)),
+            viaNpm  = () => {
+                const
+                    run   = {out: ''},
+                    child = spawn(npmFile, ['run', 'add-build-tools'], options(slow));
+
+                child.stdout.on('data', chunk => run.out += chunk);
+                child.stderr.on('data', chunk => run.out += chunk);
+                run.done = new Promise(resolve => child.on('close', status => resolve(Object.assign(run, {status}))));
+                return run
+            };
+
+        strip();
+        [one, two] = await paused('npm', 'writeFileSync', written, waiting, {PAUSE_EMPTY: '1'}, viaNpm);
+
+        assert.doesNotMatch(two.out, /EJSONPARSE/, 'npm finds a whole package.json during the write');
+        assert.deepEqual([one.status, two.status], [0, 0], 'an npm run that arrives during the write of package.json ends well');
+        assert.match(two.out, /Waiting for the run that adds the build tools/, 'its loader waited for the writer');
+        assert.equal(npmRuns(), runs + 1, 'with one install between them');
+        assert.equal(read(), text, 'and package.json is as one run leaves it');
+
+        // A platform that refuses the rename while another process holds the manifest: the text goes in place, and the
+        // draft of this run and one left by a run that was killed are both gone
+        strip();
+        fs.writeFileSync(draft, 'left by a run that was killed');
+
+        const refused = spawnSync(process.execPath, ['-r', refuser, 'buildScripts/addBuildTools.mjs'], options(working));
+
+        assert.equal(refused.status, 0, 'a refused rename does not fail the run');
+        assert.equal(read(), text, 'the tools are declared in place');
+        assert.equal(fs.existsSync(draft), false, 'and no draft stays beside package.json');
 
         // The first run is killed alone and its npm goes on: a run beside it waits for that npm
         remove();
