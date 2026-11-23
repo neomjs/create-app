@@ -11,7 +11,7 @@ import createIndexHtml                         from './createIndexHtml.mjs';
 import createMyAppsJson                        from './createMyAppsJson.mjs';
 import createNeoConfigJson                     from './createNeoConfigJson.mjs';
 import createPackageJson                       from './createPackageJson.mjs';
-import createScssResources                     from './createScssResources.mjs';
+import createCssResources                      from './createCssResources.mjs';
 import createServerScript                      from './createServerScript.mjs';
 import createSrcFolder                         from './createSrcFolder.mjs';
 import createServiceWorker                     from './createServiceWorker.mjs';
@@ -201,7 +201,7 @@ if (programOpts.info) {
             createMyAppsJson   .init(appName, workspace, fs, os, path);
             createNeoConfigJson.init(appName, appPath, fs, mainThreadAddons, os, path, themes, useSharedWorkers, useServiceWorker, programOpts.agent);
             createPackageJson  .init(appName, workspace, fs, os, path, programOpts.agent);
-            createScssResources.init(appName, workspace, fs, os, path);
+            createCssResources .init(appName, workspace, fs, os, path);
             createServerScript .init(appName, workspace, fs, os, path);
             createServiceWorker.init(appName, workspace, fs, os, path);
             createSrcFolder    .init(path.join(cwd, workspace), fs, os, path, __dirname);
@@ -211,10 +211,12 @@ if (programOpts.info) {
                 createAgentLayer.writeMcpConfigs(workspace, fs, path, {appName, useMemory});
             }
 
-            fs.copySync(
-                path.join(__dirname, '../resources/copyExamples.mjs'),
-                path.join(workspace, 'buildScripts/copyExamples.mjs')
-            );
+            for (const script of ['addBuildTools.mjs', 'copyExamples.mjs']) {
+                fs.copySync(
+                    path.join(__dirname, '../resources', script),
+                    path.join(workspace, 'buildScripts', script)
+                );
+            }
 
             const cpOpts = { encoding: 'utf-8', env: process.env, cwd: workspace, shell: true, stdio: 'inherit' };
 
@@ -232,7 +234,7 @@ if (programOpts.info) {
                 stdio: 'inherit'
             });
 
-            console.log(`\n${chalk.cyan('npm run build-all')} builds dist/development, dist/production and dist/esm.`);
+            console.log(`\nThis install holds what dev mode needs. ${chalk.cyan('npm run build-all')} adds the build tools once, then builds dist/development, dist/production and dist/esm.`);
 
             if (programOpts.start === 'true') {
                 logBuildTime();

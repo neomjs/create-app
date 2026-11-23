@@ -3,18 +3,24 @@
  * @summary Contract checks for the first run: `server-start` starts the engine's file server, no webpack, and opens
  * the app the generator wrote, with the app name as data in the workspace's server script and never in a shell line;
  * a workspace gets no `src/index.js`, no `webpack-dev-server` and no command that runs the engine's own test suite,
- * and the engine's docs app is copied only with `--docs`. The generator runs for real in a throwaway directory; a stand-in for npm installs nothing, so each
- * workspace gets the slice of the installed engine the run reads.
+ * its styles are plain CSS under `resources/css` with no Sass, and the engine's docs app is copied only with `--docs`.
+ * A workspace declares only the packages its first run imports; the build tools stand under `neo.buildTools` as a
+ * recipe, and `buildScripts/addBuildTools.mjs` installs them once. The generator runs for real in a throwaway
+ * directory; the stand-in for npm it runs with installs nothing, so each workspace gets the slice of the installed
+ * engine the run reads.
  */
 
-import assert             from 'node:assert/strict';
-import {spawnSync}        from 'node:child_process';
-import fs                 from 'node:fs';
-import os                 from 'node:os';
-import path               from 'node:path';
+import assert                             from 'node:assert/strict';
+import {spawn, spawnSync}                 from 'node:child_process';
+import fs                                 from 'node:fs';
+import os                                 from 'node:os';
+import path                               from 'node:path';
 import {fileURLToPath,
-        pathToFileURL}    from 'node:url';
-import createServerScript from '../tasks/createServerScript.mjs';
+        pathToFileURL}                    from 'node:url';
+import {declareTools, missingBuildTools}  from '../resources/addBuildTools.mjs';
+import {ADD_BUILD_TOOLS, FIRST_RUN,
+        NEEDS_BUILD_TOOLS}                from '../tasks/createPackageJson.mjs';
+import createServerScript                 from '../tasks/createServerScript.mjs';
 
 const
     generator   = fileURLToPath(new URL('../tasks/neo-app.mjs', import.meta.url)),
@@ -64,7 +70,7 @@ try {
     // ── The app name stays data: the server script holds the route as a string ─────────────────────────────────────
     // `%CD%` and `ͻ` (UTF-8 CD BB) are the names a percent-encoded route in a cmd.exe line would expand
     const names = ['MyApp', 'Sales Desk', "O'Brien", 'x; touch pwned', '$(id)', '`id`', 'a&b|c>d', '"q"', 'Ünïcödé',
-        '~(!*)', '%CD%', 'ͻ', '</script>\\', ' '];
+        '~(!*)', '%CD%', 'ͻ', '</script>\\', ' '];
 
     for (const [index, name] of names.entries()) {
         const workspace = path.join(root, 'names', String(index));
@@ -106,6 +112,354 @@ try {
         for (const folder of ['docs', 'dist/development/docs', 'dist/production/docs']) {
             assert.equal(exists('plain', folder), false, `without --docs there is no ${folder}`)
         }
+    }
+
+    // ── Styles are plain CSS: the app's folder per theme under resources/css, and no Sass anywhere ─────────────────
+    {
+        const {devDependencies, neo} = JSON.parse(fs.readFileSync(path.join(root, 'plain/package.json'), 'utf-8'));
+
+        for (const folder of ['src', 'theme-dark', 'theme-light', 'theme-neo-light']) {
+            assert.ok(exists('plain', `resources/css/${folder}/apps/myapp`), `resources/css/${folder} holds the app's folder`)
+        }
+
+        assert.equal(exists('plain', 'resources/scss'), false, 'no resources/scss');
+        assert.deepEqual(fs.readdirSync(path.join(root, 'plain'), {recursive: true}).filter(file => file.endsWith('.scss')), [], 'no .scss file');
+        assert.equal(devDependencies.sass, undefined, 'a workspace installs no Sass');
+        // The parity check compares only declared ranges, so it cannot see this one missing
+        assert.ok(neo.buildTools['highlight.js'], 'the engine builds its highlight.js bundle from the workspace install')
+    }
+
+    // ── Every generated script is sorted: it needs a build tool, it chains sorted scripts, or the first run runs it ─
+    // Kept apart from NEEDS_BUILD_TOOLS on purpose. A script that loses its wrapper fails here, and so does a new
+    // script that nobody sorted.
+    {
+        const
+            {scripts} = JSON.parse(fs.readFileSync(path.join(root, 'plain/package.json'), 'utf-8')),
+            builds    = ['build-all', 'build-all-questions', 'build-dist-esm', 'build-highlightjs', 'build-threads', 'bundle-mermaid',
+                'bundle-monaco', 'generate-docs-json'],
+            chains    = ['bundle-browser-deps', 'postinstall'],
+            firstRun  = ['add-build-tools', 'add-config', 'add-reactive-tags', 'build-themes', 'bundle-marked', 'bundle-parse5',
+                'check-reactive-tags', 'copy-examples', 'create-app', 'create-app-minimal', 'create-class', 'create-component',
+                'server-start', 'watch-themes'];
+
+        assert.deepEqual(Object.keys(scripts).sort(), [...builds, ...chains, ...firstRun].sort(), 'every generated script stands in one list');
+        assert.equal(scripts['add-build-tools'], ADD_BUILD_TOOLS);
+
+        for (const name of builds) {
+            assert.ok(scripts[name].startsWith(`${ADD_BUILD_TOOLS} && node `), `${name} adds the build tools first`)
+        }
+
+        for (const name of firstRun.slice(1)) {
+            assert.doesNotMatch(scripts[name], /addBuildTools/, `${name} runs on the first install`)
+        }
+
+        for (const name of chains) {
+            for (const part of scripts[name].split(' && ')) {
+                assert.ok(/^npm run [\w-]+$/.test(part) && part.slice(8) in scripts, `${name} runs only the workspace's own scripts`)
+            }
+        }
+
+        assert.deepEqual([...NEEDS_BUILD_TOOLS].sort(), builds, 'and the generator wraps exactly the builds');
+        assert.equal(scripts.postinstall, 'npm run bundle-parse5 && npm run bundle-marked', 'the install installs nothing inside the engine')
+    }
+
+    // ── The first run installs what it runs; the build tools stand as a recipe, and one step installs them once ────
+    {
+        const
+            workspace = path.join(root, 'plain'),
+            manifest  = path.join(workspace, 'package.json'),
+            read      = () => fs.readFileSync(manifest, 'utf-8'),
+            lean      = read(),
+            {devDependencies, neo} = JSON.parse(lean),
+            tools     = Object.keys(neo.buildTools),
+            toolFile  = name => path.join(workspace, 'node_modules', name, 'package.json'),
+            present   = () => tools.filter(name => fs.existsSync(toolFile(name))),
+            remove    = () => tools.forEach(name => fs.rmSync(path.dirname(toolFile(name)), {force: true, recursive: true})),
+            lockDir   = path.join(workspace, 'node_modules/.neo-build-tools.lock'),
+            npmLog    = path.join(root, 'npm.log'),
+            npmRuns   = () => fs.existsSync(npmLog) ? fs.readFileSync(npmLog, 'utf-8').split('\n').filter(Boolean).length : 0,
+            options   = npmBin => ({cwd: workspace, encoding: 'utf-8', env: {...process.env, NPM_LOG: npmLog, PATH: npmBin + path.delimiter + process.env.PATH}}),
+            addTools  = npmBin => spawnSync(process.execPath, ['buildScripts/addBuildTools.mjs'], options(npmBin)),
+            helper    = (name, lines) => {
+                write(path.join(root, name), lines.join('\n'));
+                return path.join(root, name)
+            },
+            // What an install leaves behind: a folder with a package.json for every declared devDependency
+            installer = helper('install.mjs', [
+                "import fs from 'node:fs';",
+                "for (const name of Object.keys(JSON.parse(fs.readFileSync('package.json', 'utf8')).devDependencies || {})) {",
+                "    fs.mkdirSync(`node_modules/${name}`, {recursive: true});",
+                "    fs.writeFileSync(`node_modules/${name}/package.json`, '{}')",
+                "}"
+            ]),
+            // A person's edit of package.json while npm runs
+            editor    = helper('edit.mjs', [
+                "import fs from 'node:fs';",
+                "const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));",
+                "packageJson.scripts.mine = 'echo';",
+                "fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 4) + '\\n')"
+            ]),
+            // Loaded with -r: the first call of fs[PAUSE_AT] on a path that matches PAUSE_PATH leaves PAUSE_FILE and
+            // waits there until PAUSE_FILE.go stands. With PAUSE_EMPTY the wait stands inside a write: the file is
+            // opened and emptied first, and its content follows after the wait.
+            pauser    = helper('pause.cjs', [
+                "const fs = require('node:fs'), {existsSync, writeFileSync} = fs;",
+                "const original = fs[process.env.PAUSE_AT], pattern = new RegExp(process.env.PAUSE_PATH);",
+                "let done = false;",
+                "fs[process.env.PAUSE_AT] = (...args) => {",
+                "    if (!done && pattern.test(String(args[0]).replaceAll('\\\\', '/'))) {",
+                "        const fd = process.env.PAUSE_EMPTY && fs.openSync(args[0], 'w');",
+                "        done = true;",
+                "        writeFileSync(process.env.PAUSE_FILE, '');",
+                "        while (!existsSync(`${process.env.PAUSE_FILE}.go`)) {",
+                "            Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 20)",
+                "        }",
+                "        if (fd) {",
+                "            fs.writeSync(fd, args[1]);",
+                "            return fs.closeSync(fd)",
+                "        }",
+                "    }",
+                "    return original(...args)",
+                "};",
+                "require('node:module').syncBuiltinESMExports();"
+            ]),
+            // Loaded with -r: every rename is refused, as Windows refuses one onto a file another process holds open
+            refuser   = helper('refuse.cjs', [
+                "const fs = require('node:fs');",
+                "fs.renameSync = () => {throw Object.assign(new Error('EPERM: operation not permitted, rename'), {code: 'EPERM'})};",
+                "require('node:module').syncBuiltinESMExports();"
+            ]),
+            // A stand-in for npm: it notes the call, then runs its lines
+            standIn   = (name, ...lines) => {
+                write(path.join(root, name, 'npm'), ['#!/bin/sh', 'echo run >> "$NPM_LOG"', ...lines, ''].join('\n'));
+                fs.chmodSync(path.join(root, name, 'npm'), 0o755);
+                return path.join(root, name)
+            },
+            node      = file => `"${process.execPath}" "${file}"`,
+            failing   = standIn('failing', 'exit 1'),
+            editing   = standIn('editing', node(editor), 'exit 1'),
+            working   = standIn('working', node(installer)),
+            slow      = standIn('slow', 'sleep 1', node(installer));
+
+        assert.deepEqual(Object.keys(devDependencies).sort(), [...FIRST_RUN].sort(), 'devDependencies hold what the first run imports');
+
+        for (const name of ['webpack', 'webpack-cli', 'terser', 'monaco-editor', 'mermaid', '@playwright/test', 'jsdoc-api']) {
+            assert.ok(neo.buildTools[name], `${name} stands with the build tools`)
+        }
+
+        // A failed install: the recipe stays, nothing is installed, and the next run tries again
+        assert.equal(addTools(failing).status, 1, 'a failed install fails the run');
+        assert.deepEqual(JSON.parse(read()).neo, neo, 'the recipe stays where it is');
+        assert.deepEqual(present(), [], 'and nothing is installed');
+
+        assert.equal(addTools(editing).status, 1);
+        assert.equal(JSON.parse(read()).scripts.mine, 'echo', 'an edit made while npm runs stays after a failure');
+
+        let runs = npmRuns();
+
+        assert.equal(addTools(working).status, 0, 'the next run repeats a failed install');
+        assert.equal(npmRuns(), runs + 1);
+        assert.deepEqual(present(), tools, 'every build tool is installed');
+
+        const
+            text   = read(),
+            merged = JSON.parse(text);
+
+        assert.deepEqual(Object.keys(merged.devDependencies).sort(), [...Object.keys(devDependencies), ...tools].sort(),
+            'every build tool is declared, each once');
+        assert.equal(merged.devDependencies.webpack, neo.buildTools.webpack, 'with the range of the recipe');
+        assert.deepEqual(merged.neo, neo, 'and the recipe stays');
+
+        runs = npmRuns();
+        assert.equal(addTools(working).status, 0);
+        assert.equal(read(), text, 'a second run changes nothing');
+        assert.equal(npmRuns(), runs, 'and starts no install');
+
+        // An install that was interrupted: the tools are declared and not there
+        remove();
+        assert.equal(addTools(working).status, 0, 'tools that are declared and not installed get installed');
+        assert.deepEqual(present(), tools);
+        assert.equal(read(), text, 'with no change to package.json');
+
+        // npm reports success and the tools are not there
+        remove();
+
+        const idle = addTools(bin);
+
+        assert.equal(idle.status, 1, 'an install that ends without the tools fails the run');
+        assert.match(idle.stderr, /ended without these build tools/);
+
+        // The workspace's own range of a build tool
+        fs.writeFileSync(manifest, text.replace(`"webpack": "${neo.buildTools.webpack}"`, '"webpack": "5.0.0"'));
+        assert.equal(addTools(working).status, 0);
+        assert.equal(JSON.parse(read()).devDependencies.webpack, '5.0.0', 'a range the workspace declares stays');
+        fs.writeFileSync(manifest, text);
+
+        // An entry whose run is gone
+        const gone = `${spawnSync(process.execPath, ['-e', '']).pid}-1`;
+
+        remove();
+        fs.mkdirSync(lockDir, {recursive: true});
+        fs.writeFileSync(path.join(lockDir, gone), '');
+        assert.equal(addTools(working).status, 0, 'a run that is gone holds no lock');
+        assert.deepEqual(present(), tools);
+        assert.deepEqual(fs.readdirSync(lockDir), [], 'and the lock folder is empty again');
+
+        // Two runs at once: one installs, the other waits for it and finds the tools
+        remove();
+        runs = npmRuns();
+
+        const
+            start = pause => {
+                const
+                    {env, ...spawnOptions} = options(slow),
+                    run   = {out: ''},
+                    child = spawn(process.execPath, [...(pause ? ['-r', pauser] : []), 'buildScripts/addBuildTools.mjs'],
+                        {...spawnOptions, env: {...env, ...pause}});
+
+                child.stdout.on('data', chunk => run.out += chunk);
+                run.done = new Promise(resolve => child.on('close', status => resolve(Object.assign(run, {status}))));
+                run.kill = () => child.kill('SIGKILL');
+                return run
+            },
+            first = start();
+
+        await new Promise(resolve => setTimeout(resolve, 400));
+
+        let [one, two] = await Promise.all([first.done, start().done]);
+
+        assert.deepEqual([one.status, two.status], [0, 0], 'two runs at once both end well');
+        assert.equal(npmRuns(), runs + 1, 'with one install between them');
+        assert.match(two.out, /Waiting for the run that adds the build tools/, 'the second one waited');
+        assert.deepEqual(present(), tools);
+        assert.equal(read(), text, 'and package.json is as one run leaves it');
+
+        // One run stopped inside the step that takes the lock, and a second run started beside it. The second one gets
+        // the time to wait or to start npm before the first goes on.
+        const
+            until  = async (what, condition) => {
+                const end = Date.now() + 20000;
+
+                while (!condition()) {
+                    assert.ok(Date.now() < end, what);
+                    await new Promise(resolve => setTimeout(resolve, 20))
+                }
+            },
+            paused = async (name, at, pattern, settled, more, second = start) => {
+                const
+                    file    = path.join(root, `${name}.paused`),
+                    stopped = start({PAUSE_AT: at, PAUSE_FILE: file, PAUSE_PATH: pattern, ...more});
+
+                await until(`${name}: the first run reaches ${at}`, () => fs.existsSync(file));
+
+                const beside = second();
+
+                await until(`${name}: the second run waits or installs`, () => settled(beside));
+                fs.writeFileSync(`${file}.go`, '');
+
+                return Promise.all([stopped.done, beside.done])
+            };
+
+        // Both find an entry whose run is gone, and the first is stopped before it removes what it found
+        remove();
+        runs = npmRuns();
+        fs.writeFileSync(path.join(lockDir, gone), '');
+        [one, two] = await paused('gone', 'rmSync', `\\.neo-build-tools\\.lock(/${gone})?$`,
+            beside => /Waiting for the run/.test(beside.out) || npmRuns() > runs);
+
+        assert.deepEqual([one.status, two.status], [0, 0], 'two runs that find a run gone both end well');
+        assert.equal(npmRuns(), runs + 1, 'and only one of them installs');
+        assert.deepEqual(fs.readdirSync(lockDir), [], 'and no entry stays');
+
+        // The first is stopped before it writes its entry, and goes on while the second one installs
+        remove();
+        runs = npmRuns();
+        [one, two] = await paused('entry', 'writeFileSync', '\\.neo-build-tools\\.lock/\\d+-\\d+$', () => npmRuns() > runs);
+
+        assert.deepEqual([one.status, two.status], [0, 0], 'a run that arrives during an install ends well');
+        assert.equal(npmRuns(), runs + 1, 'and starts no second one');
+
+        // The first is stopped inside its write of the new package.json, with the written file empty: a run beside it
+        // waits for the writer
+        const
+            bare    = JSON.parse(text),
+            draft   = `${manifest}.neo-build-tools.tmp`,
+            written = '/package\\.json(\\.neo-build-tools\\.tmp)?$',
+            waiting = beside => 'status' in beside || /Waiting for the run/.test(beside.out),
+            strip   = () => {
+                fs.writeFileSync(manifest, JSON.stringify(bare, null, 4) + '\n');
+                remove();
+                runs = npmRuns()
+            };
+
+        tools.forEach(name => delete bare.devDependencies[name]);
+        strip();
+        [one, two] = await paused('manifest', 'writeFileSync', written, waiting, {PAUSE_EMPTY: '1'});
+
+        assert.deepEqual([one.status, two.status], [0, 0], 'a run that arrives during the write of package.json ends well');
+        assert.match(two.out, /Waiting for the run that adds the build tools/, 'it waited for the writer');
+        assert.equal(npmRuns(), runs + 1, 'with one install between them');
+        assert.equal(read(), text, 'and package.json is as one run leaves it');
+
+        // The same stop, met through npm itself. npm reads package.json before it starts a script, so no check inside
+        // the loader can cover that read: the manifest has to be whole at every moment of the write.
+        const
+            npmFile = process.env.PATH.split(path.delimiter).map(folder => path.join(folder, 'npm')).find(file => fs.existsSync(file)),
+            viaNpm  = () => {
+                const
+                    run   = {out: ''},
+                    child = spawn(npmFile, ['run', 'add-build-tools'], options(slow));
+
+                child.stdout.on('data', chunk => run.out += chunk);
+                child.stderr.on('data', chunk => run.out += chunk);
+                run.done = new Promise(resolve => child.on('close', status => resolve(Object.assign(run, {status}))));
+                return run
+            };
+
+        strip();
+        [one, two] = await paused('npm', 'writeFileSync', written, waiting, {PAUSE_EMPTY: '1'}, viaNpm);
+
+        assert.doesNotMatch(two.out, /EJSONPARSE/, 'npm finds a whole package.json during the write');
+        assert.deepEqual([one.status, two.status], [0, 0], 'an npm run that arrives during the write of package.json ends well');
+        assert.match(two.out, /Waiting for the run that adds the build tools/, 'its loader waited for the writer');
+        assert.equal(npmRuns(), runs + 1, 'with one install between them');
+        assert.equal(read(), text, 'and package.json is as one run leaves it');
+
+        // A platform that refuses the rename while another process holds the manifest: the text goes in place, and the
+        // draft of this run and one left by a run that was killed are both gone
+        strip();
+        fs.writeFileSync(draft, 'left by a run that was killed');
+
+        const refused = spawnSync(process.execPath, ['-r', refuser, 'buildScripts/addBuildTools.mjs'], options(working));
+
+        assert.equal(refused.status, 0, 'a refused rename does not fail the run');
+        assert.equal(read(), text, 'the tools are declared in place');
+        assert.equal(fs.existsSync(draft), false, 'and no draft stays beside package.json');
+
+        // The first run is killed alone and its npm goes on: a run beside it waits for that npm
+        remove();
+        runs = npmRuns();
+
+        const killed = start();
+
+        await until('the first run starts npm', () => npmRuns() > runs);
+        await new Promise(resolve => setTimeout(resolve, 100));
+        killed.kill();
+        [one, two] = await Promise.all([killed.done, start().done]);
+
+        assert.equal(one.status, null, 'the first run was killed');
+        assert.equal(two.status, 0, 'a run beside an npm whose run was killed ends well');
+        assert.equal(npmRuns(), runs + 1, 'and starts no second npm');
+        assert.match(two.out, /Waiting for the run that adds the build tools/, 'it waited for that npm');
+        assert.deepEqual(present(), tools);
+        assert.deepEqual(fs.readdirSync(lockDir), [], 'and no entry stays');
+
+        // The two decisions as data
+        assert.deepEqual(missingBuildTools({devDependencies: {a: '^1'}, neo: {buildTools: {a: '^2', b: '^3', c: '^4'}}}, name => name === 'c'),
+            {missing: ['a', 'b'], undeclared: {b: '^3'}}, 'an installed tool is left alone, a declared range is not replaced');
+        assert.deepEqual(missingBuildTools({}, () => false), {missing: [], undeclared: {}}, 'no recipe, nothing to add');
+        assert.equal(declareTools('{\r\n  "name": "x"\r\n}\r\n', {b: '^3'}),
+            '{\r\n  "name": "x",\r\n  "devDependencies": {\r\n    "b": "^3"\r\n  }\r\n}\r\n', 'the indent and the line ending stay')
     }
 
     // ── --docs: the copy runs as before ─────────────────────────────────────────────────────────────────────────────

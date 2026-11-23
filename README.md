@@ -111,7 +111,9 @@ The beauty inside this screen is:
     2.  No need for source-maps
 
 ## Viewing your app in dist modes
-The first run builds what dev mode needs: the development themes. The dist modes exist after you build them:
+The first run installs and builds what dev mode needs: the engine, the icon font, a dozen packages and the development
+themes. The dist modes exist after you build them. The first build adds the build tools (webpack, terser and the rest)
+to your `package.json` and installs them:
 ```bash
 npm run build-all
 ```
@@ -138,8 +140,10 @@ framework version update would require to re-create it)
 builds of your app
 5.  docs exists only with `--docs`: a copy of the engine's docs app, which shows documentation views of your app and the
 engine's examples once `npm run generate-docs-json` has run
-6.  node_modules => all related dependencies which are required for the build scripts & the file server
-7.  package.json => defines scripts and dependencies.
+6.  node_modules => what dev mode and the file server need; the build tools arrive with your first build
+7.  package.json => defines scripts and dependencies. `neo.buildTools` lists the build tools. Your first build installs
+them and adds them to `devDependencies`; the list stays as the recipe, so a build that was interrupted finishes the
+install the next time.
 
 ## package.json Scripts
 
@@ -151,7 +155,8 @@ You can run each script via
 
 ### Main Scripts
 *   `server-start`: Starts the engine's file server and opens your app; `npm run server-start -- --no-open` starts it without a browser, and `-- --port <n>` or `PORT=<n>` picks the port
-*   `build-all`: npm install & builds literally everything.
+*   `build-all`: adds the build tools on its first run, then npm install & builds literally everything.
+*   `add-build-tools`: installs the packages the build scripts import. Every script that needs one runs it first, so you rarely call it yourself.
 *   `build-all-questions`: same as build all, but you can choose what to build using the inquirer interface.
 *   `build-themes`: builds the themes for dev and / or prod and lets you choose if want to use CSS variables.
 *   `build-threads`: builds main, data & vdom (or any combinations) for dev and / or prod.
