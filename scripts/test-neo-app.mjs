@@ -136,7 +136,7 @@ try {
         const
             {scripts} = JSON.parse(fs.readFileSync(path.join(root, 'plain/package.json'), 'utf-8')),
             builds    = ['build-all', 'build-all-questions', 'build-dist-esm', 'build-highlightjs', 'build-threads', 'bundle-mermaid',
-                'bundle-monaco', 'generate-docs-json'],
+                'bundle-monaco', 'create-theme', 'generate-docs-json'],
             chains    = ['bundle-browser-deps', 'postinstall'],
             firstRun  = ['add-build-tools', 'add-config', 'add-reactive-tags', 'build-themes', 'bundle-marked', 'bundle-parse5',
                 'check-reactive-tags', 'copy-examples', 'create-app', 'create-app-minimal', 'create-class', 'create-component',
