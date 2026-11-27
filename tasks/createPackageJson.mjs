@@ -28,7 +28,7 @@ export const ADD_BUILD_TOOLS = 'node ./buildScripts/addBuildTools.mjs';
  */
 export const NEEDS_BUILD_TOOLS = [
     'build-all', 'build-all-questions', 'build-dist-esm', 'build-highlightjs', 'build-threads', 'bundle-mermaid',
-    'bundle-monaco', 'generate-docs-json'
+    'bundle-monaco', 'create-theme', 'generate-docs-json'
 ];
 
 export default {
@@ -67,6 +67,7 @@ export default {
                 "create-app-minimal" : "node ./node_modules/neo.mjs/buildScripts/create/appMinimal.mjs",
                 "create-class"       : "node ./node_modules/neo.mjs/buildScripts/create/class.mjs",
                 "create-component"   : "node ./node_modules/neo.mjs/buildScripts/create/component.mjs",
+                "create-theme"       : "node ./node_modules/neo.mjs/buildScripts/create/theme.mjs",
                 "generate-docs-json" : "node ./node_modules/neo.mjs/buildScripts/docs/generateDocsJson.mjs",
                 // The engine package ships no generated bundles, and an install replaces node_modules/neo.mjs, so every
                 // install rebuilds the two the engine imports at module scope. The others load lazily: bundle-browser-deps.
@@ -104,6 +105,7 @@ export default {
                 "monaco-editor"                : "0.57.0",
                 "parse5"                       : "^8.0.1",
                 "postcss"                      : "^8.5.29",
+                "postcss-selector-parser"      : "^7.1.7",
                 "semver"                       : "^7.8.5",
                 "terser"                       : "^5.51.2",
                 "url"                          : "^0.11.4",
