@@ -154,4 +154,33 @@ import {ADD_BUILD_TOOLS, FIRST_RUN} from '../tasks/createPackageJson.mjs';
     assert.ok(generatedPackageJson().scripts['build-all'].startsWith(`${ADD_BUILD_TOOLS} && `), 'the scaffold really wraps its builds')
 }
 
+// ── create-theme reaches the selector parser, which waits with the build tools (#82) ───────────────
+{
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'parity-theme-'));
+
+    try {
+        fs.mkdirSync(path.join(root, 'buildScripts/create'), {recursive: true});
+        fs.writeFileSync(path.join(root, 'buildScripts/create/theme.mjs'),
+            "import postcss        from 'postcss';\nimport selectorParser from 'postcss-selector-parser';\n");
+
+        const
+            packageJson = generatedPackageJson(),
+            theme       = ({script}) => script === 'create-theme',
+            withoutIt   = {...packageJson, neo: {buildTools: {...packageJson.neo.buildTools}}};
+
+        assert.ok(packageJson.scripts['create-theme']?.startsWith(`${ADD_BUILD_TOOLS} && `),
+            'a workspace runs create-theme with no command before it');
+        assert.ok(!FIRST_RUN.has('postcss-selector-parser'), 'and the first run does not grow for it');
+        assert.deepEqual(findUnreachable(packageJson, root).filter(theme), [], 'the scaffold declares what it reaches');
+
+        delete withoutIt.neo.buildTools['postcss-selector-parser'];
+
+        assert.deepEqual(findUnreachable(withoutIt, root).filter(theme),
+            [{script: 'create-theme', wrapped: true, packages: ['postcss-selector-parser']}],
+            'a scaffold that leaves the parser out of the list fails')
+    } finally {
+        fs.rmSync(root, {force: true, recursive: true})
+    }
+}
+
 console.log('check-engine-parity: contract arms green.');
