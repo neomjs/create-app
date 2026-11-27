@@ -1,0 +1,30 @@
+# Thin caller for neomjs/neo's reusable claim-responder workflow. Owns only triggers, token permissions, and the
+# pre-runner `if` filter; concurrency (`claim-responder`) and rule execution live in neomjs/neo at the pinned SHA.
+name: Claim responder
+
+permissions:
+  contents: read       # sparse checkout of neomjs/neo rule modules in the called workflow
+  issues: write        # auto-assignment and release notices on curated issues
+  pull-requests: write # overlap and residual-scope notices on pull requests
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_target:
+    types: [opened, reopened, edited, closed]
+
+jobs:
+  respond:
+    if: >-
+      (
+        github.event_name == 'issue_comment' &&
+        !github.event.issue.pull_request &&
+        github.event.issue.state == 'open' &&
+        github.event.comment.user.type != 'Bot' &&
+        !contains(fromJSON('["COLLABORATOR","MEMBER","OWNER"]'), github.event.comment.author_association) &&
+        (contains(github.event.issue.labels.*.name, 'good first issue') || contains(github.event.issue.labels.*.name, 'help wanted'))
+      ) || (
+        github.event_name == 'pull_request_target' &&
+        github.event.pull_request.user.type != 'Bot'
+      )
+    uses: neomjs/neo/.github/workflows/claim-responder.yml@7cb40d9bfeefb5deb8c80cc39fec56fbff04cee0
