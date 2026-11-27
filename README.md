@@ -161,6 +161,7 @@ You can run each script via
 *   `build-themes`: builds the themes for dev and / or prod and lets you choose if want to use CSS variables.
 *   `build-threads`: builds main, data & vdom (or any combinations) for dev and / or prod.
 *   `create-app`: add an additional app to your project. You can also trigger npx neo-app multiple times.
+*   `create-theme`: copies an existing theme into `resources/css` under a new name, ready to edit; `npm run create-theme -- -n theme-acme -b theme-neo-dark --noquestions` runs it without prompts. Like the builds, it adds the build tools on its first run.
 *   `generate-docs-json`: writes the data the docs app of a `--docs` workspace reads. Run it once before that app shows anything, and again when you change your app code (e.g. adding new files).
 *   `bundle-browser-deps`: builds the browser bundles the engine loads from `node_modules/neo.mjs/dist/`. The npm package ships none of them. `npm install` builds the two the engine imports at startup (`parse5`, `marked`); run this script for the ones loaded on demand (Mermaid, Monaco, highlight.js).
 
