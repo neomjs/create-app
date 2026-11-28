@@ -114,6 +114,30 @@ try {
         }
     }
 
+    // ── -m merges into the defaults, never writes a string: #86 ───────────────────────────────────────────────────
+    {
+        const neoConfig = workspace => JSON.parse(fs.readFileSync(path.join(root, workspace, 'apps/myapp/neo-config.json'), 'utf-8')),
+            defaults    = ['DragDrop', 'Navigator', 'Stylesheet'];
+
+        // AC-3: without -m, no mainThreadAddons key at all
+        assert.equal(neoConfig('plain').mainThreadAddons, undefined, 'without -m there is no mainThreadAddons key');
+
+        // AC-1: -m HighlightJS appends to the defaults
+        run('addons1', '-m', 'HighlightJS');
+        assert.deepEqual(neoConfig('addons1').mainThreadAddons, [...defaults, 'HighlightJS'], '-m HighlightJS merges with the defaults');
+
+        // AC-2: a comma list and two flags write the same list
+        run('addons2', '-m', 'HighlightJS,Markdown');
+        assert.deepEqual(neoConfig('addons2').mainThreadAddons, [...defaults, 'HighlightJS', 'Markdown'], '-m HighlightJS,Markdown splits on commas');
+
+        run('addons3', '-m', 'HighlightJS', '-m', 'Markdown');
+        assert.deepEqual(neoConfig('addons3').mainThreadAddons, [...defaults, 'HighlightJS', 'Markdown'], 'two -m flags accumulate the same way');
+
+        // AC-2: -m Stylesheet repeats a default, so the key stays out of neo-config.json
+        run('addons4', '-m', 'Stylesheet');
+        assert.equal(neoConfig('addons4').mainThreadAddons, undefined, '-m Stylesheet writes no mainThreadAddons key');
+    }
+
     // ── Styles are plain CSS: the app's folder per theme under resources/css, and no Sass anywhere ─────────────────
     {
         const {devDependencies, neo} = JSON.parse(fs.readFileSync(path.join(root, 'plain/package.json'), 'utf-8'));
