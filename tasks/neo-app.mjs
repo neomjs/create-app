@@ -35,6 +35,10 @@ const
             return value.replace(/^["']|["']$/g, '').trim();
         }
         return value;
+    },
+    collectAddons = (value, previous) => {
+        const names = value.split(',').map(name => sanitizeInput(name)).filter(Boolean);
+        return [...(previous ?? []), ...names];
     };
 
 program
@@ -42,7 +46,7 @@ program
     .version(packageJson.version)
     .option('-i, --info',                                   'print environment debug info')
     .option('-n, --app-name <name>',                        'name of your app in PascalCase', sanitizeInput)
-    .option('-m, --mainThreadAddons <name>',                '"AmCharts", "AnalyticsByGoogle", "DragDrop", "HighlightJS", "LocalStorage", "MapboxGL", "Markdown", "ServiceWorker", "Siesta", "Stylesheet"', sanitizeInput)
+    .option('-m, --mainThreadAddons <names...>',             '"AmCharts", "AnalyticsByGoogle", "DragDrop", "HighlightJS", "LocalStorage", "MapboxGL", "Markdown", "Navigator", "ServiceWorker", "Siesta", "Stylesheet"', collectAddons)
     .option('-s, --start <name>',                           'start a web-server right after the build.', sanitizeInput, 'true')
     .addOption(new Option('-t, --themes <name>',            'theme for your neo app').choices(['neo-theme-dark', 'neo-theme-light', 'neo-theme-neo-light', 'all', 'none']).argParser(sanitizeInput))
     .addOption(new Option('-u, --useSharedWorkers <name>',  'use SharedWorkers').choices(['yes', 'no']).argParser(sanitizeInput))
@@ -178,7 +182,8 @@ if (programOpts.info) {
 
     inquirer.prompt(questions).then(answers => {
         let appName          = programOpts.appName          || answers['appName'],
-            mainThreadAddons = programOpts.mainThreadAddons || ['DragDrop', 'Navigator', 'Stylesheet'],
+            mainThreadAddons = [...['DragDrop', 'Navigator', 'Stylesheet'], ...(programOpts.mainThreadAddons ?? [])]
+                .filter((name, index, list) => list.indexOf(name) === index),
             themes           = programOpts.themes           || answers['themes'],
             useSharedWorkers = programOpts.useSharedWorkers || answers.useSharedWorkers,
             useServiceWorker = programOpts.useServiceWorker || 'no',
